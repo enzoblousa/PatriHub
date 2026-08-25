@@ -48,9 +48,12 @@ public sealed class LancamentoService(PatriHubDbContext db) : ILancamentoService
             return ResultadoOperacao<LancamentoDto>.ComErro("Lançamento não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
-        if (lancamento.AtivoId != request.AtivoId && !await AtivoPertenceAoUsuarioAsync(usuarioId, request.AtivoId))
+        // AtivoId não é editável: o Lançamento não "muda de dono" depois de criado. O request
+        // ainda o exige (mesmo corpo do POST — ver LancamentoRequest) só para o cliente
+        // reafirmar qual Ativo está editando; se vier diferente, é erro de validação.
+        if (lancamento.AtivoId != request.AtivoId)
         {
-            return ResultadoOperacao<LancamentoDto>.ComErro("Ativo não encontrado.", TipoErroOperacao.NaoEncontrado);
+            return ResultadoOperacao<LancamentoDto>.ComErro("Não é possível mover um Lançamento para outro Ativo.", TipoErroOperacao.Validacao);
         }
 
         if (!TentarExecutar(() => lancamento.Atualizar(

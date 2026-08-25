@@ -142,6 +142,21 @@ public sealed class LancamentosTests(PatriHubApiFactory factory) : IClassFixture
     }
 
     [Fact]
+    public async Task Atualizar_lancamento_com_AtivoId_diferente_retorna_400()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        var ativoOriginal = await CriarAtivoAsync(client, "Apê 1");
+        var outroAtivo = await CriarAtivoAsync(client, "Apê 2");
+        var criado = await (await client.PostAsJsonAsync("/api/lancamentos", ReceitaValida(ativoOriginal))).Content.ReadFromJsonAsync<LancamentoDto>();
+
+        var response = await client.PutAsJsonAsync($"/api/lancamentos/{criado!.Id}", ReceitaValida(outroAtivo));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var detalhe = await client.GetFromJsonAsync<LancamentoDto>($"/api/lancamentos/{criado.Id}");
+        Assert.Equal(ativoOriginal, detalhe!.AtivoId);
+    }
+
+    [Fact]
     public async Task Atualizar_lancamento_de_outro_usuario_retorna_404()
     {
         var dono = await factory.CriarClienteAutenticadoAsync();
