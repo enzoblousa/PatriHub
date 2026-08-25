@@ -22,8 +22,14 @@ public sealed class VerificacaoInadimplenciaService(PatriHubDbContext db) : IVer
             .Where(c => c.Status == StatusContrato.Ativo)
             .ToListAsync();
 
+        // O vencimento relevante de cada Contrato pode cair no mês de `dataReferencia` (se já
+        // ocorreu) ou no mês anterior (se o vencimento deste mês ainda não chegou) — ver
+        // VencimentoRelevante. Cada um carrega seu próprio mês de competência, então dois
+        // Contratos nesta lista podem estar sendo avaliados contra meses diferentes.
         var candidatos = contratosAtivos
-            .Where(c => ForaDaCarencia(c, dataReferencia))
+            .Select(c => (Contrato: c, Vencimento: VencimentoRelevante(c, dataReferencia)))
+            .Where(x => x.Vencimento is { } vencimento && dataReferencia > vencimento.AddDays(DiasDeCarencia))
+            .Select(x => (x.Contrato, Vencimento: x.Vencimento!.Value))
             .ToList();
 
         if (candidatos.Count == 0)
@@ -31,52 +37,60 @@ public sealed class VerificacaoInadimplenciaService(PatriHubDbContext db) : IVer
             return;
         }
 
-        // Mesmo mês de competência para todos os candidatos, já que todos são avaliados na mesma
-        // data de referência — um único SELECT cobre o mês inteiro (mesma estratégia do
-        // AtivoService.ListarAsync para o mês do usuário).
-        var inicioMes = new DateOnly(dataReferencia.Year, dataReferencia.Month, 1);
-        var fimMes = inicioMes.AddMonths(1).AddDays(-1);
-        var idsCandidatos = candidatos.Select(c => c.Id).ToList();
+        // Intervalo cobrindo os dois meses de competência possíveis entre os candidatos (mês
+        // anterior e mês atual relativos a `dataReferencia`) — um único SELECT, cada Contrato é
+        // comparado contra o seu próprio mês de competência (`Vencimento`) abaixo.
+        var inicioIntervalo = new DateOnly(dataReferencia.Year, dataReferencia.Month, 1).AddMonths(-1);
+        var fimIntervalo = new DateOnly(dataReferencia.Year, dataReferencia.Month, 1).AddMonths(1).AddDays(-1);
+        var idsCandidatos = candidatos.Select(x => x.Contrato.Id).ToList();
 
-        var idsComLancamentoNoMes = (await db.Lancamentos
+        var lancamentosPorContrato = (await db.Lancamentos
                 .Where(l => l.ContratoId != null
                     && idsCandidatos.Contains(l.ContratoId.Value)
                     && l.Tipo == TipoLancamento.Receita
                     && l.Categoria == CategoriaLancamento.Aluguel
-                    && l.Data >= inicioMes
-                    && l.Data <= fimMes)
-                .Select(l => l.ContratoId!.Value)
+                    && l.Data >= inicioIntervalo
+                    && l.Data <= fimIntervalo)
+                .Select(l => new { l.ContratoId, l.Data })
                 .ToListAsync())
-            .ToHashSet();
+            .ToLookup(l => l.ContratoId!.Value);
 
-        foreach (var contrato in candidatos.Where(c => !idsComLancamentoNoMes.Contains(c.Id)))
+        foreach (var (contrato, vencimento) in candidatos)
         {
-            contrato.MarcarInadimplente();
+            var pagoNaCompetencia = lancamentosPorContrato[contrato.Id]
+                .Any(l => l.Data.Year == vencimento.Year && l.Data.Month == vencimento.Month);
+            if (!pagoNaCompetencia)
+            {
+                contrato.MarcarInadimplente();
+            }
         }
 
         await db.SaveChangesAsync();
     }
 
     /// <summary>
-    /// Verdadeiro quando o vencimento do mês de <paramref name="dataReferencia"/> já ocorreu
-    /// depois do início do Contrato e passou da carência — ou seja, o Contrato já deveria ter
-    /// sido pago para este mês de competência.
+    /// O vencimento mais recente que já ocorreu até <paramref name="dataReferencia"/>: o deste
+    /// mês, se já chegou, senão o do mês anterior — nunca recalculado "para frente" a partir do
+    /// mês corrente, para não perder de vista um vencimento vencido perto da virada do mês (ex.:
+    /// `DiaVencimento` 28 em janeiro continua sendo o vencimento relevante em 1º de fevereiro,
+    /// até que fevereiro tenha seu próprio vencimento). Retorna null se o Contrato ainda não
+    /// existia nesse vencimento (não deve ser avaliado).
     /// </summary>
-    private static bool ForaDaCarencia(Contrato contrato, DateOnly dataReferencia)
+    private static DateOnly? VencimentoRelevante(Contrato contrato, DateOnly dataReferencia)
     {
-        var vencimentoDoMes = VencimentoDoMes(dataReferencia.Year, dataReferencia.Month, contrato.DiaVencimento);
-        if (vencimentoDoMes < contrato.DataInicio)
-        {
-            return false; // o Contrato ainda não existia no vencimento deste mês
-        }
+        var vencimentoDoMesAtual = VencimentoDoMes(dataReferencia.Year, dataReferencia.Month, contrato.DiaVencimento);
+        var vencimento = dataReferencia >= vencimentoDoMesAtual
+            ? vencimentoDoMesAtual
+            : VencimentoDoMes(dataReferencia.Year, dataReferencia.Month, contrato.DiaVencimento, mesesAtras: 1);
 
-        return dataReferencia > vencimentoDoMes.AddDays(DiasDeCarencia);
+        return vencimento < contrato.DataInicio ? null : vencimento;
     }
 
     /// <summary>Clampa o dia de vencimento ao último dia do mês (ex.: DiaVencimento 31 em fevereiro).</summary>
-    private static DateOnly VencimentoDoMes(int ano, int mes, int diaVencimento)
+    private static DateOnly VencimentoDoMes(int ano, int mes, int diaVencimento, int mesesAtras = 0)
     {
-        var ultimoDiaDoMes = DateTime.DaysInMonth(ano, mes);
-        return new DateOnly(ano, mes, Math.Min(diaVencimento, ultimoDiaDoMes));
+        var referencia = new DateOnly(ano, mes, 1).AddMonths(-mesesAtras);
+        var ultimoDiaDoMes = DateTime.DaysInMonth(referencia.Year, referencia.Month);
+        return new DateOnly(referencia.Year, referencia.Month, Math.Min(diaVencimento, ultimoDiaDoMes));
     }
 }

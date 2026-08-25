@@ -15,30 +15,9 @@ namespace PatriHub.Api.IntegrationTests;
 /// </summary>
 public sealed class InadimplenciaTests(PatriHubApiFactory factory) : IClassFixture<PatriHubApiFactory>
 {
-    private static EnderecoDto EnderecoValido() =>
-        new("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", "01000-000");
+    private static Task<Guid> CriarAtivoAsync(HttpClient client) => CenarioTestHelper.CriarAtivoAsync(client);
 
-    private static ImovelRequest ImovelValido(string apelido = "Apê Centro") => new(
-        apelido,
-        new DateOnly(2020, 1, 10),
-        ValorAquisicao: 300_000m,
-        ValorMercadoAtual: 350_000m,
-        EnderecoValido(),
-        TipoImovel.Apartamento,
-        AreaM2: 65m,
-        Matricula: "12345",
-        ValorIptuMensal: 150m,
-        ValorCondominioMensal: 400m,
-        Financiamento: null);
-
-    private static LocatarioRequest LocatarioValido(string nome = "João Souza") =>
-        new(nome, "123.456.789-09", "(11) 99999-0000", "joao@example.com");
-
-    private static async Task<Guid> CriarAtivoAsync(HttpClient client) =>
-        (await (await client.PostAsJsonAsync("/api/ativos/imoveis", ImovelValido())).Content.ReadFromJsonAsync<AtivoDetalheDto>())!.Id;
-
-    private static async Task<Guid> CriarLocatarioAsync(HttpClient client) =>
-        (await (await client.PostAsJsonAsync("/api/locatarios", LocatarioValido())).Content.ReadFromJsonAsync<LocatarioDto>())!.Id;
+    private static Task<Guid> CriarLocatarioAsync(HttpClient client) => CenarioTestHelper.CriarLocatarioAsync(client);
 
     private static async Task<ContratoDto> CriarContratoAsync(
         HttpClient client, Guid ativoId, Guid locatarioId, int diaVencimento, DateOnly dataInicio)
@@ -136,6 +115,36 @@ public sealed class InadimplenciaTests(PatriHubApiFactory factory) : IClassFixtu
         var contrato = await CriarContratoAsync(client, ativoId, locatarioId, diaVencimento: 10, dataInicio: new DateOnly(2026, 3, 20));
 
         await VerificarAsync(hoje: new DateOnly(2026, 3, 30));
+
+        Assert.Equal(StatusContrato.Ativo, await StatusDoContratoAsync(client, contrato.Id));
+    }
+
+    [Fact]
+    public async Task Contrato_com_vencimento_no_fim_do_mes_continua_avaliado_apos_virar_o_mes()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        var ativoId = await CriarAtivoAsync(client);
+        var locatarioId = await CriarLocatarioAsync(client);
+        // Vencimento em 28/01 — a carência de 5 dias (até 02/02) atravessa a virada do mês.
+        var contrato = await CriarContratoAsync(client, ativoId, locatarioId, diaVencimento: 28, dataInicio: new DateOnly(2026, 1, 1));
+
+        // Já é fevereiro, mas o vencimento relevante ainda é o de janeiro (28/01) — a checagem não
+        // pode "esquecer" a competência de janeiro só porque o mês virou.
+        await VerificarAsync(hoje: new DateOnly(2026, 2, 3));
+
+        Assert.Equal(StatusContrato.Inadimplente, await StatusDoContratoAsync(client, contrato.Id));
+    }
+
+    [Fact]
+    public async Task Contrato_com_vencimento_no_fim_do_mes_nao_vira_Inadimplente_logo_apos_virar_o_mes()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        var ativoId = await CriarAtivoAsync(client);
+        var locatarioId = await CriarLocatarioAsync(client);
+        var contrato = await CriarContratoAsync(client, ativoId, locatarioId, diaVencimento: 28, dataInicio: new DateOnly(2026, 1, 1));
+
+        // 01/02 ainda está dentro da carência do vencimento de 28/01 (carência até 02/02).
+        await VerificarAsync(hoje: new DateOnly(2026, 2, 1));
 
         Assert.Equal(StatusContrato.Ativo, await StatusDoContratoAsync(client, contrato.Id));
     }
