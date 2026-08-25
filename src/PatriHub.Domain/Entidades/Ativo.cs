@@ -97,7 +97,8 @@ public abstract class Ativo
 
     /// <summary>
     /// Marca manualmente o Ativo como Manutenção ou À venda. Alugado/Vago são derivados
-    /// automaticamente do ciclo de vida do Contrato (ticket #5) — nunca setados por aqui.
+    /// automaticamente do ciclo de vida do Contrato — nunca setados por aqui (ver
+    /// <see cref="MarcarAlugado"/>/<see cref="MarcarVago"/>).
     /// </summary>
     public void MarcarStatusManual(StatusAtivo status, DateTimeOffset? agora = null)
     {
@@ -109,6 +110,25 @@ public abstract class Ativo
         }
 
         Status = status;
+        AtualizadoEm = agora ?? DateTimeOffset.UtcNow;
+    }
+
+    /// <summary>
+    /// Sincroniza o Status para Alugado ao criar um Contrato `Ativo` (ContratoService) — sempre
+    /// sobrepõe um status manual (Manutenção/À venda) anterior, pois este prevalece só até o
+    /// próximo evento de contrato (ver 01-SPEC-FUNCIONAL.md §6.3). Nunca chamado pelo usuário
+    /// diretamente.
+    /// </summary>
+    public void MarcarAlugado(DateTimeOffset? agora = null)
+    {
+        Status = StatusAtivo.Alugado;
+        AtualizadoEm = agora ?? DateTimeOffset.UtcNow;
+    }
+
+    /// <summary>Sincroniza o Status para Vago ao encerrar um Contrato `Ativo` (ContratoService) — mesma regra de precedência de <see cref="MarcarAlugado"/>.</summary>
+    public void MarcarVago(DateTimeOffset? agora = null)
+    {
+        Status = StatusAtivo.Vago;
         AtualizadoEm = agora ?? DateTimeOffset.UtcNow;
     }
 

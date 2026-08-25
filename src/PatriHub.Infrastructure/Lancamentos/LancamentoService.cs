@@ -20,6 +20,11 @@ public sealed class LancamentoService(PatriHubDbContext db) : ILancamentoService
             return ResultadoOperacao<LancamentoDto>.ComErro("Ativo não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
+        if (request.ContratoId is { } contratoId && !await ContratoPertenceAoAtivoDoUsuarioAsync(usuarioId, request.AtivoId, contratoId))
+        {
+            return ResultadoOperacao<LancamentoDto>.ComErro("Contrato não encontrado.", TipoErroOperacao.NaoEncontrado);
+        }
+
         Lancamento? lancamento = null;
         if (!TentarExecutar(() => lancamento = Lancamento.Registrar(
                 usuarioId,
@@ -54,6 +59,11 @@ public sealed class LancamentoService(PatriHubDbContext db) : ILancamentoService
         if (lancamento.AtivoId != request.AtivoId)
         {
             return ResultadoOperacao<LancamentoDto>.ComErro("Não é possível mover um Lançamento para outro Ativo.", TipoErroOperacao.Validacao);
+        }
+
+        if (request.ContratoId is { } contratoId && !await ContratoPertenceAoAtivoDoUsuarioAsync(usuarioId, request.AtivoId, contratoId))
+        {
+            return ResultadoOperacao<LancamentoDto>.ComErro("Contrato não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
         if (!TentarExecutar(() => lancamento.Atualizar(
@@ -126,6 +136,10 @@ public sealed class LancamentoService(PatriHubDbContext db) : ILancamentoService
 
     private Task<bool> AtivoPertenceAoUsuarioAsync(Guid usuarioId, Guid ativoId) =>
         db.Ativos.AnyAsync(a => a.Id == ativoId && a.UsuarioId == usuarioId && a.ExcluidoEm == null);
+
+    /// <summary>Exige que o Contrato seja do usuário e do mesmo Ativo do Lançamento — nunca vincula receita de um Ativo ao Contrato de outro.</summary>
+    private Task<bool> ContratoPertenceAoAtivoDoUsuarioAsync(Guid usuarioId, Guid ativoId, Guid contratoId) =>
+        db.Contratos.AnyAsync(c => c.Id == contratoId && c.UsuarioId == usuarioId && c.AtivoId == ativoId);
 
     private Task<Lancamento?> BuscarLancamentoDoUsuarioAsync(Guid usuarioId, Guid lancamentoId) =>
         db.Lancamentos.FirstOrDefaultAsync(l => l.Id == lancamentoId && l.UsuarioId == usuarioId);
