@@ -10,7 +10,7 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
     private static EnderecoDto EnderecoValido() =>
         new("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", "01000-000");
 
-    private static CriarImovelRequest ImovelValido(string apelido = "Apê Centro") => new(
+    private static ImovelRequest ImovelValido(string apelido = "Apê Centro") => new(
         apelido,
         new DateOnly(2020, 1, 10),
         ValorAquisicao: 300_000m,
@@ -23,7 +23,7 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
         ValorCondominioMensal: 400m,
         Financiamento: null);
 
-    private static CriarCarroRequest CarroValido(string apelido = "Corolla") => new(
+    private static CarroRequest CarroValido(string apelido = "Corolla") => new(
         apelido,
         new DateOnly(2022, 3, 15),
         ValorAquisicao: 120_000m,
@@ -87,9 +87,7 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
         var client = await factory.CriarClienteAutenticadoAsync();
         var criado = await (await client.PostAsJsonAsync("/api/ativos/imoveis", ImovelValido())).Content.ReadFromJsonAsync<AtivoDetalheDto>();
 
-        var atualizarRequest = new AtualizarImovelRequest(
-            "Apê Paulista", new DateOnly(2020, 1, 10), 300_000m, ValorMercadoAtual: 420_000m,
-            EnderecoValido(), TipoImovel.Apartamento, 65m, "12345", 150m, 400m, Financiamento: null);
+        var atualizarRequest = ImovelValido("Apê Paulista") with { ValorMercadoAtual = 420_000m };
 
         var response = await client.PutAsJsonAsync($"/api/ativos/imoveis/{criado!.Id}", atualizarRequest);
 

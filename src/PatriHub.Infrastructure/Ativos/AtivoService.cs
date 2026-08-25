@@ -13,11 +13,10 @@ namespace PatriHub.Infrastructure.Ativos;
 /// </summary>
 public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
 {
-    public async Task<ResultadoOperacao<AtivoDetalheDto>> CriarImovelAsync(Guid usuarioId, CriarImovelRequest request)
+    public async Task<ResultadoOperacao<AtivoDetalheDto>> CriarImovelAsync(Guid usuarioId, ImovelRequest request)
     {
-        try
-        {
-            var imovel = Imovel.Cadastrar(
+        Imovel? imovel = null;
+        if (!TentarExecutar(() => imovel = Imovel.Cadastrar(
                 usuarioId,
                 request.Apelido,
                 request.DataAquisicao,
@@ -29,24 +28,21 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.Matricula,
                 request.ValorIptuMensal,
                 request.ValorCondominioMensal,
-                MapearFinanciamento(request.Financiamento));
-
-            db.Ativos.Add(imovel);
-            await db.SaveChangesAsync();
-
-            return ResultadoOperacao<AtivoDetalheDto>.ComSucesso(MapearDetalhe(imovel, lucroDoMes: 0m));
-        }
-        catch (ArgumentException ex)
+                MapearFinanciamento(request.Financiamento)),
+            out var erro))
         {
-            return ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return erro!;
         }
+
+        db.Ativos.Add(imovel!);
+        await db.SaveChangesAsync();
+        return ResultadoOperacao<AtivoDetalheDto>.ComSucesso(MapearDetalhe(imovel!, lucroDoMes: 0m));
     }
 
-    public async Task<ResultadoOperacao<AtivoDetalheDto>> CriarCarroAsync(Guid usuarioId, CriarCarroRequest request)
+    public async Task<ResultadoOperacao<AtivoDetalheDto>> CriarCarroAsync(Guid usuarioId, CarroRequest request)
     {
-        try
-        {
-            var carro = Carro.Cadastrar(
+        Carro? carro = null;
+        if (!TentarExecutar(() => carro = Carro.Cadastrar(
                 usuarioId,
                 request.Apelido,
                 request.DataAquisicao,
@@ -60,20 +56,18 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.ValorFipeAtual,
                 request.Km,
                 request.ConsumoMedio,
-                MapearFinanciamento(request.Financiamento));
-
-            db.Ativos.Add(carro);
-            await db.SaveChangesAsync();
-
-            return ResultadoOperacao<AtivoDetalheDto>.ComSucesso(MapearDetalhe(carro, lucroDoMes: 0m));
-        }
-        catch (ArgumentException ex)
+                MapearFinanciamento(request.Financiamento)),
+            out var erro))
         {
-            return ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return erro!;
         }
+
+        db.Ativos.Add(carro!);
+        await db.SaveChangesAsync();
+        return ResultadoOperacao<AtivoDetalheDto>.ComSucesso(MapearDetalhe(carro!, lucroDoMes: 0m));
     }
 
-    public async Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarImovelAsync(Guid usuarioId, Guid ativoId, AtualizarImovelRequest request)
+    public async Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarImovelAsync(Guid usuarioId, Guid ativoId, ImovelRequest request)
     {
         var ativo = await BuscarAtivoDoUsuarioAsync(usuarioId, ativoId);
         if (ativo is not Imovel imovel)
@@ -81,9 +75,7 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
             return ResultadoOperacao<AtivoDetalheDto>.ComErro("Imóvel não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
-        try
-        {
-            imovel.Atualizar(
+        if (!TentarExecutar(() => imovel.Atualizar(
                 request.Apelido,
                 request.DataAquisicao,
                 request.ValorAquisicao,
@@ -94,18 +86,17 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.Matricula,
                 request.ValorIptuMensal,
                 request.ValorCondominioMensal,
-                MapearFinanciamento(request.Financiamento));
-        }
-        catch (ArgumentException ex)
+                MapearFinanciamento(request.Financiamento)),
+            out var erro))
         {
-            return ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return erro!;
         }
 
         await db.SaveChangesAsync();
         return ResultadoOperacao<AtivoDetalheDto>.ComSucesso(MapearDetalhe(imovel, lucroDoMes: 0m));
     }
 
-    public async Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarCarroAsync(Guid usuarioId, Guid ativoId, AtualizarCarroRequest request)
+    public async Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarCarroAsync(Guid usuarioId, Guid ativoId, CarroRequest request)
     {
         var ativo = await BuscarAtivoDoUsuarioAsync(usuarioId, ativoId);
         if (ativo is not Carro carro)
@@ -113,9 +104,7 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
             return ResultadoOperacao<AtivoDetalheDto>.ComErro("Carro não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
-        try
-        {
-            carro.Atualizar(
+        if (!TentarExecutar(() => carro.Atualizar(
                 request.Apelido,
                 request.DataAquisicao,
                 request.ValorAquisicao,
@@ -128,11 +117,10 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.ValorFipeAtual,
                 request.Km,
                 request.ConsumoMedio,
-                MapearFinanciamento(request.Financiamento));
-        }
-        catch (ArgumentException ex)
+                MapearFinanciamento(request.Financiamento)),
+            out var erro))
         {
-            return ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return erro!;
         }
 
         await db.SaveChangesAsync();
@@ -147,13 +135,9 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
             return ResultadoOperacao<AtivoDetalheDto>.ComErro("Ativo não encontrado.", TipoErroOperacao.NaoEncontrado);
         }
 
-        try
+        if (!TentarExecutar(() => ativo.MarcarStatusManual(request.Status), out var erro))
         {
-            ativo.MarcarStatusManual(request.Status);
-        }
-        catch (ArgumentException ex)
-        {
-            return ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return erro!;
         }
 
         await db.SaveChangesAsync();
@@ -199,6 +183,26 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
 
     private Task<Ativo?> BuscarAtivoDoUsuarioAsync(Guid usuarioId, Guid ativoId) =>
         db.Ativos.FirstOrDefaultAsync(a => a.Id == ativoId && a.UsuarioId == usuarioId && a.ExcluidoEm == null);
+
+    /// <summary>
+    /// Roda uma criação/edição de domínio (que valida e pode lançar <see cref="ArgumentException"/>)
+    /// e converte a exceção num <see cref="TipoErroOperacao.Validacao"/> — usado por todo método
+    /// que constrói ou atualiza um Ativo, para não repetir o mesmo try/catch em cada um.
+    /// </summary>
+    private static bool TentarExecutar(Action acao, out ResultadoOperacao<AtivoDetalheDto>? erro)
+    {
+        try
+        {
+            acao();
+            erro = null;
+            return true;
+        }
+        catch (ArgumentException ex)
+        {
+            erro = ResultadoOperacao<AtivoDetalheDto>.ComErro(ex.Message, TipoErroOperacao.Validacao);
+            return false;
+        }
+    }
 
     private static Endereco MapearEndereco(EnderecoDto dto) =>
         Endereco.Criar(dto.Rua, dto.Numero, dto.Complemento, dto.Bairro, dto.Cidade, dto.Uf, dto.Cep);

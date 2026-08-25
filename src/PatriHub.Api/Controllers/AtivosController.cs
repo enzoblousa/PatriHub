@@ -12,38 +12,32 @@ namespace PatriHub.Api.Controllers;
 public sealed class AtivosController(IAtivoService ativoService) : ControllerBase
 {
     [HttpPost("imoveis")]
-    public async Task<IActionResult> CriarImovel([FromBody] CriarImovelRequest request)
+    public async Task<IActionResult> CriarImovel([FromBody] ImovelRequest request)
     {
         var resultado = await ativoService.CriarImovelAsync(User.ObterUsuarioId(), request);
-        if (!resultado.Sucesso)
-        {
-            return BadRequest(new { erro = resultado.Erro });
-        }
-
-        return CreatedAtAction(nameof(ObterDetalhe), new { id = resultado.Dado!.Id }, resultado.Dado);
+        return resultado.Sucesso
+            ? CreatedAtAction(nameof(ObterDetalhe), new { id = resultado.Dado!.Id }, resultado.Dado)
+            : ErroParaResposta(resultado.Erro, resultado.TipoErro);
     }
 
     [HttpPost("carros")]
-    public async Task<IActionResult> CriarCarro([FromBody] CriarCarroRequest request)
+    public async Task<IActionResult> CriarCarro([FromBody] CarroRequest request)
     {
         var resultado = await ativoService.CriarCarroAsync(User.ObterUsuarioId(), request);
-        if (!resultado.Sucesso)
-        {
-            return BadRequest(new { erro = resultado.Erro });
-        }
-
-        return CreatedAtAction(nameof(ObterDetalhe), new { id = resultado.Dado!.Id }, resultado.Dado);
+        return resultado.Sucesso
+            ? CreatedAtAction(nameof(ObterDetalhe), new { id = resultado.Dado!.Id }, resultado.Dado)
+            : ErroParaResposta(resultado.Erro, resultado.TipoErro);
     }
 
     [HttpPut("imoveis/{id:guid}")]
-    public async Task<IActionResult> AtualizarImovel(Guid id, [FromBody] AtualizarImovelRequest request)
+    public async Task<IActionResult> AtualizarImovel(Guid id, [FromBody] ImovelRequest request)
     {
         var resultado = await ativoService.AtualizarImovelAsync(User.ObterUsuarioId(), id, request);
         return ResultadoParaResposta(resultado);
     }
 
     [HttpPut("carros/{id:guid}")]
-    public async Task<IActionResult> AtualizarCarro(Guid id, [FromBody] AtualizarCarroRequest request)
+    public async Task<IActionResult> AtualizarCarro(Guid id, [FromBody] CarroRequest request)
     {
         var resultado = await ativoService.AtualizarCarroAsync(User.ObterUsuarioId(), id, request);
         return ResultadoParaResposta(resultado);
@@ -60,14 +54,7 @@ public sealed class AtivosController(IAtivoService ativoService) : ControllerBas
     public async Task<IActionResult> Excluir(Guid id)
     {
         var resultado = await ativoService.ExcluirAsync(User.ObterUsuarioId(), id);
-        if (!resultado.Sucesso)
-        {
-            return resultado.TipoErro == TipoErroOperacao.NaoEncontrado
-                ? NotFound(new { erro = resultado.Erro })
-                : BadRequest(new { erro = resultado.Erro });
-        }
-
-        return NoContent();
+        return resultado.Sucesso ? NoContent() : ErroParaResposta(resultado.Erro, resultado.TipoErro);
     }
 
     [HttpGet]
@@ -84,15 +71,12 @@ public sealed class AtivosController(IAtivoService ativoService) : ControllerBas
         return ResultadoParaResposta(resultado);
     }
 
-    private IActionResult ResultadoParaResposta(ResultadoOperacao<AtivoDetalheDto> resultado)
-    {
-        if (resultado.Sucesso)
-        {
-            return Ok(resultado.Dado);
-        }
+    private IActionResult ResultadoParaResposta(ResultadoOperacao<AtivoDetalheDto> resultado) =>
+        resultado.Sucesso ? Ok(resultado.Dado) : ErroParaResposta(resultado.Erro, resultado.TipoErro);
 
-        return resultado.TipoErro == TipoErroOperacao.NaoEncontrado
-            ? NotFound(new { erro = resultado.Erro })
-            : BadRequest(new { erro = resultado.Erro });
-    }
+    /// <summary>Mapeamento único de erro de domínio para status HTTP, reaproveitado por toda ação deste controller.</summary>
+    private IActionResult ErroParaResposta(string? erro, TipoErroOperacao? tipoErro) =>
+        tipoErro == TipoErroOperacao.NaoEncontrado
+            ? NotFound(new { erro })
+            : BadRequest(new { erro });
 }

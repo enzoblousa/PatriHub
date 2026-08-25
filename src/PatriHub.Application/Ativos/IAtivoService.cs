@@ -9,13 +9,13 @@ namespace PatriHub.Application.Ativos;
 /// </summary>
 public interface IAtivoService
 {
-    Task<ResultadoOperacao<AtivoDetalheDto>> CriarImovelAsync(Guid usuarioId, CriarImovelRequest request);
+    Task<ResultadoOperacao<AtivoDetalheDto>> CriarImovelAsync(Guid usuarioId, ImovelRequest request);
 
-    Task<ResultadoOperacao<AtivoDetalheDto>> CriarCarroAsync(Guid usuarioId, CriarCarroRequest request);
+    Task<ResultadoOperacao<AtivoDetalheDto>> CriarCarroAsync(Guid usuarioId, CarroRequest request);
 
-    Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarImovelAsync(Guid usuarioId, Guid ativoId, AtualizarImovelRequest request);
+    Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarImovelAsync(Guid usuarioId, Guid ativoId, ImovelRequest request);
 
-    Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarCarroAsync(Guid usuarioId, Guid ativoId, AtualizarCarroRequest request);
+    Task<ResultadoOperacao<AtivoDetalheDto>> AtualizarCarroAsync(Guid usuarioId, Guid ativoId, CarroRequest request);
 
     Task<ResultadoOperacao<AtivoDetalheDto>> MarcarStatusAsync(Guid usuarioId, Guid ativoId, MarcarStatusAtivoRequest request);
 

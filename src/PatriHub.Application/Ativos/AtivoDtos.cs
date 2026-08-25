@@ -6,7 +6,8 @@ public sealed record EnderecoDto(string Rua, string Numero, string? Complemento,
 
 public sealed record DadosFinanciamentoDto(decimal ValorParcela, decimal SaldoDevedor, decimal TaxaJurosAnual, int ParcelasRestantes);
 
-public sealed record CriarImovelRequest(
+/// <summary>Corpo de cadastro (POST) e edição (PUT) de um Imóvel — os mesmos campos são exigidos nos dois casos.</summary>
+public sealed record ImovelRequest(
     string Apelido,
     DateOnly DataAquisicao,
     decimal ValorAquisicao,
@@ -19,35 +20,8 @@ public sealed record CriarImovelRequest(
     decimal ValorCondominioMensal,
     DadosFinanciamentoDto? Financiamento);
 
-public sealed record AtualizarImovelRequest(
-    string Apelido,
-    DateOnly DataAquisicao,
-    decimal ValorAquisicao,
-    decimal ValorMercadoAtual,
-    EnderecoDto Endereco,
-    TipoImovel TipoImovel,
-    decimal AreaM2,
-    string Matricula,
-    decimal ValorIptuMensal,
-    decimal ValorCondominioMensal,
-    DadosFinanciamentoDto? Financiamento);
-
-public sealed record CriarCarroRequest(
-    string Apelido,
-    DateOnly DataAquisicao,
-    decimal ValorAquisicao,
-    decimal ValorMercadoAtual,
-    string Placa,
-    string Marca,
-    string Modelo,
-    int AnoFabricacao,
-    int AnoModelo,
-    decimal ValorFipeAtual,
-    decimal Km,
-    decimal ConsumoMedio,
-    DadosFinanciamentoDto? Financiamento);
-
-public sealed record AtualizarCarroRequest(
+/// <summary>Corpo de cadastro (POST) e edição (PUT) de um Carro — os mesmos campos são exigidos nos dois casos.</summary>
+public sealed record CarroRequest(
     string Apelido,
     DateOnly DataAquisicao,
     decimal ValorAquisicao,
