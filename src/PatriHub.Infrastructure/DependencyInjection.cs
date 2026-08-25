@@ -5,10 +5,12 @@ using Microsoft.Extensions.DependencyInjection;
 using PatriHub.Application.Ativos;
 using PatriHub.Application.Autenticacao;
 using PatriHub.Application.Contratos;
+using PatriHub.Application.Dashboard;
 using PatriHub.Application.Lancamentos;
 using PatriHub.Application.Locatarios;
 using PatriHub.Infrastructure.Ativos;
 using PatriHub.Infrastructure.Contratos;
+using PatriHub.Infrastructure.Dashboard;
 using PatriHub.Infrastructure.Identity;
 using PatriHub.Infrastructure.Lancamentos;
 using PatriHub.Infrastructure.Locatarios;
@@ -49,6 +51,7 @@ public static class DependencyInjection
         services.AddScoped<IContratoService, ContratoService>();
         services.AddScoped<IVerificacaoInadimplenciaService, VerificacaoInadimplenciaService>();
         services.AddHostedService<InadimplenciaBackgroundService>();
+        services.AddScoped<IDashboardService, DashboardService>();
 
         return services;
     }

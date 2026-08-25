@@ -11,6 +11,13 @@ public static class AutenticacaoTestHelper
 
     public static async Task<HttpClient> CriarClienteAutenticadoAsync(this PatriHubApiFactory factory, string? nome = null)
     {
+        var (client, _) = await factory.CriarClienteAutenticadoComIdAsync(nome);
+        return client;
+    }
+
+    /// <summary>Igual a <see cref="CriarClienteAutenticadoAsync"/>, mas também devolve o `UsuarioId` — usado por testes que resolvem um serviço diretamente do container de DI (ver DashboardTests).</summary>
+    public static async Task<(HttpClient Client, Guid UsuarioId)> CriarClienteAutenticadoComIdAsync(this PatriHubApiFactory factory, string? nome = null)
+    {
         var client = factory.CreateClient();
         var registro = await client.PostAsJsonAsync(
             "/api/auth/registrar",
@@ -18,6 +25,6 @@ public static class AutenticacaoTestHelper
         var resultado = await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>();
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultado!.Token);
-        return client;
+        return (client, resultado.Usuario!.Id);
     }
 }
