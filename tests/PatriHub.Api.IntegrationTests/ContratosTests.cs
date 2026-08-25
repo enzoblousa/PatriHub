@@ -10,36 +10,11 @@ namespace PatriHub.Api.IntegrationTests;
 
 public sealed class ContratosTests(PatriHubApiFactory factory) : IClassFixture<PatriHubApiFactory>
 {
-    private static EnderecoDto EnderecoValido() =>
-        new("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", "01000-000");
+    private static Task<Guid> CriarAtivoAsync(HttpClient client, string apelido = "Apê Centro") =>
+        CenarioTestHelper.CriarAtivoAsync(client, apelido);
 
-    private static ImovelRequest ImovelValido(string apelido = "Apê Centro") => new(
-        apelido,
-        new DateOnly(2020, 1, 10),
-        ValorAquisicao: 300_000m,
-        ValorMercadoAtual: 350_000m,
-        EnderecoValido(),
-        TipoImovel.Apartamento,
-        AreaM2: 65m,
-        Matricula: "12345",
-        ValorIptuMensal: 150m,
-        ValorCondominioMensal: 400m,
-        Financiamento: null);
-
-    private static LocatarioRequest LocatarioValido(string nome = "João Souza") =>
-        new(nome, "123.456.789-09", "(11) 99999-0000", "joao@example.com");
-
-    private static async Task<Guid> CriarAtivoAsync(HttpClient client, string apelido = "Apê Centro")
-    {
-        var criado = await (await client.PostAsJsonAsync("/api/ativos/imoveis", ImovelValido(apelido))).Content.ReadFromJsonAsync<AtivoDetalheDto>();
-        return criado!.Id;
-    }
-
-    private static async Task<Guid> CriarLocatarioAsync(HttpClient client, string nome = "João Souza")
-    {
-        var criado = await (await client.PostAsJsonAsync("/api/locatarios", LocatarioValido(nome))).Content.ReadFromJsonAsync<LocatarioDto>();
-        return criado!.Id;
-    }
+    private static Task<Guid> CriarLocatarioAsync(HttpClient client, string nome = "João Souza") =>
+        CenarioTestHelper.CriarLocatarioAsync(client, nome);
 
     private static ContratoRequest ContratoValido(Guid ativoId, Guid locatarioId) => new(
         ativoId,

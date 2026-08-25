@@ -1,8 +1,8 @@
 namespace PatriHub.Domain.Entidades;
 
 /// <summary>
-/// `Inadimplente` é atribuído automaticamente pelo job periódico do ticket #6 — nenhum método
-/// deste ticket (#5) o define. Ver CONTEXT.md.
+/// `Inadimplente` é atribuído automaticamente pelo job periódico do ticket #6, via
+/// <see cref="Contrato.MarcarInadimplente"/> — nunca pelo usuário. Ver CONTEXT.md.
 /// </summary>
 public enum StatusContrato
 {
@@ -96,6 +96,21 @@ public sealed class Contrato
         }
 
         Status = StatusContrato.Encerrado;
+        AtualizadoEm = agora ?? DateTimeOffset.UtcNow;
+    }
+
+    /// <summary>
+    /// Marca o Contrato como Inadimplente — atribuído automaticamente pela checagem periódica do
+    /// ticket #6 (ver ADR-0003), nunca por ação direta do usuário.
+    /// </summary>
+    public void MarcarInadimplente(DateTimeOffset? agora = null)
+    {
+        if (Status != StatusContrato.Ativo)
+        {
+            throw new ArgumentException("Somente um contrato com status Ativo pode virar Inadimplente.", nameof(Status));
+        }
+
+        Status = StatusContrato.Inadimplente;
         AtualizadoEm = agora ?? DateTimeOffset.UtcNow;
     }
 }
