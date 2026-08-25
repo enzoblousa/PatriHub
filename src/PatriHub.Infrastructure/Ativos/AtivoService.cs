@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PatriHub.Application.Ativos;
 using PatriHub.Application.Common;
+using PatriHub.Domain.Calculos;
 using PatriHub.Domain.Entidades;
 using PatriHub.Infrastructure.Persistence;
 
@@ -164,10 +165,31 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
             .OrderByDescending(a => a.CriadoEm)
             .ToListAsync();
 
-        // Lucro do mês fica 0 até o ticket de Lançamentos (#4) existir — ver AC do ticket #3.
+        var (inicioMes, fimMes) = MesAtual();
+
+        // Um único SELECT para o mês inteiro do usuário, agrupado em memória por Ativo — evita
+        // 1 query de Lançamentos por Ativo listado.
+        var lancamentosDoMesPorAtivo = (await db.Lancamentos
+                .Where(l => l.UsuarioId == usuarioId && l.Data >= inicioMes && l.Data <= fimMes)
+                .ToListAsync())
+            .ToLookup(l => l.AtivoId);
+
         return ativos
-            .Select(a => new AtivoResumoDto(a.Id, a.Apelido, a.Tipo, a.Status, a.ValorMercadoAtual, LucroDoMes: 0m))
+            .Select(a => new AtivoResumoDto(
+                a.Id,
+                a.Apelido,
+                a.Tipo,
+                a.Status,
+                a.ValorMercadoAtual,
+                LucroDoMes: CalculadoraFinanceira.LucroDoPeriodo(lancamentosDoMesPorAtivo[a.Id], inicioMes, fimMes)))
             .ToList();
+    }
+
+    private static (DateOnly Inicio, DateOnly Fim) MesAtual()
+    {
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        var inicio = new DateOnly(hoje.Year, hoje.Month, 1);
+        return (inicio, inicio.AddMonths(1).AddDays(-1));
     }
 
     public async Task<ResultadoOperacao<AtivoDetalheDto>> ObterDetalheAsync(Guid usuarioId, Guid ativoId)

@@ -4,8 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using PatriHub.Application.Ativos;
 using PatriHub.Application.Autenticacao;
+using PatriHub.Application.Lancamentos;
 using PatriHub.Infrastructure.Ativos;
 using PatriHub.Infrastructure.Identity;
+using PatriHub.Infrastructure.Lancamentos;
 using PatriHub.Infrastructure.Jwt;
 using PatriHub.Infrastructure.Persistence;
 
@@ -38,6 +40,7 @@ public static class DependencyInjection
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IAutenticacaoService, AutenticacaoService>();
         services.AddScoped<IAtivoService, AtivoService>();
+        services.AddScoped<ILancamentoService, LancamentoService>();
 
         return services;
     }
