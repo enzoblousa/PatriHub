@@ -11,8 +11,9 @@ pena continuar com ele, tudo em um único lugar.
 2. **Simples antes de completo.** Preferir cobrir bem o fluxo essencial (cadastrar ativo →
    lançar receita/despesa → ver lucro) a cobrir muitos casos de borda.
 3. **Privacidade por padrão (LGPD).** Dados financeiros e pessoais (CPF de locatário, valores)
-   são sensíveis; acesso é restrito ao dono do dado, e o papel Admin só acessa o necessário
-   para operar a plataforma.
+   são sensíveis; acesso é restrito ao dono do dado. Admin é a única exceção: tem leitura
+   (nunca edição/exclusão) de ativos e lançamentos de qualquer usuário para fins de suporte,
+   com todo acesso registrado em log de auditoria — ver [ADR-0002](../adr/0002-admin-acesso-leitura-com-auditoria.md).
 4. **Sem custo de terceiros desnecessário no MVP.** Autenticação self-hosted, sem cobrança
    ainda, sem integrações pagas — o objetivo é validar o produto com early adopters.
 5. **Um monólito modular, não microsserviços.** Complexidade de infraestrutura não se
