@@ -1,0 +1,23 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using PatriHub.Application.Autenticacao;
+
+namespace PatriHub.Api.IntegrationTests;
+
+/// <summary>Registra um usuário de teste e devolve um HttpClient já autenticado com o Bearer token.</summary>
+public static class AutenticacaoTestHelper
+{
+    public static string EmailUnico() => $"usuario-{Guid.NewGuid():N}@example.com";
+
+    public static async Task<HttpClient> CriarClienteAutenticadoAsync(this PatriHubApiFactory factory, string? nome = null)
+    {
+        var client = factory.CreateClient();
+        var registro = await client.PostAsJsonAsync(
+            "/api/auth/registrar",
+            new RegistrarUsuarioRequest(nome ?? "Maria Silva", EmailUnico(), "SenhaForte123!"));
+        var resultado = await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>();
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultado!.Token);
+        return client;
+    }
+}
