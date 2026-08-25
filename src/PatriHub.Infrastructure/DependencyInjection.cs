@@ -47,6 +47,8 @@ public static class DependencyInjection
         services.AddScoped<ILancamentoService, LancamentoService>();
         services.AddScoped<ILocatarioService, LocatarioService>();
         services.AddScoped<IContratoService, ContratoService>();
+        services.AddScoped<IVerificacaoInadimplenciaService, VerificacaoInadimplenciaService>();
+        services.AddHostedService<InadimplenciaBackgroundService>();
 
         return services;
     }

@@ -83,4 +83,32 @@ public class ContratoTests
 
         Assert.Throws<ArgumentException>(() => contrato.Encerrar());
     }
+
+    [Fact]
+    public void MarcarInadimplente_um_contrato_Ativo_muda_status_para_Inadimplente()
+    {
+        var contrato = ContratoValido();
+
+        contrato.MarcarInadimplente();
+
+        Assert.Equal(StatusContrato.Inadimplente, contrato.Status);
+    }
+
+    [Fact]
+    public void MarcarInadimplente_um_contrato_Encerrado_lanca_ArgumentException()
+    {
+        var contrato = ContratoValido();
+        contrato.Encerrar();
+
+        Assert.Throws<ArgumentException>(() => contrato.MarcarInadimplente());
+    }
+
+    [Fact]
+    public void MarcarInadimplente_um_contrato_ja_Inadimplente_lanca_ArgumentException()
+    {
+        var contrato = ContratoValido();
+        contrato.MarcarInadimplente();
+
+        Assert.Throws<ArgumentException>(() => contrato.MarcarInadimplente());
+    }
 }
