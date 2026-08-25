@@ -92,7 +92,7 @@ public sealed class Contrato
     {
         if (Status != StatusContrato.Ativo)
         {
-            throw new ArgumentException("Somente um contrato com status Ativo pode ser encerrado.");
+            throw new ArgumentException("Somente um contrato com status Ativo pode ser encerrado.", nameof(Status));
         }
 
         Status = StatusContrato.Encerrado;
