@@ -12,7 +12,7 @@ using PatriHub.Infrastructure.Persistence;
 namespace PatriHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PatriHubDbContext))]
-    [Migration("20260825215655_InitialCreate")]
+    [Migration("20260825221531_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -196,9 +196,6 @@ namespace PatriHub.Infrastructure.Persistence.Migrations
                     b.Property<string>("NormalizedUserName")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
-
-                    b.Property<int>("Papel")
-                        .HasColumnType("integer");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("text");

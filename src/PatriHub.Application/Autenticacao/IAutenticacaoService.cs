@@ -6,7 +6,7 @@ namespace PatriHub.Application.Autenticacao;
 /// </summary>
 public interface IAutenticacaoService
 {
-    Task<ResultadoAutenticacao> RegistrarAsync(RegistrarUsuarioRequest request, CancellationToken ct = default);
+    Task<ResultadoAutenticacao> RegistrarAsync(RegistrarUsuarioRequest request);
 
-    Task<ResultadoAutenticacao> LoginAsync(LoginRequest request, CancellationToken ct = default);
+    Task<ResultadoAutenticacao> LoginAsync(LoginRequest request);
 }

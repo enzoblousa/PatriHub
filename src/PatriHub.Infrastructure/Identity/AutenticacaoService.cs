@@ -9,7 +9,7 @@ public sealed class AutenticacaoService(
     UserManager<ApplicationUser> userManager,
     IJwtTokenGenerator jwtTokenGenerator) : IAutenticacaoService
 {
-    public async Task<ResultadoAutenticacao> RegistrarAsync(RegistrarUsuarioRequest request, CancellationToken ct = default)
+    public async Task<ResultadoAutenticacao> RegistrarAsync(RegistrarUsuarioRequest request)
     {
         Usuario usuario;
         try
@@ -34,7 +34,6 @@ public sealed class AutenticacaoService(
             Email = usuario.Email,
             Nome = usuario.Nome,
             CriadoEm = usuario.CriadoEm,
-            Papel = usuario.Papel,
         };
 
         var criado = await userManager.CreateAsync(applicationUser, request.Senha);
@@ -49,9 +48,9 @@ public sealed class AutenticacaoService(
         return GerarResultado(applicationUser, [usuario.Papel.ToString()]);
     }
 
-    public async Task<ResultadoAutenticacao> LoginAsync(LoginRequest request, CancellationToken ct = default)
+    public async Task<ResultadoAutenticacao> LoginAsync(LoginRequest request)
     {
-        var applicationUser = await userManager.FindByEmailAsync(request.Email.Trim().ToLowerInvariant());
+        var applicationUser = await userManager.FindByEmailAsync(Usuario.NormalizarEmail(request.Email));
         if (applicationUser is null || !await userManager.CheckPasswordAsync(applicationUser, request.Senha))
         {
             return ResultadoAutenticacao.ComErro("Email ou senha inválidos.");

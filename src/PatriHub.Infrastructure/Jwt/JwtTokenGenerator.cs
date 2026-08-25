@@ -20,7 +20,7 @@ public sealed class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenG
             new(JwtRegisteredClaimNames.Sub, usuario.Id.ToString()),
             new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, usuario.Email ?? string.Empty),
-            new("nome", usuario.Nome),
+            new(PatriHubClaimTypes.Nome, usuario.Nome),
         };
 
         claims.AddRange(papeis.Select(papel => new Claim(ClaimTypes.Role, papel)));

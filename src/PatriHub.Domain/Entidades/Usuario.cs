@@ -38,6 +38,12 @@ public sealed class Usuario
             throw new ArgumentException("Email do usuário não pode ser vazio.", nameof(email));
         }
 
-        return new Usuario(Guid.NewGuid(), nome.Trim(), email.Trim().ToLowerInvariant(), papel, agora ?? DateTimeOffset.UtcNow);
+        return new Usuario(Guid.NewGuid(), nome.Trim(), NormalizarEmail(email), papel, agora ?? DateTimeOffset.UtcNow);
     }
+
+    /// <summary>
+    /// Mesma normalização usada ao registrar um Usuario — reaproveitada no login, para que a
+    /// busca por email sempre bata com o que foi persistido.
+    /// </summary>
+    public static string NormalizarEmail(string email) => email.Trim().ToLowerInvariant();
 }
