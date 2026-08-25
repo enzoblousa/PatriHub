@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PatriHub.Api.Autenticacao;
 using PatriHub.Application.Autenticacao;
 using PatriHub.Infrastructure.Jwt;
 
@@ -40,11 +41,10 @@ public sealed class AuthController(IAutenticacaoService autenticacaoService) : C
     [Authorize]
     public IActionResult Me()
     {
-        var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var email = User.FindFirstValue(ClaimTypes.Email);
         var nome = User.FindFirstValue(PatriHubClaimTypes.Nome);
         var papel = User.FindFirstValue(ClaimTypes.Role);
 
-        return Ok(new UsuarioDto(Guid.Parse(id!), nome ?? string.Empty, email ?? string.Empty, papel ?? string.Empty));
+        return Ok(new UsuarioDto(User.ObterUsuarioId(), nome ?? string.Empty, email ?? string.Empty, papel ?? string.Empty));
     }
 }

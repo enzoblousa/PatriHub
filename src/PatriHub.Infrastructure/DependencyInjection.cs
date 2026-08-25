@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PatriHub.Application.Ativos;
 using PatriHub.Application.Autenticacao;
+using PatriHub.Infrastructure.Ativos;
 using PatriHub.Infrastructure.Identity;
 using PatriHub.Infrastructure.Jwt;
 using PatriHub.Infrastructure.Persistence;
@@ -35,6 +37,7 @@ public static class DependencyInjection
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddScoped<IAutenticacaoService, AutenticacaoService>();
+        services.AddScoped<IAtivoService, AtivoService>();
 
         return services;
     }
