@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: patrihub
+      POSTGRES_USER: patrihub
+      POSTGRES_PASSWORD: patrihub
+    ports:
+      - "5432:5432"
+    volumes:
+      - patrihub-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U patrihub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/PatriHub.Api/Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__PatriHubDb: "Host=postgres;Port=5432;Database=patrihub;Username=patrihub;Password=patrihub"
+      Jwt__Secret: "dev-only-secret-change-me-please-1234567890"
+      Jwt__Issuer: "PatriHub"
+      Jwt__Audience: "PatriHub"
+
+volumes:
+  patrihub-postgres-data:

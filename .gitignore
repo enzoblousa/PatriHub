@@ -1,0 +1,22 @@
+# .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.DotSettings.user
+
+# Test results
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Secrets you should never commit
+*.pfx
+appsettings.*.local.json

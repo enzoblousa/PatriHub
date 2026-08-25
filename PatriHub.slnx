@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PatriHub.Api/PatriHub.Api.csproj" />
+    <Project Path="src/PatriHub.Application/PatriHub.Application.csproj" />
+    <Project Path="src/PatriHub.Domain/PatriHub.Domain.csproj" />
+    <Project Path="src/PatriHub.Infrastructure/PatriHub.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PatriHub.Api.IntegrationTests/PatriHub.Api.IntegrationTests.csproj" />
+    <Project Path="tests/PatriHub.Domain.Tests/PatriHub.Domain.Tests.csproj" />
+  </Folder>
+</Solution>

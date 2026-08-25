@@ -1,0 +1,45 @@
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.Extensions.Configuration;
+using Testcontainers.PostgreSql;
+
+namespace PatriHub.Api.IntegrationTests;
+
+/// <summary>
+/// Seam 2: sobe a API real (WebApplicationFactory) contra um Postgres real (Testcontainers),
+/// aplicando as migrations do EF Core — nada de mock de banco.
+/// </summary>
+public sealed class PatriHubApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
+{
+    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder("postgres:16")
+        .WithDatabase("patrihub")
+        .WithUsername("patrihub")
+        .WithPassword("patrihub")
+        .Build();
+
+    protected override void ConfigureWebHost(IWebHostBuilder builder)
+    {
+        builder.ConfigureAppConfiguration((_, configBuilder) =>
+        {
+            configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["ConnectionStrings:PatriHubDb"] = _postgres.GetConnectionString(),
+            });
+        });
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _postgres.StartAsync();
+
+        // Acessar Services aqui força o host a subir agora (com o container já no ar), o que
+        // por sua vez roda as migrations e o seed de Roles definidos em Program.cs.
+        _ = Services;
+    }
+
+    public new async Task DisposeAsync()
+    {
+        await _postgres.DisposeAsync();
+        await base.DisposeAsync();
+    }
+}
