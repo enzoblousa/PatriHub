@@ -10,6 +10,7 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
     : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>(options)
 {
     public DbSet<Ativo> Ativos => Set<Ativo>();
+    public DbSet<Lancamento> Lancamentos => Set<Lancamento>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -71,6 +72,21 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
             entity.Property(c => c.ValorFipeAtual).HasPrecision(18, 2);
             entity.Property(c => c.Km).HasPrecision(10, 1);
             entity.Property(c => c.ConsumoMedio).HasPrecision(6, 2);
+        });
+
+        builder.Entity<Lancamento>(entity =>
+        {
+            entity.ToTable("Lancamentos");
+            entity.HasKey(l => l.Id);
+            entity.Property(l => l.Tipo).HasConversion<string>().HasMaxLength(20);
+            entity.Property(l => l.Categoria).HasConversion<string>().HasMaxLength(30);
+            entity.Property(l => l.Valor).HasPrecision(18, 2);
+            entity.Property(l => l.Descricao).HasMaxLength(500);
+            entity.HasIndex(l => new { l.UsuarioId, l.AtivoId, l.Data });
+
+            // Sem navegação em Ativo (nenhuma coleção `ICollection<Lancamento>`) — a FK garante
+            // integridade referencial no banco sem acoplar a entidade de domínio a EF Core.
+            entity.HasOne<Ativo>().WithMany().HasForeignKey(l => l.AtivoId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

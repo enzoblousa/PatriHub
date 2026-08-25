@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using PatriHub.Application.Ativos;
+using PatriHub.Application.Lancamentos;
 using PatriHub.Domain.Entidades;
 
 namespace PatriHub.Api.IntegrationTests;
@@ -150,7 +151,7 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
     }
 
     [Fact]
-    public async Task Listar_retorna_apenas_ativos_do_usuario_autenticado_com_lucro_do_mes_zero()
+    public async Task Listar_retorna_apenas_ativos_do_usuario_autenticado_com_lucro_do_mes_zero_sem_lancamentos()
     {
         var usuario1 = await factory.CriarClienteAutenticadoAsync();
         var usuario2 = await factory.CriarClienteAutenticadoAsync();
@@ -163,6 +164,24 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
         var resumo = Assert.Single(listagem!);
         Assert.Equal(criadoUsuario1!.Id, resumo.Id);
         Assert.Equal(0m, resumo.LucroDoMes);
+    }
+
+    [Fact]
+    public async Task Listar_exibe_o_lucro_do_mes_real_com_base_nos_lancamentos_do_mes_corrente()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        var ativo = await (await client.PostAsJsonAsync("/api/ativos/imoveis", ImovelValido())).Content.ReadFromJsonAsync<AtivoDetalheDto>();
+
+        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
+        await client.PostAsJsonAsync("/api/lancamentos", new LancamentoRequest(
+            ativo!.Id, TipoLancamento.Receita, CategoriaLancamento.Aluguel, 1_500m, hoje, "Aluguel", null));
+        await client.PostAsJsonAsync("/api/lancamentos", new LancamentoRequest(
+            ativo.Id, TipoLancamento.Despesa, CategoriaLancamento.Condominio, 400m, hoje, "Condomínio", null));
+
+        var listagem = await client.GetFromJsonAsync<List<AtivoResumoDto>>("/api/ativos");
+
+        var resumo = Assert.Single(listagem!, a => a.Id == ativo.Id);
+        Assert.Equal(1_100m, resumo.LucroDoMes);
     }
 
     [Fact]
