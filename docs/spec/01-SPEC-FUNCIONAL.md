@@ -9,7 +9,7 @@ decidir se vale a pena manter o ativo.
 | Papel | Descrição | Acesso |
 |---|---|---|
 | **User** | Dono do(s) ativo(s). Pessoa física com poucos imóveis/carros. | Vê e gerencia apenas os próprios ativos, contratos e lançamentos. |
-| **Admin** | Operador da plataforma (backoffice PatriHub). | Gestão de usuários/suporte. **Não** tem acesso amplo a dados financeiros de terceiros por padrão — ver [Decisão Pendente #1](03-DECISOES-PENDENTES.md). |
+| **Admin** | Operador da plataforma (backoffice PatriHub). | Gestão de usuários/suporte + leitura (nunca edição/exclusão) de ativos/lançamentos de qualquer usuário, com log de auditoria — ver [ADR-0002](../adr/0002-admin-acesso-leitura-com-auditoria.md). |
 
 Não há hierarquia adicional no MVP: um ativo pertence a exatamente um `User` (sem
 co-propriedade — ver decisão pendente).
@@ -19,7 +19,9 @@ co-propriedade — ver decisão pendente).
 - **Lançamento**: registro financeiro (receita ou despesa) associado a um ativo.
 - **Contrato**: vínculo de locação entre um ativo e um locatário, com valor e vigência.
 - **Locatário**: pessoa física que aluga o ativo do usuário.
-- **Yield/ROI**: retorno percentual do ativo, calculado sobre o valor investido.
+- **Yield**: retorno percentual apenas da renda de aluguel (receita líquida ÷ valor do ativo).
+- **ROI**: retorno percentual total (lucro acumulado, incluindo valorização/depreciação),
+  calculado sobre `ValorAquisição` e sobre `ValorMercadoAtual`. Ver [`../../CONTEXT.md`](../../CONTEXT.md).
 
 ## 4. Modelo de domínio (entidades e atributos)
 
@@ -57,17 +59,19 @@ Campos comuns a Imóvel e Carro:
 - Id, AtivoId, LocatárioId, ValorAluguelMensal, DiaVencimento, DataInício, DataFim (opcional
   para contrato por prazo indeterminado), Status (`Ativo`, `Encerrado`, `Inadimplente`)
 - Regra: um ativo só pode ter **um contrato `Ativo` por vez**.
-- Inadimplência: **Decisão Pendente #2** — como o status `Inadimplente` é definido (manual pelo
-  usuário vs. automático ao passar do dia de vencimento sem lançamento de receita
-  correspondente). Proposta de default: manual no MVP (usuário marca o contrato como
-  inadimplente); automação fica para depois.
+- Inadimplência: automática, via job diário (`BackgroundService` in-process — ver
+  [ADR-0003](../adr/0003-job-inadimplencia-background-service.md)). Um Contrato `Ativo` vira
+  `Inadimplente` após 5 dias de carência sem um Lançamento (Receita, categoria Aluguel, mesmo
+  `ContratoId`) dentro do mês de competência.
 
 ### 4.7 Lançamento Financeiro
-- Id, AtivoId, Tipo (`Receita` | `Despesa`), Categoria, Valor, Data, Descrição (texto livre)
+- Id, AtivoId, ContratoId (**opcional/nullable** — vincula a receita ao contrato
+  correspondente, usado pela detecção de inadimplência e por relatórios por locatário),
+  Tipo (`Receita` | `Despesa`), Categoria, Valor, Data, Descrição (texto livre)
 - Categorias de Receita (fixas no MVP): `Aluguel`, `TaxaDeServiço`, `MultaPorAtraso`, `Outras`
-- Categorias de Despesa: **Decisão Pendente #3** — lista não fechada ainda. Proposta de
-  default inicial: `IPTU`, `Condomínio`, `Manutenção`, `Seguro`, `IPVA`, `Multa`,
-  `Financiamento`, `Imposto de Renda`, `Outras`.
+- Categorias de Despesa (fixas no MVP): `IPTU`, `Condomínio`, `Manutenção`, `Reforma`,
+  `Seguro`, `IPVA`, `Multa`, `Financiamento`, `Administração`, `Imposto de Renda`, `Outras`.
+  Customização pelo usuário fica para v2.
 - Sem anexos no MVP (apenas o valor é registrado, conforme resposta #20).
 
 ## 5. Regras de negócio — Cálculos financeiros
@@ -78,11 +82,13 @@ lançamentos e dados do ativo.
 - **Lucro acumulado** = soma de todos os lançamentos desde a aquisição do ativo.
 - **Depreciação** = ValorAquisição − ValorMercadoAtual (ambos informados manualmente pelo
   usuário; sem modelo de depreciação contábil automático no MVP).
-- **ROI / Yield anualizado** = Lucro acumulado (ou anualizado) ÷ ValorAquisição (ou
-  ValorMercadoAtual — a definir qual base usar). **Decisão Pendente #4.**
+- **Yield** = Receita de aluguel líquida do período ÷ ValorMercadoAtual (retorno só de renda,
+  sem valorização/depreciação).
+- **ROI** = Lucro acumulado (incluindo valorização/depreciação) ÷ ValorAquisição **e** ÷
+  ValorMercadoAtual — as duas bases são calculadas e exibidas lado a lado.
 - **Custo de oportunidade** = ValorMercadoAtual × Taxa de referência anual (ex.: CDI/Selic),
-  informada manualmente pelo usuário por enquanto (sem integração com índice oficial no MVP).
-  **Decisão Pendente #5.**
+  informada manualmente pelo usuário (sem integração com índice oficial no MVP, consistente
+  com o Princípio 1 — manual antes de automático).
 - **Imposto de Renda sobre aluguel**: entra como categoria de despesa lançada manualmente pelo
   usuário (o sistema não calcula a alíquota automaticamente no MVP).
 - **Taxa de ocupação** (para exibição futura, fora do dashboard do MVP-relatórios): dias com
@@ -97,7 +103,8 @@ lucro, (d) contrato/locatário.
 - Como usuário, quero cadastrar um carro com seus dados, para acompanhar seu desempenho.
 - Como usuário, quero editar/atualizar valor de mercado de um ativo, para manter o ROI
   correto.
-- Como usuário, quero mudar o status de um ativo (Alugado/Vago/Manutenção/À venda).
+- Como usuário, quero marcar manualmente um ativo como `Manutenção` ou `À venda`
+  (`Alugado`/`Vago` são definidos automaticamente pelo ciclo de vida do contrato — ver 6.3).
 - Como usuário, quero excluir um ativo (soft delete, mantendo histórico financeiro).
 - Como usuário, quero listar todos os meus ativos com visão resumida (tipo, status, lucro do
   mês).
@@ -113,27 +120,31 @@ lucro, (d) contrato/locatário.
 - Como usuário, quero criar um contrato de locação vinculando um locatário a um ativo, com
   valor de aluguel e vigência.
 - Como usuário, quero encerrar um contrato.
-- Como usuário, quero marcar um contrato como inadimplente.
-- Regra: ao criar um contrato `Ativo`, o status do ativo correspondente deveria refletir
-  `Alugado` automaticamente (a confirmar como regra de sincronização — ver Decisão Pendente
-  #2).
+- Contrato `Inadimplente` é marcado automaticamente pelo sistema (não é uma ação do usuário
+  — ver 4.6).
+- Regra de sincronização (semi-automática): ao criar um contrato `Ativo`, o `Status` do ativo
+  correspondente muda para `Alugado` automaticamente; ao encerrar o contrato, volta para
+  `Vago` automaticamente. `Manutenção` e `À venda` continuam sendo definidos manualmente pelo
+  usuário a qualquer momento (e prevalecem até o próximo evento de contrato).
 
 ### 6.4 Dashboard
-- Como usuário, quero ver, por ativo: lucro do mês, lucro acumulado, ROI, comparação com
-  outros ativos.
+- Como usuário, quero ver, por ativo: lucro do mês, lucro acumulado, Yield, ROI (sobre
+  ValorAquisição e sobre ValorMercadoAtual), comparação com outros ativos.
 - Como usuário, quero ver a visão consolidada de todo o patrimônio (soma de todos os ativos):
   lucro total do mês, lucro total acumulado.
-- Como usuário, quero ver uma projeção simples (ex.: lucro médio dos últimos N meses
-  projetado) — critério exato de projeção é **Decisão Pendente #6**.
+- Como usuário, quero ver uma projeção simples: média de lucro dos últimos 3 meses,
+  projetada linearmente.
 - (Fora do MVP, mas mapeado: comparativo detalhado entre ativos e outras métricas — resposta
   #25 deixa isso como "a decidir ao longo do projeto").
 
 ## 7. Regras de autorização
 - `User` só enxerga/edita ativos, contratos, locatários e lançamentos onde `UsuárioId` é o
   próprio.
-- `Admin` gerencia contas de usuário (ativar/desativar, suporte) mas, por padrão de
-  privacidade (LGPD), **não lista dados financeiros de outros usuários** salvo necessidade de
-  suporte explicitamente auditada — detalhar em Decisão Pendente #1.
+- `Admin` gerencia contas de usuário (ativar/desativar, suporte) e tem **leitura** (nunca
+  edição/exclusão) de ativos e lançamentos de qualquer usuário, para dar suporte sem precisar
+  de acesso ao banco. Todo acesso do Admin a dado de outro usuário é registrado em log de
+  auditoria (quem, quando, qual usuário/recurso) — ver
+  [ADR-0002](../adr/0002-admin-acesso-leitura-com-auditoria.md).
 
 ## 8. Requisitos não-funcionais
 - **LGPD**: consentimento de uso de dados no cadastro; dados pessoais de locatário (CPF)
@@ -143,5 +154,8 @@ lucro, (d) contrato/locatário.
 - **Acesso**: todo usuário tem o mesmo nível de acesso/limite (sem planos pagos ainda).
 
 ## 9. Itens em aberto
-Ver [`03-DECISOES-PENDENTES.md`](03-DECISOES-PENDENTES.md) para a lista consolidada de
-decisões que ficaram como "decidir depois" e as propostas de default sugeridas.
+Todas as decisões que estavam pendentes foram resolvidas — ver
+[`03-DECISOES-PENDENTES.md`](03-DECISOES-PENDENTES.md) para o histórico, [`../../CONTEXT.md`](../../CONTEXT.md)
+para o glossário e [`../adr/`](../adr/) para as decisões arquiteturais registradas. Único
+item ainda propositalmente em aberto: **identidade visual/referência de design**, a
+resolver quando chegarmos na etapa de UI.

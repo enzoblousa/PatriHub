@@ -10,8 +10,9 @@
 - **Hospedagem:** Azure (App Service ou Container Apps) + Azure Database for PostgreSQL
 - **CI/CD:** GitHub Actions (build, testes, push de imagem, deploy) — default, sem
   restrição informada pelo usuário
-- **Mensageria/fila:** não necessária no MVP (sem notificações, sem processamento
-  assíncrono) — reavaliar se/quando notificações entrarem no roadmap
+- **Mensageria/fila:** não necessária no MVP. Única exceção é o job diário de detecção de
+  inadimplência, que roda como `BackgroundService` in-process — sem fila/agendador dedicado
+  (ver [ADR-0003](../adr/0003-job-inadimplencia-background-service.md)).
 
 ## 2. Arquitetura
 Monólito modular em camadas (Clean Architecture simplificada), evitando
@@ -55,7 +56,10 @@ Locatarios (Id, UsuarioId FK, Nome, Cpf, Telefone, Email)
 Contratos (Id, AtivoId FK, LocatarioId FK, ValorAluguelMensal, DiaVencimento,
            DataInicio, DataFim, Status)
 
-Lancamentos (Id, AtivoId FK, Tipo, Categoria, Valor, Data, Descricao, CriadoEm)
+Lancamentos (Id, AtivoId FK, ContratoId FK nullable, Tipo, Categoria, Valor, Data, Descricao,
+             CriadoEm)
+
+AuditLogsAdmin (Id, AdminUsuarioId FK, UsuarioAlvoId FK, Recurso, RecursoId, CriadoEm)
 ```
 Estratégia de herança Imóvel/Carro: **table-per-type** — tabela `Ativos` com os campos
 comuns + tabela filha (`Imoveis` ou `Carros`) com PK = FK para `Ativos.Id` (EF Core:
@@ -63,10 +67,17 @@ comuns + tabela filha (`Imoveis` ou `Carros`) com PK = FK para `Ativos.Id` (EF C
 
 ## 4. Autenticação e autorização
 - Registro/login via email + senha (ASP.NET Core Identity).
-- Emissão de JWT (access token) — sem refresh token complexo no MVP (reavaliar).
+- Emissão de JWT (access token) com validade longa (ex.: 7 dias) — sem refresh token no MVP
+  (ver [ADR-0001](../adr/0001-sem-refresh-token-mvp.md)).
 - Roles: `User`, `Admin`, aplicadas via `[Authorize(Roles = "...")]` nos controllers.
-- Toda query de dados do domínio filtra implicitamente por `UsuarioId` do token (nunca por
-  parâmetro vindo do cliente), para evitar vazamento entre contas.
+- Toda query de dados do domínio de `User` filtra implicitamente por `UsuarioId` do token
+  (nunca por parâmetro vindo do cliente), para evitar vazamento entre contas.
+- `Admin` tem endpoints de leitura (somente leitura) sobre ativos/lançamentos de qualquer
+  usuário; cada chamada grava uma linha em `AuditLogsAdmin` (ver
+  [ADR-0002](../adr/0002-admin-acesso-leitura-com-auditoria.md)).
+- Job diário (`BackgroundService`) varre Contratos `Ativo` e marca `Inadimplente` os que
+  passaram 5 dias de carência sem Lançamento correspondente (ver
+  [ADR-0003](../adr/0003-job-inadimplencia-background-service.md)).
 
 ## 5. Ambientes
 - **Dev local:** Docker Compose subindo API + PostgreSQL + Angular dev server.
