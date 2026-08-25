@@ -11,6 +11,8 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
 {
     public DbSet<Ativo> Ativos => Set<Ativo>();
     public DbSet<Lancamento> Lancamentos => Set<Lancamento>();
+    public DbSet<Locatario> Locatarios => Set<Locatario>();
+    public DbSet<Contrato> Contratos => Set<Contrato>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -87,6 +89,36 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
             // Sem navegação em Ativo (nenhuma coleção `ICollection<Lancamento>`) — a FK garante
             // integridade referencial no banco sem acoplar a entidade de domínio a EF Core.
             entity.HasOne<Ativo>().WithMany().HasForeignKey(l => l.AtivoId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne<Contrato>().WithMany().HasForeignKey(l => l.ContratoId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<Locatario>(entity =>
+        {
+            entity.ToTable("Locatarios");
+            entity.HasKey(l => l.Id);
+            entity.Property(l => l.Nome).IsRequired().HasMaxLength(200);
+            entity.Property(l => l.Cpf).IsRequired().HasMaxLength(11);
+            entity.Property(l => l.Telefone).IsRequired().HasMaxLength(20);
+            entity.Property(l => l.Email).IsRequired().HasMaxLength(200);
+            entity.HasIndex(l => l.UsuarioId);
+        });
+
+        builder.Entity<Contrato>(entity =>
+        {
+            entity.ToTable("Contratos");
+            entity.HasKey(c => c.Id);
+            entity.Property(c => c.ValorAluguelMensal).HasPrecision(18, 2);
+            entity.Property(c => c.Status).HasConversion<string>().HasMaxLength(20);
+            entity.HasIndex(c => c.UsuarioId);
+
+            // Sustenta a checagem de "um Ativo só pode ter um Contrato Ativo por vez"
+            // (ContratoService.CriarAsync) sem varrer a tabela inteira.
+            entity.HasIndex(c => new { c.AtivoId, c.Status });
+
+            // Sem navegação em Ativo/Locatario (mesma decisão do Lancamento acima) — a FK garante
+            // integridade referencial no banco sem acoplar a entidade de domínio a EF Core.
+            entity.HasOne<Ativo>().WithMany().HasForeignKey(c => c.AtivoId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne<Locatario>().WithMany().HasForeignKey(c => c.LocatarioId).OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

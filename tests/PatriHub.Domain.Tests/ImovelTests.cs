@@ -123,6 +123,38 @@ public class ImovelTests
     }
 
     [Fact]
+    public void MarcarAlugado_altera_o_status_para_Alugado()
+    {
+        var imovel = ImovelValido();
+
+        imovel.MarcarAlugado();
+
+        Assert.Equal(StatusAtivo.Alugado, imovel.Status);
+    }
+
+    [Fact]
+    public void MarcarAlugado_sobrepoe_um_status_manual_anterior()
+    {
+        var imovel = ImovelValido();
+        imovel.MarcarStatusManual(StatusAtivo.Manutencao);
+
+        imovel.MarcarAlugado();
+
+        Assert.Equal(StatusAtivo.Alugado, imovel.Status);
+    }
+
+    [Fact]
+    public void MarcarVago_altera_o_status_para_Vago()
+    {
+        var imovel = ImovelValido();
+        imovel.MarcarAlugado();
+
+        imovel.MarcarVago();
+
+        Assert.Equal(StatusAtivo.Vago, imovel.Status);
+    }
+
+    [Fact]
     public void Excluir_marca_ExcluidoEm_e_Excluido_fica_true()
     {
         var imovel = ImovelValido();
