@@ -1,8 +1,8 @@
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Ativos } from '../ativos';
-import { mensagemErroAtivo } from '../ativos-erro-http';
 import { ROTULOS_STATUS, ROTULOS_TIPO } from '../ativos-rotulos';
 import type { AtivoDetalheDto } from '../ativos.models';
 import { StatusAtivo, TipoAtivo } from '../ativos.models';
@@ -63,7 +63,7 @@ export class AtivoDetalhe {
       },
       error: (erro: unknown) => {
         this.atualizandoStatus.set(false);
-        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível alterar o status.'));
+        this.erro.set(mensagemErroHttp(erro, 'Não foi possível alterar o status.'));
       },
     });
   }
@@ -85,7 +85,7 @@ export class AtivoDetalhe {
       error: (erro: unknown) => {
         this.excluindo.set(false);
         this.confirmandoExclusao.set(false);
-        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível excluir este Ativo.'));
+        this.erro.set(mensagemErroHttp(erro, 'Não foi possível excluir este Ativo.'));
       },
     });
   }
@@ -98,7 +98,7 @@ export class AtivoDetalhe {
       },
       error: (erro: unknown) => {
         this.carregando.set(false);
-        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível carregar este Ativo.'));
+        this.erro.set(mensagemErroHttp(erro, 'Não foi possível carregar este Ativo.'));
       },
     });
   }

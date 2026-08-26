@@ -1,0 +1,64 @@
+<section class="lancamento-form">
+  <h1>{{ modoEdicao ? 'Editar Lançamento' : 'Novo Lançamento' }}</h1>
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label>
+        Ativo
+        <select formControlName="ativoId">
+          <option value="" disabled>Selecione um Ativo</option>
+          @for (ativo of ativos.lista(); track ativo.id) {
+            <option [value]="ativo.id">{{ ativo.apelido }}</option>
+          }
+        </select>
+      </label>
+      @if (form.controls.ativoId.invalid && form.controls.ativoId.touched) {
+        <p class="campo-erro">Selecione um Ativo.</p>
+      }
+
+      <label>
+        Tipo
+        <select formControlName="tipo">
+          <option [value]="TipoLancamento.Receita">{{ rotulosTipo[TipoLancamento.Receita] }}</option>
+          <option [value]="TipoLancamento.Despesa">{{ rotulosTipo[TipoLancamento.Despesa] }}</option>
+        </select>
+      </label>
+
+      <label>
+        Categoria
+        <select formControlName="categoria">
+          @for (categoria of categoriasDisponiveis(); track categoria) {
+            <option [value]="categoria">{{ rotulosCategoria[categoria] }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Valor
+        <input type="number" formControlName="valor" min="0.01" step="0.01" />
+      </label>
+
+      <label>
+        Data
+        <input type="date" formControlName="data" />
+      </label>
+
+      <label>
+        Descrição
+        <input type="text" formControlName="descricao" />
+      </label>
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </form>
+  }
+
+  <p><a routerLink="/lancamentos">Voltar pra lista</a></p>
+</section>

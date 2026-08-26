@@ -1,0 +1,96 @@
+<section class="lancamentos-lista">
+  <h1>Lançamentos</h1>
+
+  <p class="acoes">
+    <a routerLink="/lancamentos/novo">Novo Lançamento</a>
+  </p>
+
+  <form class="filtro" [formGroup]="filtro" (ngSubmit)="filtrar()">
+    <label>
+      Ativo
+      <select formControlName="ativoId">
+        <option value="">Todos</option>
+        @for (ativo of ativos.lista(); track ativo.id) {
+          <option [value]="ativo.id">{{ ativo.apelido }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      De
+      <input type="date" formControlName="dataInicio" />
+    </label>
+
+    <label>
+      Até
+      <input type="date" formControlName="dataFim" />
+    </label>
+
+    <label>
+      Tipo
+      <select formControlName="tipo">
+        <option value="">Todos</option>
+        <option [value]="TipoLancamento.Receita">{{ rotulosTipo[TipoLancamento.Receita] }}</option>
+        <option [value]="TipoLancamento.Despesa">{{ rotulosTipo[TipoLancamento.Despesa] }}</option>
+      </select>
+    </label>
+
+    <button type="submit">Filtrar</button>
+    <button type="button" (click)="limparFiltro()">Limpar</button>
+  </form>
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (lancamentos.carregando()) {
+    <p>Carregando…</p>
+  } @else if (lancamentos.lista().length === 0) {
+    <p>Nenhum Lançamento encontrado.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Ativo</th>
+          <th>Tipo</th>
+          <th>Categoria</th>
+          <th>Valor</th>
+          <th>Data</th>
+          <th>Descrição</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (lancamento of lancamentos.lista(); track lancamento.id) {
+          <tr>
+            <td>{{ apelidoDoAtivo(lancamento.ativoId) }}</td>
+            <td>{{ rotulosTipo[lancamento.tipo] }}</td>
+            <td>{{ rotulosCategoria[lancamento.categoria] }}</td>
+            <td>{{ lancamento.valor | number: '1.2-2' }}</td>
+            <td>{{ lancamento.data }}</td>
+            <td>{{ lancamento.descricao }}</td>
+            <td>
+              <a [routerLink]="['/lancamentos', lancamento.id, 'editar']">Editar</a>
+
+              @if (confirmandoExclusaoId() === lancamento.id) {
+                <span role="alert">
+                  Confirma exclusão?
+                  <button
+                    type="button"
+                    [disabled]="excluindoId() === lancamento.id"
+                    (click)="confirmarExclusao(lancamento.id)"
+                  >
+                    Confirmar
+                  </button>
+                  <button type="button" (click)="cancelarExclusao()">Cancelar</button>
+                </span>
+              } @else {
+                <button type="button" (click)="iniciarExclusao(lancamento.id)">Excluir</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

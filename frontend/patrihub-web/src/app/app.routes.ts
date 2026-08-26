@@ -52,6 +52,29 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'lancamentos',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./lancamentos/lancamentos-lista/lancamentos-lista').then(
+            (m) => m.LancamentosLista,
+          ),
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./lancamentos/lancamento-form/lancamento-form').then((m) => m.LancamentoForm),
+      },
+      {
+        path: ':id/editar',
+        loadComponent: () =>
+          import('./lancamentos/lancamento-form/lancamento-form').then((m) => m.LancamentoForm),
+      },
+    ],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

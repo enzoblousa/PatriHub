@@ -92,6 +92,9 @@
     </div>
 
     <p><a [routerLink]="rotaEdicao()">Editar</a></p>
+    <p>
+      <a [routerLink]="['/lancamentos']" [queryParams]="{ ativoId: ativoId }">Ver lançamentos</a>
+    </p>
 
     @if (!confirmandoExclusao()) {
       <button type="button" class="excluir" (click)="iniciarExclusao()">Excluir</button>
