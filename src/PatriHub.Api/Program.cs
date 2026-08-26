@@ -51,6 +51,7 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<PatriHubDbContext>();
     await db.Database.MigrateAsync();
     await IdentitySeeder.SeedRolesAsync(scope.ServiceProvider);
+    await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider, app.Configuration);
 }
 
 app.Run();
