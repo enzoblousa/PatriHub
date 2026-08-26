@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 
 import { Ativos } from '../../ativos/ativos';
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
-import { Locatarios } from '../../locatarios/locatarios';
+import { buscarRotulo } from '../../core/util/buscar-rotulo';
 import { Contratos } from '../contratos';
 import { ROTULOS_STATUS } from '../contratos-rotulos';
 import { StatusContrato } from '../contratos.models';
+import { Locatarios } from '../locatarios';
 
 /**
  * Lista os Contratos do usuário com Status visível (`Ativo`/`Encerrado`/`Inadimplente`) via
@@ -40,11 +41,11 @@ export class ContratosLista {
   }
 
   protected apelidoDoAtivo(ativoId: string): string {
-    return this.ativos.lista().find((a) => a.id === ativoId)?.apelido ?? ativoId;
+    return buscarRotulo(this.ativos.lista(), ativoId, (a) => a.apelido);
   }
 
   protected nomeDoLocatario(locatarioId: string): string {
-    return this.locatarios.lista().find((l) => l.id === locatarioId)?.nome ?? locatarioId;
+    return buscarRotulo(this.locatarios.lista(), locatarioId, (l) => l.nome);
   }
 
   protected iniciarEncerramento(id: string): void {

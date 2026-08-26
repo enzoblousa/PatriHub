@@ -4,9 +4,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Ativos } from '../../ativos/ativos';
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
-import { Locatarios } from '../../locatarios/locatarios';
 import { Contratos } from '../contratos';
 import type { ContratoRequest } from '../contratos.models';
+import { Locatarios } from '../locatarios';
 
 /**
  * Cria um Contrato vinculando um Ativo a um Locatário — sem edição no MVP (ver

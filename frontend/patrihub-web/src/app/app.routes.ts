@@ -81,19 +81,23 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./locatarios/locatarios-lista/locatarios-lista').then(
+          import('./locatarios-contratos/locatarios-lista/locatarios-lista').then(
             (m) => m.LocatariosLista,
           ),
       },
       {
         path: 'novo',
         loadComponent: () =>
-          import('./locatarios/locatario-form/locatario-form').then((m) => m.LocatarioForm),
+          import('./locatarios-contratos/locatario-form/locatario-form').then(
+            (m) => m.LocatarioForm,
+          ),
       },
       {
         path: ':id/editar',
         loadComponent: () =>
-          import('./locatarios/locatario-form/locatario-form').then((m) => m.LocatarioForm),
+          import('./locatarios-contratos/locatario-form/locatario-form').then(
+            (m) => m.LocatarioForm,
+          ),
       },
     ],
   },
@@ -104,12 +108,16 @@ export const routes: Routes = [
       {
         path: '',
         loadComponent: () =>
-          import('./contratos/contratos-lista/contratos-lista').then((m) => m.ContratosLista),
+          import('./locatarios-contratos/contratos-lista/contratos-lista').then(
+            (m) => m.ContratosLista,
+          ),
       },
       {
         path: 'novo',
         loadComponent: () =>
-          import('./contratos/contrato-form/contrato-form').then((m) => m.ContratoForm),
+          import('./locatarios-contratos/contrato-form/contrato-form').then(
+            (m) => m.ContratoForm,
+          ),
       },
     ],
   },
