@@ -1,0 +1,12 @@
+/* Identidade visual fora de escopo desta spec (ver docs/spec/01-SPEC-FUNCIONAL.md §9). */
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.usuario {
+  margin-left: auto;
+}

@@ -1,0 +1,11 @@
+<header class="cabecalho">
+  <span class="marca">PatriHub</span>
+  @if (auth.estaAutenticado()) {
+    <span class="usuario">{{ auth.usuario()?.nome }}</span>
+    <button type="button" (click)="sair()">Sair</button>
+  }
+</header>
+
+<main>
+  <router-outlet />
+</main>

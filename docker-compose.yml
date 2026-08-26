@@ -34,5 +34,14 @@ services:
       Jwt__Issuer: "PatriHub"
       Jwt__Audience: "PatriHub"
 
+  frontend:
+    build:
+      context: ./frontend/patrihub-web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "4200:80"
+
 volumes:
   patrihub-postgres-data:
