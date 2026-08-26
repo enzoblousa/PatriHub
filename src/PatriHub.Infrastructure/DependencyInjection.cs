@@ -2,12 +2,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using PatriHub.Application.Admin;
 using PatriHub.Application.Ativos;
 using PatriHub.Application.Autenticacao;
 using PatriHub.Application.Contratos;
 using PatriHub.Application.Dashboard;
 using PatriHub.Application.Lancamentos;
 using PatriHub.Application.Locatarios;
+using PatriHub.Infrastructure.Admin;
 using PatriHub.Infrastructure.Ativos;
 using PatriHub.Infrastructure.Contratos;
 using PatriHub.Infrastructure.Dashboard;
@@ -52,6 +54,7 @@ public static class DependencyInjection
         services.AddScoped<IVerificacaoInadimplenciaService, VerificacaoInadimplenciaService>();
         services.AddHostedService<InadimplenciaBackgroundService>();
         services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IAdminService, AdminService>();
 
         return services;
     }

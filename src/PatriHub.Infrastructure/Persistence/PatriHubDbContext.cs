@@ -13,6 +13,7 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
     public DbSet<Lancamento> Lancamentos => Set<Lancamento>();
     public DbSet<Locatario> Locatarios => Set<Locatario>();
     public DbSet<Contrato> Contratos => Set<Contrato>();
+    public DbSet<AuditLogAdmin> AuditLogsAdmin => Set<AuditLogAdmin>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -119,6 +120,17 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
             // integridade referencial no banco sem acoplar a entidade de domínio a EF Core.
             entity.HasOne<Ativo>().WithMany().HasForeignKey(c => c.AtivoId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne<Locatario>().WithMany().HasForeignKey(c => c.LocatarioId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        builder.Entity<AuditLogAdmin>(entity =>
+        {
+            entity.ToTable("AuditLogsAdmin");
+            entity.HasKey(a => a.Id);
+            entity.Property(a => a.Recurso).HasConversion<string>().HasMaxLength(20);
+
+            // Sem navegação em ApplicationUser (mesma decisão do Lancamento/Contrato acima) —
+            // consulta de auditoria de suporte é rara e não precisa de índice dedicado no MVP.
+            entity.HasIndex(a => new { a.UsuarioAlvoId, a.CriadoEm });
         });
     }
 }
