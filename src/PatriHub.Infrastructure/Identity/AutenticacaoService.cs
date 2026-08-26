@@ -56,6 +56,14 @@ public sealed class AutenticacaoService(
             return ResultadoAutenticacao.ComErro("Email ou senha inválidos.");
         }
 
+        // Conta desativada pelo Admin (ver AdminService.AtualizarStatusUsuarioAsync) — mesma
+        // mensagem genérica de "Email ou senha inválidos" seria enganosa aqui, então é
+        // reportada à parte.
+        if (await userManager.IsLockedOutAsync(applicationUser))
+        {
+            return ResultadoAutenticacao.ComErro("Conta desativada. Entre em contato com o suporte.");
+        }
+
         var papeis = await userManager.GetRolesAsync(applicationUser);
         return GerarResultado(applicationUser, papeis);
     }
