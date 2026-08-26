@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Ativos } from '../../ativos/ativos';
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { buscarRotulo } from '../../core/util/buscar-rotulo';
 import { Lancamentos } from '../lancamentos';
 import { ROTULOS_CATEGORIA, ROTULOS_TIPO } from '../lancamentos-categorias';
 import type { LancamentoFiltro } from '../lancamentos.models';
@@ -47,7 +48,7 @@ export class LancamentosLista {
   }
 
   protected apelidoDoAtivo(ativoId: string): string {
-    return this.ativos.lista().find((a) => a.id === ativoId)?.apelido ?? ativoId;
+    return buscarRotulo(this.ativos.lista(), ativoId, (a) => a.apelido);
   }
 
   protected filtrar(): void {

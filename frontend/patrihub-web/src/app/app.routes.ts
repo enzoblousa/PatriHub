@@ -75,6 +75,53 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'locatarios',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./locatarios-contratos/locatarios-lista/locatarios-lista').then(
+            (m) => m.LocatariosLista,
+          ),
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./locatarios-contratos/locatario-form/locatario-form').then(
+            (m) => m.LocatarioForm,
+          ),
+      },
+      {
+        path: ':id/editar',
+        loadComponent: () =>
+          import('./locatarios-contratos/locatario-form/locatario-form').then(
+            (m) => m.LocatarioForm,
+          ),
+      },
+    ],
+  },
+  {
+    path: 'contratos',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./locatarios-contratos/contratos-lista/contratos-lista').then(
+            (m) => m.ContratosLista,
+          ),
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./locatarios-contratos/contrato-form/contrato-form').then(
+            (m) => m.ContratoForm,
+          ),
+      },
+    ],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

@@ -1,0 +1,69 @@
+<section class="contrato-form">
+  <h1>Novo Contrato</h1>
+
+  <p class="aviso" role="note">
+    Criar este Contrato muda automaticamente o Status do Ativo selecionado pra
+    <strong>Alugado</strong>.
+  </p>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+    <label>
+      Ativo
+      <select formControlName="ativoId">
+        <option value="" disabled>Selecione um Ativo</option>
+        @for (ativo of ativos.lista(); track ativo.id) {
+          <option [value]="ativo.id">{{ ativo.apelido }}</option>
+        }
+      </select>
+    </label>
+    @if (form.controls.ativoId.invalid && form.controls.ativoId.touched) {
+      <p class="campo-erro">Selecione um Ativo.</p>
+    }
+
+    <label>
+      Locatário
+      <select formControlName="locatarioId">
+        <option value="" disabled>Selecione um Locatário</option>
+        @for (locatario of locatarios.lista(); track locatario.id) {
+          <option [value]="locatario.id">{{ locatario.nome }}</option>
+        }
+      </select>
+    </label>
+    @if (form.controls.locatarioId.invalid && form.controls.locatarioId.touched) {
+      <p class="campo-erro">Selecione um Locatário.</p>
+    }
+    @if (locatarios.lista().length === 0 && !locatarios.carregando()) {
+      <p><a routerLink="/locatarios/novo">Cadastrar um Locatário</a> antes de criar o Contrato.</p>
+    }
+
+    <label>
+      Valor do aluguel mensal
+      <input type="number" formControlName="valorAluguelMensal" min="0.01" step="0.01" />
+    </label>
+
+    <label>
+      Dia de vencimento
+      <input type="number" formControlName="diaVencimento" min="1" max="31" step="1" />
+    </label>
+
+    <label>
+      Data de início
+      <input type="date" formControlName="dataInicio" />
+    </label>
+
+    <label>
+      Data de fim (opcional)
+      <input type="date" formControlName="dataFim" />
+    </label>
+
+    @if (erro()) {
+      <p class="erro" role="alert">{{ erro() }}</p>
+    }
+
+    <button type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Salvando…' : 'Salvar' }}
+    </button>
+  </form>
+
+  <p><a routerLink="/contratos">Voltar pra lista</a></p>
+</section>

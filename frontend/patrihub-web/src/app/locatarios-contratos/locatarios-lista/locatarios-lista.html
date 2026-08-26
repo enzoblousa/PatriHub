@@ -1,0 +1,36 @@
+<section class="locatarios-lista">
+  <h1>Meus Locatários</h1>
+
+  <p class="acoes">
+    <a routerLink="/locatarios/novo">Novo Locatário</a>
+  </p>
+
+  @if (locatarios.carregando()) {
+    <p>Carregando…</p>
+  } @else if (locatarios.lista().length === 0) {
+    <p>Você ainda não cadastrou nenhum Locatário.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>CPF</th>
+          <th>Telefone</th>
+          <th>Email</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (locatario of locatarios.lista(); track locatario.id) {
+          <tr>
+            <td>{{ locatario.nome }}</td>
+            <td>{{ locatario.cpf }}</td>
+            <td>{{ locatario.telefone }}</td>
+            <td>{{ locatario.email }}</td>
+            <td><a [routerLink]="['/locatarios', locatario.id, 'editar']">Editar</a></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

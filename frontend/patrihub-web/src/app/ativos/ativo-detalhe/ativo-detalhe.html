@@ -95,6 +95,9 @@
     <p>
       <a [routerLink]="['/lancamentos']" [queryParams]="{ ativoId: ativoId }">Ver lançamentos</a>
     </p>
+    <p>
+      <a [routerLink]="['/contratos/novo']" [queryParams]="{ ativoId: ativoId }">Novo Contrato</a>
+    </p>
 
     @if (!confirmandoExclusao()) {
       <button type="button" class="excluir" (click)="iniciarExclusao()">Excluir</button>
