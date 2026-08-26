@@ -1,0 +1,37 @@
+<section class="ativos-lista">
+  <h1>Meus Ativos</h1>
+
+  <p class="acoes">
+    <a routerLink="/ativos/imoveis/novo">Novo Imóvel</a>
+    <a routerLink="/ativos/carros/novo">Novo Carro</a>
+  </p>
+
+  @if (ativos.carregando()) {
+    <p>Carregando…</p>
+  } @else if (ativos.lista().length === 0) {
+    <p>Você ainda não cadastrou nenhum Ativo.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Apelido</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Valor de mercado</th>
+          <th>Lucro do mês</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ativo of ativos.lista(); track ativo.id) {
+          <tr>
+            <td><a [routerLink]="['/ativos', ativo.id]">{{ ativo.apelido }}</a></td>
+            <td>{{ rotuloTipo(ativo.tipo) }}</td>
+            <td>{{ rotuloStatus(ativo.status) }}</td>
+            <td>{{ ativo.valorMercadoAtual | number: '1.2-2' }}</td>
+            <td>{{ ativo.lucroDoMes | number: '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

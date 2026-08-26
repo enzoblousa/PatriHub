@@ -1,0 +1,117 @@
+<section class="ativo-form">
+  <h1>{{ modoEdicao ? 'Editar Carro' : 'Novo Carro' }}</h1>
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label>
+        Apelido
+        <input type="text" formControlName="apelido" />
+      </label>
+      @if (form.controls.apelido.invalid && form.controls.apelido.touched) {
+        <p class="campo-erro">Informe um apelido.</p>
+      }
+
+      <label>
+        Data de aquisição
+        <input type="date" formControlName="dataAquisicao" />
+      </label>
+
+      <label>
+        Valor de aquisição
+        <input type="number" formControlName="valorAquisicao" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Valor de mercado atual
+        <input type="number" formControlName="valorMercadoAtual" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Placa
+        <input type="text" formControlName="placa" />
+      </label>
+
+      <label>
+        Marca
+        <input type="text" formControlName="marca" />
+      </label>
+
+      <label>
+        Modelo
+        <input type="text" formControlName="modelo" />
+      </label>
+
+      <label>
+        Ano de fabricação
+        <input type="number" formControlName="anoFabricacao" step="1" />
+      </label>
+
+      <label>
+        Ano do modelo
+        <input type="number" formControlName="anoModelo" step="1" />
+      </label>
+
+      <label>
+        Valor FIPE atual
+        <input type="number" formControlName="valorFipeAtual" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Km
+        <input type="number" formControlName="km" min="0" step="1" />
+      </label>
+
+      <label>
+        Consumo médio (km/l)
+        <input type="number" formControlName="consumoMedio" min="0" step="0.1" />
+      </label>
+
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          [checked]="temFinanciamento()"
+          (change)="temFinanciamento.set(!temFinanciamento())"
+        />
+        Financiado
+      </label>
+
+      @if (temFinanciamento()) {
+        <fieldset [formGroup]="financiamentoForm">
+          <legend>Financiamento</legend>
+
+          <label>
+            Valor da parcela
+            <input type="number" formControlName="valorParcela" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Saldo devedor
+            <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Taxa de juros anual
+            <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Parcelas restantes
+            <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
+          </label>
+        </fieldset>
+      }
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </form>
+  }
+
+  <p><a routerLink="/ativos">Voltar pra lista</a></p>
+</section>
