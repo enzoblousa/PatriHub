@@ -1,6 +1,13 @@
 <header class="cabecalho">
   <span class="marca">PatriHub</span>
   @if (auth.estaAutenticado()) {
+    <nav class="navegacao">
+      <a routerLink="/">Dashboard</a>
+      <a routerLink="/ativos">Ativos</a>
+      <a routerLink="/lancamentos">Lançamentos</a>
+      <a routerLink="/locatarios">Locatários</a>
+      <a routerLink="/contratos">Contratos</a>
+    </nav>
     <span class="usuario">{{ auth.usuario()?.nome }}</span>
     <button type="button" (click)="sair()">Sair</button>
   }
