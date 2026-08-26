@@ -6,17 +6,10 @@
 
     <dl>
       <dt>Tipo</dt>
-      <dd>{{ ativo.tipo === TipoAtivo.Imovel ? 'Imóvel' : 'Carro' }}</dd>
+      <dd>{{ rotuloTipo(ativo.tipo) }}</dd>
 
       <dt>Status</dt>
-      <dd>
-        @switch (ativo.status) {
-          @case (StatusAtivo.Vago) { Vago }
-          @case (StatusAtivo.Alugado) { Alugado }
-          @case (StatusAtivo.Manutencao) { Manutenção }
-          @case (StatusAtivo.AVenda) { À venda }
-        }
-      </dd>
+      <dd>{{ rotuloStatus(ativo.status) }}</dd>
 
       <dt>Data de aquisição</dt>
       <dd>{{ ativo.dataAquisicao }}</dd>

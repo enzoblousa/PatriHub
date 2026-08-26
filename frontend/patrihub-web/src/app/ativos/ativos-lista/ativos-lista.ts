@@ -3,19 +3,8 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Ativos } from '../ativos';
-import { StatusAtivo, TipoAtivo } from '../ativos.models';
-
-const ROTULOS_TIPO: Record<TipoAtivo, string> = {
-  [TipoAtivo.Imovel]: 'Imóvel',
-  [TipoAtivo.Carro]: 'Carro',
-};
-
-const ROTULOS_STATUS: Record<StatusAtivo, string> = {
-  [StatusAtivo.Vago]: 'Vago',
-  [StatusAtivo.Alugado]: 'Alugado',
-  [StatusAtivo.Manutencao]: 'Manutenção',
-  [StatusAtivo.AVenda]: 'À venda',
-};
+import { ROTULOS_STATUS, ROTULOS_TIPO } from '../ativos-rotulos';
+import type { StatusAtivo, TipoAtivo } from '../ativos.models';
 
 /** Lista os Ativos do usuário autenticado (tipo, status, lucro do mês) via `GET /api/ativos`. */
 @Component({

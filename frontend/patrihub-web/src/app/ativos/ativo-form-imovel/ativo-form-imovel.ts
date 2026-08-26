@@ -1,9 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Ativos } from '../ativos';
+import { mensagemErroAtivo } from '../ativos-erro-http';
 import type { ImovelRequest } from '../ativos.models';
 import { TipoImovel } from '../ativos.models';
 import {
@@ -124,11 +124,7 @@ export class AtivoFormImovel {
       next: (detalhe) => this.router.navigate(['/ativos', detalhe.id]),
       error: (erro: unknown) => {
         this.enviando.set(false);
-        this.erro.set(
-          erro instanceof HttpErrorResponse && typeof erro.error?.erro === 'string'
-            ? erro.error.erro
-            : 'Não foi possível salvar o Imóvel. Tente novamente.',
-        );
+        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível salvar o Imóvel. Tente novamente.'));
       },
     });
   }

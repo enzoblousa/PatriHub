@@ -1,8 +1,9 @@
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Ativos } from '../ativos';
+import { mensagemErroAtivo } from '../ativos-erro-http';
+import { ROTULOS_STATUS, ROTULOS_TIPO } from '../ativos-rotulos';
 import type { AtivoDetalheDto } from '../ativos.models';
 import { StatusAtivo, TipoAtivo } from '../ativos.models';
 
@@ -38,6 +39,14 @@ export class AtivoDetalhe {
     this.carregar();
   }
 
+  protected rotuloTipo(tipo: TipoAtivo): string {
+    return ROTULOS_TIPO[tipo];
+  }
+
+  protected rotuloStatus(status: StatusAtivo): string {
+    return ROTULOS_STATUS[status];
+  }
+
   protected rotaEdicao(): string[] {
     const tipo = this.detalhe()?.tipo === TipoAtivo.Carro ? 'carros' : 'imoveis';
     return ['/ativos', tipo, this.ativoId, 'editar'];
@@ -54,7 +63,7 @@ export class AtivoDetalhe {
       },
       error: (erro: unknown) => {
         this.atualizandoStatus.set(false);
-        this.erro.set(this.mensagemErro(erro, 'Não foi possível alterar o status.'));
+        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível alterar o status.'));
       },
     });
   }
@@ -76,7 +85,7 @@ export class AtivoDetalhe {
       error: (erro: unknown) => {
         this.excluindo.set(false);
         this.confirmandoExclusao.set(false);
-        this.erro.set(this.mensagemErro(erro, 'Não foi possível excluir este Ativo.'));
+        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível excluir este Ativo.'));
       },
     });
   }
@@ -89,14 +98,8 @@ export class AtivoDetalhe {
       },
       error: (erro: unknown) => {
         this.carregando.set(false);
-        this.erro.set(this.mensagemErro(erro, 'Não foi possível carregar este Ativo.'));
+        this.erro.set(mensagemErroAtivo(erro, 'Não foi possível carregar este Ativo.'));
       },
     });
-  }
-
-  private mensagemErro(erro: unknown, padrao: string): string {
-    return erro instanceof HttpErrorResponse && typeof erro.error?.erro === 'string'
-      ? erro.error.erro
-      : padrao;
   }
 }
