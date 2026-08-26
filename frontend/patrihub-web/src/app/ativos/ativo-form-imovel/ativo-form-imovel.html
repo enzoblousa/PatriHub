@@ -1,0 +1,145 @@
+<section class="ativo-form">
+  <h1>{{ modoEdicao ? 'Editar Imóvel' : 'Novo Imóvel' }}</h1>
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label>
+        Apelido
+        <input type="text" formControlName="apelido" />
+      </label>
+      @if (form.controls.apelido.invalid && form.controls.apelido.touched) {
+        <p class="campo-erro">Informe um apelido.</p>
+      }
+
+      <label>
+        Data de aquisição
+        <input type="date" formControlName="dataAquisicao" />
+      </label>
+
+      <label>
+        Valor de aquisição
+        <input type="number" formControlName="valorAquisicao" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Valor de mercado atual
+        <input type="number" formControlName="valorMercadoAtual" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Tipo
+        <select formControlName="tipoImovel">
+          @for (tipo of tiposImovel; track tipo.valor) {
+            <option [value]="tipo.valor">{{ tipo.rotulo }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Área (m²)
+        <input type="number" formControlName="areaM2" min="0.01" step="0.01" />
+      </label>
+
+      <label>
+        Matrícula
+        <input type="text" formControlName="matricula" />
+      </label>
+
+      <label>
+        IPTU mensal
+        <input type="number" formControlName="valorIptuMensal" min="0" step="0.01" />
+      </label>
+
+      <label>
+        Condomínio mensal
+        <input type="number" formControlName="valorCondominioMensal" min="0" step="0.01" />
+      </label>
+
+      <fieldset formGroupName="endereco">
+        <legend>Endereço</legend>
+
+        <label>
+          Rua
+          <input type="text" formControlName="rua" />
+        </label>
+
+        <label>
+          Número
+          <input type="text" formControlName="numero" />
+        </label>
+
+        <label>
+          Complemento
+          <input type="text" formControlName="complemento" />
+        </label>
+
+        <label>
+          Bairro
+          <input type="text" formControlName="bairro" />
+        </label>
+
+        <label>
+          Cidade
+          <input type="text" formControlName="cidade" />
+        </label>
+
+        <label>
+          UF
+          <input type="text" formControlName="uf" maxlength="2" />
+        </label>
+
+        <label>
+          CEP
+          <input type="text" formControlName="cep" />
+        </label>
+      </fieldset>
+
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          [checked]="temFinanciamento()"
+          (change)="temFinanciamento.set(!temFinanciamento())"
+        />
+        Financiado
+      </label>
+
+      @if (temFinanciamento()) {
+        <fieldset [formGroup]="financiamentoForm">
+          <legend>Financiamento</legend>
+
+          <label>
+            Valor da parcela
+            <input type="number" formControlName="valorParcela" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Saldo devedor
+            <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Taxa de juros anual
+            <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
+          </label>
+
+          <label>
+            Parcelas restantes
+            <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
+          </label>
+        </fieldset>
+      }
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </form>
+  }
+
+  <p><a routerLink="/ativos">Voltar pra lista</a></p>
+</section>

@@ -1,0 +1,116 @@
+<section class="ativo-detalhe">
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else if (detalhe(); as ativo) {
+    <h1>{{ ativo.apelido }}</h1>
+
+    <dl>
+      <dt>Tipo</dt>
+      <dd>{{ rotuloTipo(ativo.tipo) }}</dd>
+
+      <dt>Status</dt>
+      <dd>{{ rotuloStatus(ativo.status) }}</dd>
+
+      <dt>Data de aquisição</dt>
+      <dd>{{ ativo.dataAquisicao }}</dd>
+
+      <dt>Valor de aquisição</dt>
+      <dd>{{ ativo.valorAquisicao }}</dd>
+
+      <dt>Valor de mercado atual</dt>
+      <dd>{{ ativo.valorMercadoAtual }}</dd>
+
+      @if (ativo.imovel; as imovel) {
+        <dt>Endereço</dt>
+        <dd>
+          {{ imovel.endereco.rua }}, {{ imovel.endereco.numero }}
+          @if (imovel.endereco.complemento) {
+            - {{ imovel.endereco.complemento }}
+          }
+          — {{ imovel.endereco.bairro }}, {{ imovel.endereco.cidade }}/{{ imovel.endereco.uf }} —
+          {{ imovel.endereco.cep }}
+        </dd>
+
+        <dt>Área</dt>
+        <dd>{{ imovel.areaM2 }} m²</dd>
+
+        <dt>Matrícula</dt>
+        <dd>{{ imovel.matricula }}</dd>
+
+        <dt>IPTU mensal</dt>
+        <dd>{{ imovel.valorIptuMensal }}</dd>
+
+        <dt>Condomínio mensal</dt>
+        <dd>{{ imovel.valorCondominioMensal }}</dd>
+      }
+
+      @if (ativo.carro; as carro) {
+        <dt>Placa</dt>
+        <dd>{{ carro.placa }}</dd>
+
+        <dt>Marca / Modelo</dt>
+        <dd>{{ carro.marca }} {{ carro.modelo }}</dd>
+
+        <dt>Ano fabricação / modelo</dt>
+        <dd>{{ carro.anoFabricacao }} / {{ carro.anoModelo }}</dd>
+
+        <dt>Valor FIPE atual</dt>
+        <dd>{{ carro.valorFipeAtual }}</dd>
+
+        <dt>Km</dt>
+        <dd>{{ carro.km }}</dd>
+
+        <dt>Consumo médio</dt>
+        <dd>{{ carro.consumoMedio }} km/l</dd>
+      }
+
+      @if (ativo.financiado && ativo.financiamento; as financiamento) {
+        <dt>Financiamento</dt>
+        <dd>
+          Parcela {{ financiamento.valorParcela }} — saldo devedor
+          {{ financiamento.saldoDevedor }} — {{ financiamento.parcelasRestantes }} parcelas
+          restantes ({{ financiamento.taxaJurosAnual }}% a.a.)
+        </dd>
+      }
+    </dl>
+
+    <div class="acoes-status">
+      <button
+        type="button"
+        [disabled]="atualizandoStatus() || ativo.status === StatusAtivo.Manutencao"
+        (click)="marcarStatus(StatusAtivo.Manutencao)"
+      >
+        Marcar Manutenção
+      </button>
+      <button
+        type="button"
+        [disabled]="atualizandoStatus() || ativo.status === StatusAtivo.AVenda"
+        (click)="marcarStatus(StatusAtivo.AVenda)"
+      >
+        Marcar À venda
+      </button>
+    </div>
+
+    <p><a [routerLink]="rotaEdicao()">Editar</a></p>
+
+    @if (!confirmandoExclusao()) {
+      <button type="button" class="excluir" (click)="iniciarExclusao()">Excluir</button>
+    } @else {
+      <p class="confirmacao-exclusao" role="alert">
+        Tem certeza que deseja excluir este Ativo?
+        <button type="button" [disabled]="excluindo()" (click)="confirmarExclusao()">
+          {{ excluindo() ? 'Excluindo…' : 'Confirmar exclusão' }}
+        </button>
+        <button type="button" [disabled]="excluindo()" (click)="cancelarExclusao()">
+          Cancelar
+        </button>
+      </p>
+    }
+  }
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  <p><a routerLink="/ativos">Voltar pra lista</a></p>
+</section>
