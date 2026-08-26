@@ -17,7 +17,7 @@ public sealed class DashboardService(PatriHubDbContext db) : IDashboardService
     public async Task<PatrimonioConsolidadoDto> ObterDashboardAsync(Guid usuarioId, decimal? taxaReferenciaAnual = null, DateOnly? hoje = null)
     {
         var dataReferencia = hoje ?? DateOnly.FromDateTime(DateTimeOffset.UtcNow.UtcDateTime);
-        var (inicioMes, fimMes) = MesDe(dataReferencia);
+        var (inicioMes, fimMes) = CalculadoraFinanceira.IntervaloDoMes(dataReferencia);
 
         var ativos = await db.Ativos
             .Where(a => a.UsuarioId == usuarioId && a.ExcluidoEm == null)
@@ -69,7 +69,9 @@ public sealed class DashboardService(PatriHubDbContext db) : IDashboardService
             ativo.Apelido,
             LucroDoMes: lucroDoMes,
             LucroAcumulado: lucroAcumulado,
-            Yield: CalculadoraFinanceira.Yield(lucroDoMes, ativo.ValorMercadoAtual),
+            Yield: CalculadoraFinanceira.Yield(
+                CalculadoraFinanceira.ReceitaDeAluguelLiquidaDoPeriodo(lancamentos, inicioMes, fimMes),
+                ativo.ValorMercadoAtual),
             RoiSobreValorAquisicao: CalculadoraFinanceira.Roi(lucroTotalComValorizacao, ativo.ValorAquisicao),
             RoiSobreValorMercadoAtual: CalculadoraFinanceira.Roi(lucroTotalComValorizacao, ativo.ValorMercadoAtual),
             Depreciacao: CalculadoraFinanceira.Depreciacao(ativo.ValorAquisicao, ativo.ValorMercadoAtual),
@@ -77,11 +79,5 @@ public sealed class DashboardService(PatriHubDbContext db) : IDashboardService
                 ? CalculadoraFinanceira.CustoDeOportunidade(ativo.ValorMercadoAtual, taxa)
                 : null,
             ProjecaoDeLucro: CalculadoraFinanceira.ProjecaoDeLucro(lancamentos, dataReferencia));
-    }
-
-    private static (DateOnly Inicio, DateOnly Fim) MesDe(DateOnly data)
-    {
-        var inicio = new DateOnly(data.Year, data.Month, 1);
-        return (inicio, inicio.AddMonths(1).AddDays(-1));
     }
 }

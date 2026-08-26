@@ -26,12 +26,26 @@ public static class CalculadoraFinanceira
         valorAquisicao - valorMercadoAtual;
 
     /// <summary>
-    /// Yield = Lucro do período (renda líquida — receitas menos despesas, sem valorização/depreciação)
-    /// ÷ ValorMercadoAtual. Distinto de <see cref="Roi"/>, que inclui a variação do valor de mercado
-    /// (ver CONTEXT.md — "Avoid: usar ROI para essa métrica").
+    /// Receita de aluguel líquida do período = Σ Receitas(categoria Aluguel) − Σ Despesas, no
+    /// intervalo — a base de renda do <see cref="Yield"/>. Distinta de <see cref="LucroDoPeriodo"/>,
+    /// que soma toda categoria de Receita (TaxaDeServiço, MultaPorAtraso, Outras também); aqui só a
+    /// renda de aluguel entra no numerador, mas toda Despesa do período ainda é descontada (ver
+    /// 01-SPEC-FUNCIONAL.md §5 e CONTEXT.md — "Yield... receita de aluguel líquida").
     /// </summary>
-    public static decimal Yield(decimal lucroDoPeriodo, decimal valorMercadoAtual) =>
-        valorMercadoAtual == 0 ? 0m : lucroDoPeriodo / valorMercadoAtual;
+    public static decimal ReceitaDeAluguelLiquidaDoPeriodo(IEnumerable<Lancamento> lancamentos, DateOnly inicio, DateOnly fim) =>
+        lancamentos
+            .Where(l => l.Data >= inicio && l.Data <= fim)
+            .Where(l => l.Tipo == TipoLancamento.Despesa || l.Categoria == CategoriaLancamento.Aluguel)
+            .Sum(ValorComSinal);
+
+    /// <summary>
+    /// Yield = Receita de aluguel líquida do período (<see cref="ReceitaDeAluguelLiquidaDoPeriodo"/>)
+    /// ÷ ValorMercadoAtual — retorno só da renda de aluguel, sem valorização/depreciação. Distinto de
+    /// <see cref="Roi"/>, que inclui a variação do valor de mercado e toda categoria de Receita (ver
+    /// CONTEXT.md — "Avoid: usar ROI para essa métrica").
+    /// </summary>
+    public static decimal Yield(decimal receitaDeAluguelLiquida, decimal valorMercadoAtual) =>
+        valorMercadoAtual == 0 ? 0m : receitaDeAluguelLiquida / valorMercadoAtual;
 
     /// <summary>
     /// Lucro total = Lucro acumulado (fluxo de caixa) + valorização do Ativo (o inverso de
@@ -75,6 +89,13 @@ public static class CalculadoraFinanceira
         }
 
         return somaDosTresMeses / 3m;
+    }
+
+    /// <summary>Primeiro e último dia do mês de <paramref name="data"/> — usado por qualquer cálculo de "mês corrente" (ver AtivoService.ListarAsync e DashboardService).</summary>
+    public static (DateOnly Inicio, DateOnly Fim) IntervaloDoMes(DateOnly data)
+    {
+        var inicio = new DateOnly(data.Year, data.Month, 1);
+        return (inicio, inicio.AddMonths(1).AddDays(-1));
     }
 
     private static decimal ValorComSinal(Lancamento lancamento) =>

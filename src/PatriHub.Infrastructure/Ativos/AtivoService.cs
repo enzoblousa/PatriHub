@@ -199,12 +199,8 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
     private Task<Ativo?> BuscarAtivoDoUsuarioAsync(Guid usuarioId, Guid ativoId) =>
         db.Ativos.FirstOrDefaultAsync(a => a.Id == ativoId && a.UsuarioId == usuarioId && a.ExcluidoEm == null);
 
-    private static (DateOnly Inicio, DateOnly Fim) MesAtual()
-    {
-        var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
-        var inicio = new DateOnly(hoje.Year, hoje.Month, 1);
-        return (inicio, inicio.AddMonths(1).AddDays(-1));
-    }
+    private static (DateOnly Inicio, DateOnly Fim) MesAtual() =>
+        CalculadoraFinanceira.IntervaloDoMes(DateOnly.FromDateTime(DateTime.UtcNow));
 
     /// <summary>
     /// Roda uma criação/edição de domínio (que valida e pode lançar <see cref="ArgumentException"/>)

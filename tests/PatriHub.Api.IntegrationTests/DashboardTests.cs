@@ -51,23 +51,28 @@ public sealed class DashboardTests(PatriHubApiFactory factory) : IClassFixture<P
         var ativoId = await CriarAtivoAsync(client); // ValorAquisicao 300_000, ValorMercadoAtual 350_000
         var hoje = DateOnly.FromDateTime(DateTime.UtcNow);
         await CriarLancamentoAsync(client, ativoId, TipoLancamento.Receita, CategoriaLancamento.Aluguel, 3_500m, hoje);
+        // Receita fora da categoria Aluguel: entra no Lucro do mês, mas não na "receita de aluguel
+        // líquida" do Yield — ver ReceitaDeAluguelLiquidaDoPeriodo.
+        await CriarLancamentoAsync(client, ativoId, TipoLancamento.Receita, CategoriaLancamento.TaxaDeServico, 800m, hoje);
         await CriarLancamentoAsync(client, ativoId, TipoLancamento.Despesa, CategoriaLancamento.Condominio, 500m, hoje);
 
         var dashboard = await client.GetFromJsonAsync<PatrimonioConsolidadoDto>("/api/dashboard");
 
         var metricas = Assert.Single(dashboard!.Ativos);
         Assert.Equal(ativoId, metricas.AtivoId);
-        Assert.Equal(3_000m, metricas.LucroDoMes);
-        Assert.Equal(3_000m, metricas.LucroAcumulado);
+        Assert.Equal(3_800m, metricas.LucroDoMes); // 3_500 + 800 − 500
+        Assert.Equal(3_800m, metricas.LucroAcumulado);
+        // Yield usa só a receita de Aluguel líquida de despesas (3_500 − 500), não o Lucro do mês inteiro.
         Assert.Equal(3_000m / 350_000m, metricas.Yield);
+        Assert.NotEqual(metricas.LucroDoMes / 350_000m, metricas.Yield);
         Assert.Equal(-50_000m, metricas.Depreciacao);
-        // Lucro total com valorização = 3_000 (lucro acumulado) + 50_000 (valorização) = 53_000.
-        Assert.Equal(53_000m / 300_000m, metricas.RoiSobreValorAquisicao);
-        Assert.Equal(53_000m / 350_000m, metricas.RoiSobreValorMercadoAtual);
+        // Lucro total com valorização = 3_800 (lucro acumulado) + 50_000 (valorização) = 53_800.
+        Assert.Equal(53_800m / 300_000m, metricas.RoiSobreValorAquisicao);
+        Assert.Equal(53_800m / 350_000m, metricas.RoiSobreValorMercadoAtual);
         Assert.Null(metricas.CustoDeOportunidade);
 
-        Assert.Equal(3_000m, dashboard.LucroTotalDoMes);
-        Assert.Equal(3_000m, dashboard.LucroTotalAcumulado);
+        Assert.Equal(3_800m, dashboard.LucroTotalDoMes);
+        Assert.Equal(3_800m, dashboard.LucroTotalAcumulado);
     }
 
     [Fact]
