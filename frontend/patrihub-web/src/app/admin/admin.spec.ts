@@ -51,7 +51,7 @@ describe('Admin', () => {
     expect(service.usuarios()).toEqual([usuario]);
   });
 
-  it('carregarUsuarios com erro para de carregar sem popular a lista', () => {
+  it('carregarUsuarios com erro para de carregar sem popular a lista e expõe a mensagem', () => {
     const service = TestBed.inject(Admin);
 
     service.carregarUsuarios();
@@ -60,6 +60,24 @@ describe('Admin', () => {
 
     expect(service.carregando()).toBe(false);
     expect(service.usuarios()).toEqual([]);
+    expect(service.erro()).toBe('falha');
+  });
+
+  it('carregarUsuarios limpa o erro anterior ao tentar de novo com sucesso', () => {
+    const service = TestBed.inject(Admin);
+
+    service.carregarUsuarios();
+    httpMock
+      .expectOne(`${baseUrl}/usuarios`)
+      .flush({ erro: 'falha' }, { status: 500, statusText: 'Server Error' });
+    expect(service.erro()).toBe('falha');
+
+    service.carregarUsuarios();
+    expect(service.erro()).toBeNull();
+
+    httpMock.expectOne(`${baseUrl}/usuarios`).flush([usuario]);
+    expect(service.erro()).toBeNull();
+    expect(service.usuarios()).toEqual([usuario]);
   });
 
   it('atualizarStatus chama PATCH /api/admin/usuarios/{id}/status com o novo status', () => {

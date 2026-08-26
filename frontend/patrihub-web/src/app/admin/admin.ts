@@ -4,6 +4,7 @@ import { catchError, of } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import type { AtivoResumoDto } from '../ativos/ativos.models';
+import { mensagemErroHttp } from '../core/http/mensagem-erro-http';
 import type { LancamentoDto } from '../lancamentos/lancamentos.models';
 import type { UsuarioAdminDto } from './admin.models';
 
@@ -21,18 +22,22 @@ export class Admin {
 
   private readonly usuariosSignal = signal<UsuarioAdminDto[]>([]);
   private readonly carregandoSignal = signal(false);
+  private readonly erroSignal = signal<string | null>(null);
 
   readonly usuarios = this.usuariosSignal.asReadonly();
   readonly carregando = this.carregandoSignal.asReadonly();
+  readonly erro = this.erroSignal.asReadonly();
 
   carregarUsuarios(): void {
     this.carregandoSignal.set(true);
+    this.erroSignal.set(null);
 
     this.http
       .get<UsuarioAdminDto[]>(`${this.baseUrl}/usuarios`)
       .pipe(
-        catchError(() => {
+        catchError((erro: unknown) => {
           this.carregandoSignal.set(false);
+          this.erroSignal.set(mensagemErroHttp(erro, 'Não foi possível carregar as contas de usuário.'));
           return of(null);
         }),
       )

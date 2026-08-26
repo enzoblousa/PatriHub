@@ -59,6 +59,20 @@ describe('AdminUsuarios', () => {
     expect(linhas[0].textContent).toContain('Ativa');
   });
 
+  it('mostra a mensagem de erro (não "nenhuma conta") quando o GET falha', async () => {
+    const fixture = TestBed.createComponent(AdminUsuarios);
+    await fixture.whenStable();
+
+    httpMock
+      .expectOne(usuariosUrl)
+      .flush({ erro: 'Falha ao carregar contas.' }, { status: 500, statusText: 'Server Error' });
+    await fixture.whenStable();
+
+    const texto = fixture.nativeElement.textContent;
+    expect(texto).toContain('Falha ao carregar contas.');
+    expect(texto).not.toContain('Nenhuma conta cadastrada.');
+  });
+
   it('desabilita a ação de status pra própria conta do Admin logado', async () => {
     const fixture = TestBed.createComponent(AdminUsuarios);
     await fixture.whenStable();
