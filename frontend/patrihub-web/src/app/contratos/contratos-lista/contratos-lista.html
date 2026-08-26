@@ -1,0 +1,60 @@
+<section class="contratos-lista">
+  <h1>Contratos</h1>
+
+  <p class="acoes">
+    <a routerLink="/contratos/novo">Novo Contrato</a>
+  </p>
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (contratos.carregando()) {
+    <p>Carregando…</p>
+  } @else if (contratos.lista().length === 0) {
+    <p>Nenhum Contrato cadastrado.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Ativo</th>
+          <th>Locatário</th>
+          <th>Aluguel mensal</th>
+          <th>Vigência</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (contrato of contratos.lista(); track contrato.id) {
+          <tr>
+            <td>{{ apelidoDoAtivo(contrato.ativoId) }}</td>
+            <td>{{ nomeDoLocatario(contrato.locatarioId) }}</td>
+            <td>{{ contrato.valorAluguelMensal | number: '1.2-2' }}</td>
+            <td>{{ contrato.dataInicio }} — {{ contrato.dataFim ?? 'sem fim definido' }}</td>
+            <td>{{ rotulosStatus[contrato.status] }}</td>
+            <td>
+              @if (contrato.status === StatusContrato.Ativo) {
+                @if (confirmandoEncerramentoId() === contrato.id) {
+                  <span role="alert">
+                    Confirma encerramento?
+                    <button
+                      type="button"
+                      [disabled]="encerrandoId() === contrato.id"
+                      (click)="confirmarEncerramento(contrato.id)"
+                    >
+                      Confirmar
+                    </button>
+                    <button type="button" (click)="cancelarEncerramento()">Cancelar</button>
+                  </span>
+                } @else {
+                  <button type="button" (click)="iniciarEncerramento(contrato.id)">Encerrar</button>
+                }
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

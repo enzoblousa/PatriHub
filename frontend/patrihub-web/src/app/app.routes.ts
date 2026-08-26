@@ -75,6 +75,45 @@ export const routes: Routes = [
     ],
   },
   {
+    path: 'locatarios',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./locatarios/locatarios-lista/locatarios-lista').then(
+            (m) => m.LocatariosLista,
+          ),
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./locatarios/locatario-form/locatario-form').then((m) => m.LocatarioForm),
+      },
+      {
+        path: ':id/editar',
+        loadComponent: () =>
+          import('./locatarios/locatario-form/locatario-form').then((m) => m.LocatarioForm),
+      },
+    ],
+  },
+  {
+    path: 'contratos',
+    canActivate: [authGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./contratos/contratos-lista/contratos-lista').then((m) => m.ContratosLista),
+      },
+      {
+        path: 'novo',
+        loadComponent: () =>
+          import('./contratos/contrato-form/contrato-form').then((m) => m.ContratoForm),
+      },
+    ],
+  },
+  {
     path: '**',
     redirectTo: '',
   },

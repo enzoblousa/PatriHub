@@ -1,0 +1,48 @@
+<section class="locatario-form">
+  <h1>{{ modoEdicao ? 'Editar Locatário' : 'Novo Locatário' }}</h1>
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <label>
+        Nome
+        <input type="text" formControlName="nome" autocomplete="name" />
+      </label>
+      @if (form.controls.nome.invalid && form.controls.nome.touched) {
+        <p class="campo-erro">Informe o nome do Locatário.</p>
+      }
+
+      <label>
+        CPF
+        <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
+      </label>
+      @if (form.controls.cpf.invalid && form.controls.cpf.touched) {
+        <p class="campo-erro">Informe o CPF do Locatário.</p>
+      }
+
+      <label>
+        Telefone
+        <input type="text" formControlName="telefone" autocomplete="tel" />
+      </label>
+
+      <label>
+        Email
+        <input type="email" formControlName="email" autocomplete="email" />
+      </label>
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <p class="campo-erro">Informe um email válido.</p>
+      }
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando…' : 'Salvar' }}
+      </button>
+    </form>
+  }
+
+  <p><a routerLink="/locatarios">Voltar pra lista</a></p>
+</section>
