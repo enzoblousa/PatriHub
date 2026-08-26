@@ -159,7 +159,7 @@ describe('LancamentoForm', () => {
       expect(componente['form'].controls.valor.value).toBe(400);
     });
 
-    it('salva via PUT /api/lancamentos/{id}', async () => {
+    it('trava o campo Ativo na edição (backend rejeita PUT que troca o AtivoId)', async () => {
       const fixture = TestBed.createComponent(LancamentoForm);
       const componente = fixture.componentInstance;
       await fixture.whenStable();
@@ -179,6 +179,29 @@ describe('LancamentoForm', () => {
       });
       await fixture.whenStable();
 
+      expect(componente['form'].controls.ativoId.disabled).toBe(true);
+    });
+
+    it('salva via PUT /api/lancamentos/{id} preservando o ContratoId original', async () => {
+      const fixture = TestBed.createComponent(LancamentoForm);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      httpMock.expectOne(ativosUrl).flush([]);
+      httpMock.expectOne(`${baseUrl}/lancamento-1`).flush({
+        id: 'lancamento-1',
+        ativoId: 'ativo-1',
+        contratoId: 'contrato-1',
+        tipo: 1,
+        categoria: 4,
+        valor: 400,
+        data: '2026-03-12',
+        descricao: 'Condomínio de março',
+        criadoEm: '2026-03-12T00:00:00Z',
+        atualizadoEm: '2026-03-12T00:00:00Z',
+      });
+      await fixture.whenStable();
+
       componente['form'].controls.valor.setValue(450);
       fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
       await fixture.whenStable();
@@ -186,6 +209,8 @@ describe('LancamentoForm', () => {
       const req = httpMock.expectOne(`${baseUrl}/lancamento-1`);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body.valor).toBe(450);
+      expect(req.request.body.ativoId).toBe('ativo-1');
+      expect(req.request.body.contratoId).toBe('contrato-1');
       req.flush({ id: 'lancamento-1' });
     });
   });

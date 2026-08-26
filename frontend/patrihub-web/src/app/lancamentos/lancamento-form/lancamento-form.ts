@@ -1,5 +1,4 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -7,7 +6,7 @@ import { Ativos } from '../../ativos/ativos';
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Lancamentos } from '../lancamentos';
 import { categoriasPermitidas, ROTULOS_CATEGORIA, ROTULOS_TIPO } from '../lancamentos-categorias';
-import type { LancamentoRequest } from '../lancamentos.models';
+import type { CategoriaLancamento, LancamentoRequest } from '../lancamentos.models';
 import { TipoLancamento } from '../lancamentos.models';
 
 /**
@@ -49,24 +48,40 @@ export class LancamentoForm {
     descricao: [''],
   });
 
-  private readonly tipoSignal = toSignal(this.form.controls.tipo.valueChanges, {
-    initialValue: this.form.controls.tipo.getRawValue(),
-  });
-  protected readonly categoriasDisponiveis = computed(() => categoriasPermitidas(this.tipoSignal()));
+  protected readonly categoriasDisponiveis = signal<readonly CategoriaLancamento[]>(
+    categoriasPermitidas(TipoLancamento.Receita),
+  );
+
+  /**
+   * `ContratoId` original do Lançamento carregado, preservado através da edição — não vira
+   * campo do formulário (fora do escopo desta tela, ver issue #21), mas `LancamentoRequest`
+   * exige o valor completo em toda edição, e sobrescrevê-lo com `null` desvincularia
+   * silenciosamente um Lançamento já ligado a um Contrato.
+   */
+  private contratoIdOriginal: string | null = null;
 
   constructor() {
     this.ativos.carregarLista();
 
-    effect(() => {
-      const disponiveis = this.categoriasDisponiveis();
+    // Zera a categoria pra primeira válida sempre que o Tipo muda — AC "Categoria disponível
+    // no formulário respeita a lista fixa por Tipo".
+    this.form.controls.tipo.valueChanges.subscribe((tipo) => {
+      const disponiveis = categoriasPermitidas(tipo);
+      this.categoriasDisponiveis.set(disponiveis);
       if (!disponiveis.includes(this.form.controls.categoria.value)) {
         this.form.controls.categoria.setValue(disponiveis[0]);
       }
     });
 
     if (this.lancamentoId !== null) {
+      // O backend rejeita PUT que troca o AtivoId de um Lançamento existente (ver
+      // `Atualizar_lancamento_com_AtivoId_diferente_retorna_400`) — trava o campo em vez de
+      // deixar o usuário bater num 400 sem explicação.
+      this.form.controls.ativoId.disable();
+
       this.lancamentos.obterDetalhe(this.lancamentoId).subscribe({
         next: (lancamento) => {
+          this.contratoIdOriginal = lancamento.contratoId;
           this.form.patchValue({
             ativoId: lancamento.ativoId,
             tipo: lancamento.tipo,
@@ -98,7 +113,7 @@ export class LancamentoForm {
     const request: LancamentoRequest = {
       ...valores,
       descricao: valores.descricao.trim() === '' ? null : valores.descricao.trim(),
-      contratoId: null,
+      contratoId: this.contratoIdOriginal,
     };
 
     const requisicao =
