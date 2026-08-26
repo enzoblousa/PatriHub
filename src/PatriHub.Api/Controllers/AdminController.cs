@@ -22,7 +22,7 @@ public sealed class AdminController(IAdminService adminService) : ControllerBase
     [HttpGet("usuarios")]
     public async Task<IActionResult> ListarUsuarios()
     {
-        var usuarios = await adminService.ListarUsuariosAsync();
+        var usuarios = await adminService.ListarUsuariosAsync(User.ObterUsuarioId());
         return Ok(usuarios);
     }
 

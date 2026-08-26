@@ -12,7 +12,7 @@ namespace PatriHub.Application.Admin;
 /// </summary>
 public interface IAdminService
 {
-    Task<IReadOnlyList<UsuarioAdminDto>> ListarUsuariosAsync();
+    Task<IReadOnlyList<UsuarioAdminDto>> ListarUsuariosAsync(Guid adminUsuarioId);
 
     Task<ResultadoOperacao> AtualizarStatusUsuarioAsync(Guid adminUsuarioId, Guid usuarioAlvoId, bool ativo);
 

@@ -65,6 +65,21 @@ public sealed class AdminTests(PatriHubApiFactory factory) : IClassFixture<Patri
     }
 
     [Fact]
+    public async Task ListarUsuarios_grava_uma_auditoria_por_usuario_retornado_mas_nao_para_o_proprio_admin()
+    {
+        var (admin, adminId) = await factory.CriarClienteAdminAutenticadoComIdAsync();
+        var (_, usuarioAlvoId) = await factory.CriarClienteAutenticadoComIdAsync();
+
+        await admin.GetFromJsonAsync<List<UsuarioAdminDto>>("/api/admin/usuarios");
+
+        var log = Assert.Single(await LogsDoAlvoAsync(usuarioAlvoId));
+        Assert.Equal(adminId, log.AdminUsuarioId);
+        Assert.Equal(RecursoAuditoria.Usuario, log.Recurso);
+        Assert.Equal(usuarioAlvoId, log.RecursoId);
+        Assert.Empty(await LogsDoAlvoAsync(adminId));
+    }
+
+    [Fact]
     public async Task AtualizarStatus_desativa_conta_e_bloqueia_login_subsequente()
     {
         var admin = await factory.CriarClienteAdminAutenticadoAsync();
@@ -148,6 +163,22 @@ public sealed class AdminTests(PatriHubApiFactory factory) : IClassFixture<Patri
 
         var loginComSenhaNova = await factory.CreateClient().PostAsJsonAsync("/api/auth/login", new LoginRequest(email, novaSenha));
         Assert.Equal(HttpStatusCode.OK, loginComSenhaNova.StatusCode);
+    }
+
+    /// <summary>
+    /// Diferente de AtualizarStatus (que bloqueia o Admin de mexer na própria conta), resetar a
+    /// própria senha continua permitido: não existe endpoint de autoatendimento pra trocar senha
+    /// nesta issue, então bloquear aqui deixaria o Admin sem nenhuma forma de trocá-la
+    /// (ver AdminService.ResetarSenhaAsync).
+    /// </summary>
+    [Fact]
+    public async Task ResetarSenha_da_propria_conta_e_permitido()
+    {
+        var (admin, adminId) = await factory.CriarClienteAdminAutenticadoComIdAsync();
+
+        var response = await admin.PostAsJsonAsync($"/api/admin/usuarios/{adminId}/resetar-senha", new ResetarSenhaRequest("OutraSenhaForte456!"));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }
 
     [Fact]

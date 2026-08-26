@@ -22,7 +22,7 @@ public sealed class AdminService(
     IAtivoService ativoService,
     ILancamentoService lancamentoService) : IAdminService
 {
-    public async Task<IReadOnlyList<UsuarioAdminDto>> ListarUsuariosAsync()
+    public async Task<IReadOnlyList<UsuarioAdminDto>> ListarUsuariosAsync(Guid adminUsuarioId)
     {
         var usuarios = await userManager.Users.OrderBy(u => u.Email).ToListAsync();
 
@@ -39,6 +39,11 @@ public sealed class AdminService(
             var ativo = !await userManager.IsLockedOutAsync(usuario);
             var papel = papeisPorUsuario[usuario.Id].FirstOrDefault() ?? PapelUsuario.User.ToString();
             resultado.Add(new UsuarioAdminDto(usuario.Id, usuario.Nome, usuario.Email!, papel!, ativo, usuario.CriadoEm));
+
+            // Nome/email/status de conta de outro usuário também é dado pessoal sob LGPD — audita
+            // um registro por usuário retornado (nunca para o próprio Admin), mesmo sendo uma
+            // listagem (ver ADR-0002: "todo acesso do Admin a dado de outro usuário").
+            await RegistrarAuditoriaAsync(adminUsuarioId, usuario.Id, RecursoAuditoria.Usuario, usuario.Id);
         }
 
         return resultado;
@@ -67,6 +72,12 @@ public sealed class AdminService(
         return ResultadoOperacao.ComSucesso();
     }
 
+    /// <summary>
+    /// Sem checagem de `adminUsuarioId == usuarioAlvoId` aqui (diferente de
+    /// <see cref="AtualizarStatusUsuarioAsync"/>): não existe hoje nenhum endpoint de
+    /// autoatendimento pra trocar a própria senha, então bloquear o Admin de resetar a própria
+    /// senha por aqui o deixaria sem nenhuma forma de trocá-la.
+    /// </summary>
     public async Task<ResultadoOperacao> ResetarSenhaAsync(Guid adminUsuarioId, Guid usuarioAlvoId, string novaSenha)
     {
         var usuarioAlvo = await userManager.FindByIdAsync(usuarioAlvoId.ToString());
@@ -81,24 +92,21 @@ public sealed class AdminService(
         // Valida a nova senha ANTES de remover a antiga: RemovePasswordAsync/AddPasswordAsync não
         // são atômicos, e uma novaSenha inválida não pode deixar a conta sem senha nenhuma.
         var validacao = await ValidarSenhaAsync(usuarioAlvo, novaSenha);
-        if (!validacao.Succeeded)
+        if (ParaErro(validacao) is { } erroValidacao)
         {
-            var erroValidacao = string.Join("; ", validacao.Errors.Select(e => e.Description));
-            return ResultadoOperacao.ComErro(erroValidacao, TipoErroOperacao.Validacao);
+            return erroValidacao;
         }
 
         var removido = await userManager.RemovePasswordAsync(usuarioAlvo);
-        if (!removido.Succeeded)
+        if (ParaErro(removido) is { } erroRemocao)
         {
-            var erroRemocao = string.Join("; ", removido.Errors.Select(e => e.Description));
-            return ResultadoOperacao.ComErro(erroRemocao, TipoErroOperacao.Validacao);
+            return erroRemocao;
         }
 
         var adicionado = await userManager.AddPasswordAsync(usuarioAlvo, novaSenha);
-        if (!adicionado.Succeeded)
+        if (ParaErro(adicionado) is { } erroAdicao)
         {
-            var erroAdicao = string.Join("; ", adicionado.Errors.Select(e => e.Description));
-            return ResultadoOperacao.ComErro(erroAdicao, TipoErroOperacao.Validacao);
+            return erroAdicao;
         }
 
         await RegistrarAuditoriaAsync(adminUsuarioId, usuarioAlvoId, RecursoAuditoria.Usuario, usuarioAlvoId);
@@ -117,6 +125,13 @@ public sealed class AdminService(
         return ResultadoOperacao<IReadOnlyList<AtivoResumoDto>>.ComSucesso(ativos);
     }
 
+    /// <summary>
+    /// Sem <see cref="UsuarioExisteAsync"/> aqui (diferente de <see cref="ListarAtivosDoUsuarioAsync"/>):
+    /// <see cref="IAtivoService.ObterDetalheAsync"/> já devolve NaoEncontrado quando o Ativo não
+    /// existe pra `usuarioAlvoId`, o que cobre tanto "Ativo inexistente" quanto "usuário
+    /// inexistente" com o mesmo 404 — a checagem só é necessária na listagem, que nunca falha
+    /// (uma lista vazia seria ambígua entre "sem Ativos" e "usuário não existe").
+    /// </summary>
     public async Task<ResultadoOperacao<AtivoDetalheDto>> ObterAtivoDoUsuarioAsync(Guid adminUsuarioId, Guid usuarioAlvoId, Guid ativoId)
     {
         var resultado = await ativoService.ObterDetalheAsync(usuarioAlvoId, ativoId);
@@ -170,6 +185,12 @@ public sealed class AdminService(
 
         return IdentityResult.Success;
     }
+
+    /// <summary>Mapeia um <see cref="IdentityResult"/> falho pro mesmo formato de erro do resto do serviço — <c>null</c> quando `resultado.Succeeded`.</summary>
+    private static ResultadoOperacao? ParaErro(IdentityResult resultado) =>
+        resultado.Succeeded
+            ? null
+            : ResultadoOperacao.ComErro(string.Join("; ", resultado.Errors.Select(e => e.Description)), TipoErroOperacao.Validacao);
 
     /// <summary>
     /// Nunca grava quando `adminUsuarioId == usuarioAlvoId` — auditoria existe só para acesso a
