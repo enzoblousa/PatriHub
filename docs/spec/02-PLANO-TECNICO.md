@@ -96,3 +96,34 @@ comuns + tabela filha (`Imoveis` ou `Carros`) com PK = FK para `Ativos.Id` (EF C
 ## 7. Fora do plano técnico do MVP
 - Sem mensageria/fila, sem cache distribuído, sem multi-região, sem CDN dedicado, sem
   integrações externas (conforme `00-CONSTITUTION.md`).
+
+## 8. Frontend (Angular)
+- **Componentes:** standalone (sem `NgModule`), pasta por feature (`ativos/`, `lancamentos/`,
+  `locatarios-contratos/`, `dashboard/`, `admin/`, `auth/`) — mesmo espírito modular do backend
+  (`PatriHub.Domain`/`Application`/`Infrastructure`/`Api`), mas sem replicar as quatro camadas
+  no frontend: aqui um `service` por feature já concentra chamada HTTP + estado.
+- **Estado:** Angular Signals (`signal`/`computed`) dentro dos services de feature, sem NgRx ou
+  outra lib de state management — a superfície é CRUD + um dashboard de leitura, não uma app
+  com estado compartilhado complexo o bastante pra justificar a dependência extra (mesmo
+  Princípio 2 da Constituição, "simples antes de completo").
+- **Roteamento:** `provideRouter`, com `authGuard` (exige JWT válido em `localStorage`) e
+  `adminGuard` (exige a claim de Role `Admin` — ver `PatriHubClaimTypes`/`ClaimTypes.Role` no
+  token) protegendo as rotas correspondentes; redireciona pro login quando o guard barra.
+- **Chamada à API:** um `HttpInterceptorFn` único injeta `Authorization: Bearer <token>` em
+  toda request (token lido de `localStorage` — ver [ADR-0004](../adr/0004-jwt-em-localstorage.md))
+  e trata `401` de forma centralizada (limpa o token, redireciona pro login) — nenhum service de
+  feature repete essa lógica.
+- **Forms:** Reactive Forms em todo formulário (Ativo, Lançamento, Locatário, Contrato,
+  login/registro) — não template-driven, pela validação tipada e testável fora do template.
+- **CORS:** `PatriHub.Api` ainda não tem policy de CORS configurada — necessário liberar a
+  origin do dev server Angular via `AddCors`/`UseCors` em `Program.cs` antes do frontend
+  conseguir chamar a API localmente.
+- **Docker:** `docker-compose.yml` ganha um serviço `frontend` (dev server ou build servido —
+  a decidir na implementação), somando-se aos serviços `api`/`postgres` já existentes.
+- **Testes:** convenção padrão do Angular CLI mais recente no início da implementação
+  (Karma+Jasmine ou Vitest) para componentes/services; `HttpTestingController` mocka o
+  `HttpClient` nos testes de service que chamam a API — sem Testcontainers aqui, já que não há
+  banco no frontend.
+- **Identidade visual:** propositalmente fora deste plano técnico (ver `01-SPEC-FUNCIONAL.md
+  §9`) — paleta, tipografia e estilo geral são decididos tela a tela na implementação, não
+  fixados de antemão.
