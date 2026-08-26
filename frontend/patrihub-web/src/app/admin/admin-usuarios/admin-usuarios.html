@@ -1,12 +1,14 @@
 <section class="admin-usuarios">
   <h1>Contas de usuário</h1>
 
-  @if (erro()) {
-    <p class="erro" role="alert">{{ erro() }}</p>
+  @if (erro() || admin.erro()) {
+    <p class="erro" role="alert">{{ erro() ?? admin.erro() }}</p>
   }
 
   @if (admin.carregando()) {
     <p>Carregando…</p>
+  } @else if (admin.erro()) {
+    <!-- Erro já exibido acima; evita mostrar "nenhuma conta" no lugar de uma falha real. -->
   } @else if (admin.usuarios().length === 0) {
     <p>Nenhuma conta cadastrada.</p>
   } @else {
