@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 
+import { adminGuard } from './core/guards/admin-guard';
 import { authGuard } from './core/guards/auth-guard';
 
 export const routes: Routes = [
@@ -118,6 +119,31 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./locatarios-contratos/contrato-form/contrato-form').then(
             (m) => m.ContratoForm,
+          ),
+      },
+    ],
+  },
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./admin/admin-usuarios/admin-usuarios').then((m) => m.AdminUsuarios),
+      },
+      {
+        path: 'usuarios/:id/ativos',
+        loadComponent: () =>
+          import('./admin/admin-usuario-ativos/admin-usuario-ativos').then(
+            (m) => m.AdminUsuarioAtivos,
+          ),
+      },
+      {
+        path: 'usuarios/:id/lancamentos',
+        loadComponent: () =>
+          import('./admin/admin-usuario-lancamentos/admin-usuario-lancamentos').then(
+            (m) => m.AdminUsuarioLancamentos,
           ),
       },
     ],

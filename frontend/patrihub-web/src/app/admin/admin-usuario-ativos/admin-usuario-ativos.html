@@ -1,0 +1,39 @@
+<section class="admin-usuario-ativos">
+  <h1>Ativos do usuário</h1>
+  <p>Leitura auditada — sem edição.</p>
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else if (ativos().length === 0) {
+    <p>Este usuário não tem Ativos cadastrados.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Apelido</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Valor de mercado</th>
+          <th>Lucro do mês</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (ativo of ativos(); track ativo.id) {
+          <tr>
+            <td>{{ ativo.apelido }}</td>
+            <td>{{ rotulosTipo[ativo.tipo] }}</td>
+            <td>{{ rotulosStatus[ativo.status] }}</td>
+            <td>{{ ativo.valorMercadoAtual | number: '1.2-2' }}</td>
+            <td>{{ ativo.lucroDoMes | number: '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <p><a routerLink="/admin">Voltar pra contas</a></p>
+</section>

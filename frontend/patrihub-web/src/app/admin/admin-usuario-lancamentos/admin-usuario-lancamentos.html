@@ -1,0 +1,41 @@
+<section class="admin-usuario-lancamentos">
+  <h1>Lançamentos do usuário</h1>
+  <p>Leitura auditada — sem edição.</p>
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else if (lancamentos().length === 0) {
+    <p>Este usuário não tem Lançamentos cadastrados.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Ativo</th>
+          <th>Tipo</th>
+          <th>Categoria</th>
+          <th>Valor</th>
+          <th>Data</th>
+          <th>Descrição</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (lancamento of lancamentos(); track lancamento.id) {
+          <tr>
+            <td>{{ apelidoDoAtivo(lancamento.ativoId) }}</td>
+            <td>{{ rotulosTipo[lancamento.tipo] }}</td>
+            <td>{{ rotulosCategoria[lancamento.categoria] }}</td>
+            <td>{{ lancamento.valor | number: '1.2-2' }}</td>
+            <td>{{ lancamento.data }}</td>
+            <td>{{ lancamento.descricao }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+
+  <p><a routerLink="/admin">Voltar pra contas</a></p>
+</section>

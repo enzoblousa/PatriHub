@@ -1,0 +1,81 @@
+<section class="admin-usuarios">
+  <h1>Contas de usuário</h1>
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  @if (admin.carregando()) {
+    <p>Carregando…</p>
+  } @else if (admin.usuarios().length === 0) {
+    <p>Nenhuma conta cadastrada.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Email</th>
+          <th>Papel</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (usuario of admin.usuarios(); track usuario.id) {
+          <tr>
+            <td>{{ usuario.nome }}</td>
+            <td>{{ usuario.email }}</td>
+            <td>{{ usuario.papel }}</td>
+            <td>{{ usuario.ativo ? 'Ativa' : 'Desativada' }}</td>
+            <td>
+              <p>
+                <a [routerLink]="['/admin/usuarios', usuario.id, 'ativos']">Ver Ativos</a>
+                <a [routerLink]="['/admin/usuarios', usuario.id, 'lancamentos']">Ver Lançamentos</a>
+              </p>
+
+              @if (confirmandoStatusId() === usuario.id) {
+                <p role="alert">
+                  Confirma {{ usuario.ativo ? 'desativar' : 'ativar' }} esta conta?
+                  <button
+                    type="button"
+                    [disabled]="atualizandoStatusId() === usuario.id"
+                    (click)="confirmarAlteracaoStatus(usuario)"
+                  >
+                    Confirmar
+                  </button>
+                  <button type="button" (click)="cancelarAlteracaoStatus()">Cancelar</button>
+                </p>
+              } @else {
+                <button
+                  type="button"
+                  [disabled]="ehAPropriaConta(usuario)"
+                  (click)="iniciarAlteracaoStatus(usuario.id)"
+                >
+                  {{ usuario.ativo ? 'Desativar' : 'Ativar' }}
+                </button>
+              }
+
+              @if (resetandoSenhaId() === usuario.id) {
+                <form [formGroup]="resetSenhaForm" (ngSubmit)="confirmarResetSenha(usuario.id)">
+                  <label>
+                    Nova senha
+                    <input type="password" formControlName="novaSenha" />
+                  </label>
+                  @if (resetSenhaForm.controls.novaSenha.invalid && resetSenhaForm.controls.novaSenha.touched) {
+                    <p class="campo-erro">Informe a nova senha.</p>
+                  }
+                  <button type="submit" [disabled]="enviandoResetId() === usuario.id">
+                    {{ enviandoResetId() === usuario.id ? 'Salvando…' : 'Confirmar reset' }}
+                  </button>
+                  <button type="button" (click)="cancelarResetSenha()">Cancelar</button>
+                </form>
+              } @else {
+                <button type="button" (click)="iniciarResetSenha(usuario.id)">Resetar senha</button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
