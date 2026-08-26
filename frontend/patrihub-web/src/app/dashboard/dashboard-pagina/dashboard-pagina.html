@@ -1,0 +1,72 @@
+<section class="dashboard-pagina">
+  <h1>Dashboard</h1>
+
+  @if (dashboard.carregando() && !dashboard.dado()) {
+    <p>Carregando…</p>
+  } @else if (dashboard.dado(); as patrimonio) {
+    <dl class="totais">
+      <dt>Lucro total do mês</dt>
+      <dd>{{ patrimonio.lucroTotalDoMes | number: '1.2-2' }}</dd>
+
+      <dt>Lucro total acumulado</dt>
+      <dd>{{ patrimonio.lucroTotalAcumulado | number: '1.2-2' }}</dd>
+    </dl>
+
+    <form class="taxa-referencia" [formGroup]="form" (ngSubmit)="recalcular()">
+      <label>
+        Taxa de referência anual (%)
+        <input
+          type="number"
+          formControlName="taxaReferenciaAnualPercentual"
+          placeholder="ex.: 12"
+          step="0.01"
+        />
+      </label>
+      <button type="submit" [disabled]="dashboard.carregando()">Recalcular custo de oportunidade</button>
+    </form>
+
+    @if (patrimonio.ativos.length === 0) {
+      <p>Você ainda não cadastrou nenhum Ativo.</p>
+    } @else {
+      <table>
+        <caption>
+          Depreciação negativa significa valorização (ValorMercadoAtual acima do ValorAquisição).
+        </caption>
+        <thead>
+          <tr>
+            <th>Ativo</th>
+            <th>Lucro do mês</th>
+            <th>Lucro acumulado</th>
+            <th>Yield</th>
+            <th>ROI (aquisição)</th>
+            <th>ROI (mercado)</th>
+            <th>Depreciação</th>
+            <th>Projeção de lucro</th>
+            <th>Custo de oportunidade</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (metricas of patrimonio.ativos; track metricas.ativoId) {
+            <tr>
+              <td>{{ metricas.apelido }}</td>
+              <td>{{ metricas.lucroDoMes | number: '1.2-2' }}</td>
+              <td>{{ metricas.lucroAcumulado | number: '1.2-2' }}</td>
+              <td>{{ metricas.yield | percent: '1.2-2' }}</td>
+              <td>{{ metricas.roiSobreValorAquisicao | percent: '1.2-2' }}</td>
+              <td>{{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}</td>
+              <td>{{ metricas.depreciacao | number: '1.2-2' }}</td>
+              <td>{{ metricas.projecaoDeLucro | number: '1.2-2' }}</td>
+              <td>
+                {{
+                  metricas.custoDeOportunidade !== null
+                    ? (metricas.custoDeOportunidade | number: '1.2-2')
+                    : '—'
+                }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  }
+</section>
