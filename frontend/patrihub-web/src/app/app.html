@@ -7,6 +7,9 @@
       <a routerLink="/lancamentos">Lançamentos</a>
       <a routerLink="/locatarios">Locatários</a>
       <a routerLink="/contratos">Contratos</a>
+      @if (auth.usuario()?.papel === 'Admin') {
+        <a routerLink="/admin">Admin</a>
+      }
     </nav>
     <span class="usuario">{{ auth.usuario()?.nome }}</span>
     <button type="button" (click)="sair()">Sair</button>
