@@ -1,0 +1,39 @@
+<section class="registro">
+  <h1>Criar conta</h1>
+
+  <form [formGroup]="form" (ngSubmit)="criarConta()" novalidate>
+    <label>
+      Nome
+      <input type="text" formControlName="nome" autocomplete="name" />
+    </label>
+    @if (form.controls.nome.invalid && form.controls.nome.touched) {
+      <p class="campo-erro">Informe seu nome.</p>
+    }
+
+    <label>
+      Email
+      <input type="email" formControlName="email" autocomplete="email" />
+    </label>
+    @if (form.controls.email.invalid && form.controls.email.touched) {
+      <p class="campo-erro">Informe um email válido.</p>
+    }
+
+    <label>
+      Senha
+      <input type="password" formControlName="senha" autocomplete="new-password" />
+    </label>
+    @if (form.controls.senha.invalid && form.controls.senha.touched) {
+      <p class="campo-erro">Informe uma senha.</p>
+    }
+
+    @if (erro()) {
+      <p class="erro" role="alert">{{ erro() }}</p>
+    }
+
+    <button type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Criando…' : 'Criar conta' }}
+    </button>
+  </form>
+
+  <p>Já tem conta? <a routerLink="/login">Entrar</a></p>
+</section>
