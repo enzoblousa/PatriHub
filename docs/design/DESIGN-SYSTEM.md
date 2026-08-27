@@ -7,19 +7,31 @@ documento discordarem, ajuste o CSS.
 
 ## 1. Direção
 
-**Utilitário denso.** PatriHub não é um app consumer — é uma ferramenta que alguém abre todo
-dia pra olhar números do próprio patrimônio. A referência é a mesa de operações (Bloomberg
-terminal, dashboard de trading), não um app de banco pessoal: densidade de informação e
-precisão numérica importam mais que calor visual ou espaço em branco generoso.
+**Utilitário denso, corporativo.** PatriHub não é um app consumer — é uma ferramenta que
+alguém abre todo dia pra olhar números do próprio patrimônio. A referência é uma ferramenta
+fintech B2B séria (o tipo de painel que um banco ou uma fintech dá pro próprio operador), não
+um HUD de jogo nem um terminal de hacker: densidade de informação e precisão numérica
+importam mais que calor visual, mas a execução tem que ler como profissional, nunca como
+tela de menu ou console de estimação de terminal retrô.
 
-Três regras seguem disso, e valem mais que qualquer detalhe abaixo:
+Quatro regras seguem disso, e valem mais que qualquer detalhe abaixo:
 
 1. **Cor é sinal, nunca decoração.** Só duas cores carregam significado (§2) e só aparecem
-   onde o significado existe. Nenhum elemento é colorido "pra ficar bonito".
+   onde o significado existe. Nenhum elemento é colorido "pra ficar bonito" — e mesmo essas
+   duas cores são propositalmente contidas (chroma baixo), nunca neon.
 2. **Número é mono, sempre.** Todo valor financeiro, percentual, data ou id usa
    `--font-mono` com `tabular-nums` — colunas de tabela alinham de verdade.
 3. **Sem sombra, sem gradiente, sem ilustração.** Hierarquia vem de tipografia, espaçamento e
    hairlines (bordas de 1px), não de profundidade falsa.
+4. **Caixa alta é rótulo estrutural, não título nem botão.** Reservada pra metadado pequeno
+   (cabeçalho de tabela, rótulo de campo, badge) — ver §3. Título, botão e item de navegação
+   ficam em caixa normal; caixa alta em tudo é o que lembra tela de menu de jogo.
+
+*Nota de revisão*: a primeira versão desta direção usava verde/vermelho bem mais saturados,
+scanline de fundo, um ponto pulsante no cabeçalho e caixa alta em título/botão/navegação —
+lido como HUD de jogo, não como ferramenta profissional. Esta versão corrige isso; se uma
+mudança futura reintroduzir qualquer um desses quatro elementos, é sinal de que a regra 4 (ou
+o espírito geral desta seção) está sendo esquecida.
 
 ## 2. Cor
 
@@ -34,6 +46,9 @@ tokens redefinidos — nunca cor direta fora desses dois blocos.
 | `--text` / `--text-muted` / `--text-dim` | Texto principal / rótulos e legendas / cabeçalho de tabela, placeholder |
 | `--sinal-pos` (+ `-dim`, `-hover`) / `--on-sinal-pos` | **Positivo/ativo/confirmação**: lucro ≥ 0, Contrato/Ativo em estado "bom", CTA primário (`button[type=submit]`), foco de input / cor do texto sobre um fundo `--sinal-pos` sólido |
 | `--sinal-neg` (+ `-dim`) | **Negativo/risco**: lucro < 0, erro, exclusão, zona de risco |
+
+Ambos os tons de sinal usam chroma baixo (~0.09–0.13) de propósito — o suficiente pra ler como
+verde/vermelho, longe do verde/vermelho saturado de HUD ou alerta de sistema.
 
 **Não existe um terceiro sinal** (ex.: âmbar pra "atenção"). Um status que não é claramente
 bom nem ruim (`Vago`, `Manutenção`, `À venda`, `Encerrado`) fica neutro — ver §5.3. Resistir à
@@ -51,9 +66,12 @@ anterior fazia): **IBM Plex Sans Condensed** pra UI, **IBM Plex Mono** pra todo 
 Reforça "sistema técnico" em vez de "produto de marca": os dois cortes existem na mesma
 fundição, desenhados pra funcionar juntos.
 
-- `--font-display` / `--font-body`: IBM Plex Sans Condensed. Títulos (`h1`/`h2`) e rótulos
-  (`label`, `th`, `dt`, `button`) são **caixa alta com letter-spacing** — ver `styles.css`.
-  Texto corrido normal (parágrafos, mensagens de erro) fica em caixa normal.
+- `--font-display` / `--font-body`: IBM Plex Sans Condensed. **Caixa alta com
+  letter-spacing é só pra rótulo estrutural pequeno** — `label`, `th`, `dt`, `fieldset
+  legend`, badge de status (§5.3) — ver `styles.css`. Título (`h1`/`h2`), `button`, link de
+  navegação (`.navegacao a`, `.acoes a`) e a marca no cabeçalho ficam em **caixa normal**: são
+  a coisa que se lê e se clica, não um metadado — caixa alta ali é o que lembra menu de jogo
+  (regra 4, §1).
 - `--font-mono`: IBM Plex Mono, com `font-variant-numeric: tabular-nums`. Todo `input`,
   `td`, `dd` usa mono por padrão (ver `styles.css`) — a exceção é uma célula de tabela com
   link/botão/form dentro (`td:has(a)`, `td:has(button)`, `td:has(form)`), que volta pra
@@ -85,9 +103,9 @@ pra tudo que o app faz hoje.
 ### 5.2 Tabelas
 
 Componente central da direção. Cabeçalho em `--font-display` caixa alta pequena (`th`),
-corpo em `--font-mono` (`td`). Hover de linha soma um
-`border-left` de 2px em `--sinal-pos` — não é sinal de dado, é sinal de "isto é a linha sob o
-cursor", então usa a mesma cor de foco/ação primária.
+corpo em `--font-mono` (`td`). Hover de linha soma um `border-left` de 2px em
+`--border-strong` — neutro de propósito: é só "isto é a linha sob o cursor", não um sinal de
+dado, então não usa a cor de sinal (ver regra 1, §1).
 
 ### 5.3 Badge de status
 
@@ -124,32 +142,26 @@ número neutro.
 
 ## 7. Movimento
 
-Minimalista, coerente com "sem decoração":
+Minimalista ao ponto de quase não existir — nenhuma animação persistente/em loop (um elemento
+pulsando ou piscando sem parar é HUD, não ferramenta profissional, ver regra 4 §1):
 
-- `main` tem um fade-up de 250ms na entrada de cada rota (`@keyframes entrar`).
-- O ponto antes de "PATRIHUB" no cabeçalho pulsa (`@keyframes pulsar`, 2.4s) — único elemento
-  persistente animado do app, sinaliza "sessão viva numa mesa de dados".
-- Ambos respeitam `prefers-reduced-motion: reduce` (`animation: none`).
-- Sem hover-lift, sem transição de escala, sem confete. Se surgir vontade de adicionar uma
-  animação nova, perguntar primeiro se ela carrega informação (estado mudou) ou é só
-  enfeite — só a primeira se justifica aqui.
+- `main` tem um fade-in de 200ms (opacidade só, sem deslocamento) na entrada de cada rota
+  (`@keyframes entrar`), e respeita `prefers-reduced-motion: reduce` (`animation: none`).
+- Fora isso, só transições de estado pontuais (`width` da sidebar ao colapsar, `border-color`
+  num hover) — nunca decorativas, nunca em loop.
+- Sem hover-lift, sem confete, sem indicador "ao vivo" piscando. Se surgir vontade de
+  adicionar uma animação nova, perguntar primeiro se ela carrega informação (estado mudou) ou
+  é só enfeite — só a primeira se justifica aqui, e mesmo assim uma vez, não em loop.
 
-## 8. Textura
-
-`body::before` aplica um scanline horizontal quase imperceptível (`var(--scanline)`, listras
-de 1px a cada 3px) — textura de terminal sem virar ruído. É o único elemento decorativo do
-sistema; não adicionar noise, grid ou padrão geométrico em cima disso. `--scanline` é redefinido
-por tema (branco translúcido no escuro, preto translúcido no claro — ver §10).
-
-## 9. Layout: cabeçalho + sidebar retrátil
+## 8. Layout: cabeçalho + sidebar retrátil
 
 `app.html`/`app.css` (`App`, o componente raiz) são o único lugar que monta a casca da
 aplicação — nenhuma tela individual reimplementa cabeçalho ou navegação.
 
 - **Cabeçalho** (`.cabecalho`): barra fina de topo, sempre visível. Da esquerda pra direita —
-  botão de alternar a sidebar (só quando autenticado), marca "PATRIHUB" com o ponto pulsante
-  (§7), toggle de tema (§10, sempre visível, mesmo deslogado) e, só autenticado, nome do
-  usuário + link Perfil + botão Sair.
+  botão de alternar a sidebar (só quando autenticado), marca "PatriHub" (texto simples, caixa
+  normal — ver §3), toggle de tema (§9, sempre visível, mesmo deslogado) e, só autenticado,
+  nome do usuário + link Perfil + botão Sair.
 - **Sidebar** (`.sidebar`, dentro de `.corpo`): navegação vertical, só renderizada quando
   autenticado. Cada link é ícone (SVG inline, traço `stroke-width: 1.5`, sem preenchimento —
   nunca emoji) + `<span class="rotulo">`. `routerLinkActive="ativo"` marca o item da rota
@@ -164,7 +176,7 @@ aplicação — nenhuma tela individual reimplementa cabeçalho ou navegação.
   class="rotulo">`. Se o item é só pra Admin, envolva no mesmo `@if
   (auth.usuario()?.papel === 'Admin')` já usado pro link Admin.
 
-## 10. Tema claro/escuro
+## 9. Tema claro/escuro
 
 `core/tema/tema.ts` (serviço `Tema`) é a única fonte de verdade: um signal `tema` (`'escuro'
 | 'claro'`), método `alternar()`, persistência em `localStorage.patrihub.tema`, aplicado como
@@ -181,15 +193,15 @@ sessão em modo claro piscaria escuro por um frame no primeiro load.
 - Testar uma mudança de cor nos dois temas antes de considerar pronta — o jeito mais rápido é
   `document.querySelector('.botao-tema').click()` no console do navegador.
 
-## 11. Cobertura atual
+## 10. Cobertura atual
 
 Decisão desta rodada (ver conversa) foi aplicar o sistema a fundo em **3 telas-chave** antes
 de estender — sistema fica validado antes de replicar:
 
 | Tela/parte | Profundidade |
 |---|---|
-| Casca (cabeçalho + sidebar, §9) e tema claro/escuro (§10) | Completa, cross-cutting — todo o app, autenticado ou não |
-| Login / Registro (`auth/`) | Completa — painel com rótulo de canto, borda superior de sinal |
+| Casca (cabeçalho + sidebar, §8) e tema claro/escuro (§9) | Completa, cross-cutting — todo o app, autenticado ou não |
+| Login / Registro (`auth/`) | Completa — cartão simples, sem elemento decorativo |
 | Dashboard (`dashboard/dashboard-pagina`) | Completa — readouts de estatística + tabela com sinal semântico |
 | Ativos → Listagem (`ativos/ativos-lista`) | Completa — badge de status + sinal semântico de lucro |
 | Todo o resto (Ativos detalhe/form, Lançamentos, Locatários, Contratos, Admin, Perfil) | Base global só — tokens, tipografia e componentes de `styles.css` já se aplicam; badge de status (§5.3) e sinal semântico de valor (§6) ainda não estendidos pras tabelas dessas telas |
@@ -200,7 +212,7 @@ de estender — sistema fica validado antes de replicar:
 `AtivoDetalhe`. Cada extensão é o mesmo padrão já em `ativos-lista.ts`/`.html` — importar o
 enum como valor (não `type`), expor no componente, bindar `[class.x]` no template.
 
-## 12. Checklist pra uma tela nova
+## 11. Checklist pra uma tela nova
 
 1. Título com `<h1>`/`<h2>` — não precisa de classe, `styles.css` já cobre.
 2. Tabela? Estruture como as existentes (`<table>` simples, sem `<div>` de wrapper) — o
@@ -215,4 +227,5 @@ enum como valor (não `type`), expor no componente, bindar `[class.x]` no templa
 6. Rodou `ng build`? O budget de `anyComponentStyle` é 4-8kB por componente — se estourar,
    é sinal de que o CSS deveria estar em `styles.css`, não sendo duplicado ali.
 7. Toda cor nova é `var(--token)`, nunca `oklch(...)`/hex direto num `*.css` de componente —
-   ver §2. Testou a tela nos dois temas (`.botao-tema` no console, §10)?
+   ver §2. Testou a tela nos dois temas (`.botao-tema` no console, §9)?
+8. Título, botão, link de navegação: caixa normal, nunca caixa alta (regra 4, §1 e §3).

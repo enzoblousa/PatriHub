@@ -1,8 +1,11 @@
 /* Identidade visual do PatriHub — docs/design/DESIGN-SYSTEM.md tem o racional completo.
-   Direção: "utilitário denso" — ferramenta técnica de dados (terminal/mesa de operações),
-   não um app consumer. Neutros frios dominam; cor é sinal (verde = positivo/ativo, vermelho
-   = negativo/risco), nunca decoração. Uma família tipográfica só (IBM Plex), em duas larguras
-   — Condensed pra UI, Mono pra todo número — em vez de duas famílias combinadas.
+   Direção: "utilitário denso, mas corporativo" — ferramenta técnica de dados (fintech B2B,
+   não HUD/terminal de hacker). Neutros frios dominam; cor é sinal (verde = positivo/ativo,
+   vermelho = negativo/risco), sempre discreto — nunca neon, nunca decoração. Uma família
+   tipográfica só (IBM Plex), em duas larguras — Condensed pra UI, Mono pra todo número — em
+   vez de duas famílias combinadas. Caixa alta é reservada pra rótulo estrutural pequeno
+   (cabeçalho de tabela, rótulo de campo, badge) — nunca título, botão ou item de navegação,
+   que ficam em caixa normal pra não lembrar tela de menu de jogo.
 
    Tokens + estilos base de elemento cobrem a maior parte de toda tela sem CSS por
    componente; cada `*.css` de feature é só ajuste de layout específico daquela tela. */
@@ -12,25 +15,24 @@
    é redefinido no bloco `claro` abaixo; nada fora de `:root`/`[data-theme]` define cor direto,
    pra trocar de tema sem esquecer um componente. */
 :root {
-  --bg: oklch(15.5% 0.007 250);
-  --surface: oklch(19.5% 0.008 250);
-  --surface-raised: oklch(24% 0.009 250);
-  --border: oklch(29% 0.011 250);
-  --border-strong: oklch(38% 0.013 250);
-  --text: oklch(93% 0.004 250);
-  --text-muted: oklch(60% 0.009 250);
-  --text-dim: oklch(42% 0.011 250);
+  --bg: oklch(17% 0.006 250);
+  --surface: oklch(21% 0.007 250);
+  --surface-raised: oklch(25.5% 0.008 250);
+  --border: oklch(30% 0.01 250);
+  --border-strong: oklch(39% 0.012 250);
+  --text: oklch(92% 0.004 250);
+  --text-muted: oklch(60% 0.008 250);
+  --text-dim: oklch(43% 0.01 250);
 
-  /* Sinal, não marca: verde = positivo/ativo/confirmação; vermelho = negativo/risco. Nada
-     mais no app usa essas cores como decoração — ver DESIGN-SYSTEM.md §Cor. */
-  --sinal-pos: oklch(78% 0.17 152);
-  --sinal-pos-hover: oklch(85% 0.17 152);
-  --sinal-pos-dim: oklch(30% 0.05 152);
-  --on-sinal-pos: oklch(15% 0.01 152);
-  --sinal-neg: oklch(72% 0.19 25);
-  --sinal-neg-dim: oklch(32% 0.07 25);
-
-  --scanline: oklch(100% 0 0 / 0.012);
+  /* Sinal, não marca: verde = positivo/ativo/confirmação; vermelho = negativo/risco. Tons
+     contidos de propósito (chroma baixo) — nada de verde/vermelho neon. Nada mais no app usa
+     essas cores como decoração — ver DESIGN-SYSTEM.md §Cor. */
+  --sinal-pos: oklch(64% 0.09 152);
+  --sinal-pos-hover: oklch(70% 0.09 152);
+  --sinal-pos-dim: oklch(24% 0.035 152);
+  --on-sinal-pos: oklch(14% 0.01 152);
+  --sinal-neg: oklch(62% 0.13 25);
+  --sinal-neg-dim: oklch(26% 0.05 25);
 
   --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
   --font-body: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
@@ -50,14 +52,12 @@
   --text-muted: oklch(42% 0.011 250);
   --text-dim: oklch(56% 0.01 250);
 
-  --sinal-pos: oklch(43% 0.13 152);
-  --sinal-pos-hover: oklch(36% 0.13 152);
-  --sinal-pos-dim: oklch(92% 0.045 152);
+  --sinal-pos: oklch(40% 0.09 152);
+  --sinal-pos-hover: oklch(34% 0.09 152);
+  --sinal-pos-dim: oklch(92% 0.03 152);
   --on-sinal-pos: oklch(99% 0.01 152);
-  --sinal-neg: oklch(48% 0.18 25);
-  --sinal-neg-dim: oklch(93% 0.05 25);
-
-  --scanline: oklch(0% 0 0 / 0.02);
+  --sinal-neg: oklch(46% 0.13 25);
+  --sinal-neg-dim: oklch(93% 0.04 25);
 }
 
 * {
@@ -76,51 +76,25 @@ body {
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.5;
-  position: relative;
-}
-
-/* Scanline muito sutil — textura de terminal sem virar ruído visual. Fixo, atrás de tudo,
-   não intercepta clique. */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background-image: repeating-linear-gradient(
-    to bottom,
-    var(--scanline) 0,
-    var(--scanline) 1px,
-    transparent 1px,
-    transparent 3px
-  );
 }
 
 app-root {
   display: block;
 }
 
-app-root,
-main {
-  position: relative;
-  z-index: 1;
-}
-
 main {
   max-width: 72rem;
   margin: 0 auto;
   padding: 2rem 1.5rem 4rem;
-  animation: entrar 0.25s ease-out;
+  animation: entrar 0.2s ease-out;
 }
 
 @keyframes entrar {
   from {
     opacity: 0;
-    transform: translateY(4px);
   }
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
@@ -135,19 +109,17 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.2;
   color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.01em;
 }
 
 h1 {
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   margin: 0 0 1.25rem;
 }
 
 h2 {
-  font-size: 0.9375rem;
+  font-size: 1rem;
   margin: 0 0 0.75rem;
   color: var(--text-muted);
 }
@@ -245,15 +217,13 @@ fieldset legend {
   padding: 0 0.35rem;
 }
 
-/* Buttons — comando de painel: caixa alta, sem sombra, ângulos retos. O submit de cada form
-   é a ação primária (Criar conta, Salvar, Filtrar…); todo `type="button"` sem classe própria
-   fica neutro — ver `.excluir` pro gatilho de exclusão. */
+/* Buttons — sóbrios, caixa normal (não é botão de menu de jogo): contorno neutro por padrão.
+   O submit de cada form é a ação primária (Criar conta, Salvar, Filtrar…); todo
+   `type="button"` sem classe própria fica neutro — ver `.excluir` pro gatilho de exclusão. */
 button {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   border-radius: var(--radius-sm);
   padding: 0.55rem 1rem;
   cursor: pointer;
@@ -291,8 +261,8 @@ button.excluir:hover:not(:disabled) {
   background: var(--sinal-neg-dim);
 }
 
-/* Ações em destaque (ex.: "Novo Imóvel" no topo de uma lista) — link com cara de comando,
-   sem competir com o submit de um form na mesma tela. */
+/* Ações em destaque (ex.: "Novo Imóvel" no topo de uma lista) — link com cara de botão
+   secundário, sem competir com o submit de um form na mesma tela. */
 .acoes {
   display: flex;
   gap: 0.6rem;
@@ -303,11 +273,8 @@ button.excluir:hover:not(:disabled) {
   border: 1px solid var(--border-strong);
   border-radius: var(--radius-sm);
   padding: 0.4rem 0.85rem;
-  font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   color: var(--text);
 }
 
@@ -366,7 +333,7 @@ tbody tr {
 
 tbody tr:hover {
   background: var(--surface);
-  border-left-color: var(--sinal-pos);
+  border-left-color: var(--border-strong);
 }
 
 td form {

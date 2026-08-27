@@ -11,47 +11,13 @@
   padding: 0.7rem 1.25rem;
   background: var(--surface);
   border-bottom: 1px solid var(--border-strong);
-  position: relative;
-  z-index: 2;
 }
 
 .marca {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
   font-family: var(--font-display);
-  font-size: 1rem;
+  font-size: 1.0625rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   color: var(--text);
-}
-
-/* Ponto "ao vivo" — pequeno sinal de que isto é uma sessão ativa numa mesa de dados, não uma
-   página estática. */
-.marca::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--sinal-pos);
-  animation: pulsar 2.4s ease-in-out infinite;
-}
-
-@keyframes pulsar {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.25;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .marca::before {
-    animation: none;
-  }
 }
 
 .cabecalho-acoes {
@@ -69,7 +35,7 @@
 
 .cabecalho-acoes a,
 .cabecalho-acoes button {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
 }
 
 .cabecalho-acoes > button:not(.botao-icone) {
@@ -94,7 +60,8 @@
 }
 
 .botao-sidebar[aria-pressed='true'] {
-  color: var(--sinal-pos);
+  color: var(--text);
+  border-color: var(--border-strong);
 }
 
 /* Corpo: sidebar + main lado a lado, abaixo do cabeçalho. */
@@ -111,8 +78,6 @@
   border-right: 1px solid var(--border-strong);
   overflow: hidden;
   transition: width 0.16s ease;
-  position: relative;
-  z-index: 1;
 }
 
 .sidebar--colapsada {
@@ -132,11 +97,8 @@
   gap: 0.7rem;
   padding: 0.5rem 0.6rem;
   border-radius: var(--radius-sm);
-  font-family: var(--font-display);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
+  font-weight: 500;
   color: var(--text-muted);
   text-decoration: none;
   white-space: nowrap;
@@ -150,6 +112,7 @@
 .navegacao a.ativo {
   color: var(--sinal-pos);
   background: var(--sinal-pos-dim);
+  font-weight: 600;
 }
 
 .icone-nav {
