@@ -1,0 +1,18 @@
+.dados-conta {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 32rem;
+}
+
+.zona-de-risco {
+  border: 1px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  max-width: 32rem;
+}
+
+.zona-de-risco h2 {
+  color: var(--danger);
+}

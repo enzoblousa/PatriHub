@@ -85,7 +85,9 @@
                   <button type="button" (click)="cancelarExclusao()">Cancelar</button>
                 </span>
               } @else {
-                <button type="button" (click)="iniciarExclusao(lancamento.id)">Excluir</button>
+                <button type="button" class="excluir" (click)="iniciarExclusao(lancamento.id)">
+                  Excluir
+                </button>
               }
             </td>
           </tr>
