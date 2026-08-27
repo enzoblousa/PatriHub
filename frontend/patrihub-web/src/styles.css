@@ -7,6 +7,10 @@
    Tokens + estilos base de elemento cobrem a maior parte de toda tela sem CSS por
    componente; cada `*.css` de feature é só ajuste de layout específico daquela tela. */
 
+/* Escuro é o tema base do sistema (ver docs/design/DESIGN-SYSTEM.md) — claro é a alternativa,
+   aplicada via `[data-theme='claro']` em `<html>` (ver core/tema/tema.ts). Todo token de cor
+   é redefinido no bloco `claro` abaixo; nada fora de `:root`/`[data-theme]` define cor direto,
+   pra trocar de tema sem esquecer um componente. */
 :root {
   --bg: oklch(15.5% 0.007 250);
   --surface: oklch(19.5% 0.008 250);
@@ -20,9 +24,13 @@
   /* Sinal, não marca: verde = positivo/ativo/confirmação; vermelho = negativo/risco. Nada
      mais no app usa essas cores como decoração — ver DESIGN-SYSTEM.md §Cor. */
   --sinal-pos: oklch(78% 0.17 152);
+  --sinal-pos-hover: oklch(85% 0.17 152);
   --sinal-pos-dim: oklch(30% 0.05 152);
+  --on-sinal-pos: oklch(15% 0.01 152);
   --sinal-neg: oklch(72% 0.19 25);
   --sinal-neg-dim: oklch(32% 0.07 25);
+
+  --scanline: oklch(100% 0 0 / 0.012);
 
   --font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
   --font-body: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
@@ -30,6 +38,26 @@
 
   --radius: 4px;
   --radius-sm: 2px;
+}
+
+:root[data-theme='claro'] {
+  --bg: oklch(96.5% 0.004 250);
+  --surface: oklch(100% 0 0);
+  --surface-raised: oklch(93% 0.006 250);
+  --border: oklch(85% 0.008 250);
+  --border-strong: oklch(72% 0.012 250);
+  --text: oklch(18% 0.008 250);
+  --text-muted: oklch(42% 0.011 250);
+  --text-dim: oklch(56% 0.01 250);
+
+  --sinal-pos: oklch(43% 0.13 152);
+  --sinal-pos-hover: oklch(36% 0.13 152);
+  --sinal-pos-dim: oklch(92% 0.045 152);
+  --on-sinal-pos: oklch(99% 0.01 152);
+  --sinal-neg: oklch(48% 0.18 25);
+  --sinal-neg-dim: oklch(93% 0.05 25);
+
+  --scanline: oklch(0% 0 0 / 0.02);
 }
 
 * {
@@ -61,11 +89,15 @@ body::before {
   pointer-events: none;
   background-image: repeating-linear-gradient(
     to bottom,
-    oklch(100% 0 0 / 0.012) 0,
-    oklch(100% 0 0 / 0.012) 1px,
+    var(--scanline) 0,
+    var(--scanline) 1px,
     transparent 1px,
     transparent 3px
   );
+}
+
+app-root {
+  display: block;
 }
 
 app-root,
@@ -237,11 +269,11 @@ button:hover:not(:disabled) {
 button[type='submit'] {
   border-color: var(--sinal-pos);
   background: var(--sinal-pos);
-  color: oklch(15% 0.01 152);
+  color: var(--on-sinal-pos);
 }
 
 button[type='submit']:hover:not(:disabled) {
-  background: oklch(85% 0.17 152);
+  background: var(--sinal-pos-hover);
 }
 
 button:disabled {
