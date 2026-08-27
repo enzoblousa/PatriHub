@@ -2,44 +2,83 @@
   display: flex;
   align-items: center;
   gap: 2rem;
-  padding: 0.9rem 1.5rem;
+  padding: 0.85rem 1.5rem;
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  border-bottom: 1px solid var(--border-strong);
+  position: relative;
+  z-index: 1;
 }
 
 .marca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-display);
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
   color: var(--text);
+}
+
+/* Ponto "ao vivo" — pequeno sinal de que isto é uma sessão ativa numa mesa de dados, não uma
+   página estática. */
+.marca::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--sinal-pos);
+  animation: pulsar 2.4s ease-in-out infinite;
+}
+
+@keyframes pulsar {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marca::before {
+    animation: none;
+  }
 }
 
 .navegacao {
   display: flex;
   gap: 1.5rem;
-  font-size: 0.875rem;
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .navegacao a {
   color: var(--text-muted);
+  text-decoration: none;
 }
 
 .navegacao a:hover {
-  color: var(--text);
-  text-decoration: none;
+  color: var(--sinal-pos);
 }
 
 .usuario {
   margin-left: auto;
-  font-size: 0.875rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
   color: var(--text-muted);
 }
 
 .cabecalho a,
 .cabecalho button {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
 }
 
 .cabecalho button {
-  padding: 0.35rem 0.75rem;
+  padding: 0.3rem 0.7rem;
 }

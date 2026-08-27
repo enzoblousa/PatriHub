@@ -1,8 +1,27 @@
 .registro {
-  max-width: 24rem;
-  margin: 4rem auto 0;
+  position: relative;
+  max-width: 22rem;
+  margin: 4.5rem auto 0;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-strong);
+  border-top: 2px solid var(--sinal-pos);
   border-radius: var(--radius);
   padding: 2.25rem;
+}
+
+.registro::before {
+  content: 'PATRIHUB / REGISTRO';
+  position: absolute;
+  top: -0.55rem;
+  left: 1.75rem;
+  background: var(--bg);
+  padding: 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+}
+
+.registro h1 {
+  margin-bottom: 1.75rem;
 }

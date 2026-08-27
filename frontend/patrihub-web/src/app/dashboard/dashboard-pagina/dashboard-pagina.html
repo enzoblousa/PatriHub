@@ -6,10 +6,20 @@
   } @else if (dashboard.dado(); as patrimonio) {
     <dl class="totais">
       <dt>Lucro total do mês</dt>
-      <dd>{{ patrimonio.lucroTotalDoMes | number: '1.2-2' }}</dd>
+      <dd
+        [class.valor-positivo]="patrimonio.lucroTotalDoMes >= 0"
+        [class.valor-negativo]="patrimonio.lucroTotalDoMes < 0"
+      >
+        {{ patrimonio.lucroTotalDoMes | number: '1.2-2' }}
+      </dd>
 
       <dt>Lucro total acumulado</dt>
-      <dd>{{ patrimonio.lucroTotalAcumulado | number: '1.2-2' }}</dd>
+      <dd
+        [class.valor-positivo]="patrimonio.lucroTotalAcumulado >= 0"
+        [class.valor-negativo]="patrimonio.lucroTotalAcumulado < 0"
+      >
+        {{ patrimonio.lucroTotalAcumulado | number: '1.2-2' }}
+      </dd>
     </dl>
 
     <form class="taxa-referencia" [formGroup]="form" (ngSubmit)="recalcular()">
@@ -49,13 +59,43 @@
           @for (metricas of patrimonio.ativos; track metricas.ativoId) {
             <tr>
               <td>{{ metricas.apelido }}</td>
-              <td>{{ metricas.lucroDoMes | number: '1.2-2' }}</td>
-              <td>{{ metricas.lucroAcumulado | number: '1.2-2' }}</td>
-              <td>{{ metricas.yield | percent: '1.2-2' }}</td>
-              <td>{{ metricas.roiSobreValorAquisicao | percent: '1.2-2' }}</td>
-              <td>{{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}</td>
+              <td
+                [class.valor-positivo]="metricas.lucroDoMes >= 0"
+                [class.valor-negativo]="metricas.lucroDoMes < 0"
+              >
+                {{ metricas.lucroDoMes | number: '1.2-2' }}
+              </td>
+              <td
+                [class.valor-positivo]="metricas.lucroAcumulado >= 0"
+                [class.valor-negativo]="metricas.lucroAcumulado < 0"
+              >
+                {{ metricas.lucroAcumulado | number: '1.2-2' }}
+              </td>
+              <td
+                [class.valor-positivo]="metricas.yield >= 0"
+                [class.valor-negativo]="metricas.yield < 0"
+              >
+                {{ metricas.yield | percent: '1.2-2' }}
+              </td>
+              <td
+                [class.valor-positivo]="metricas.roiSobreValorAquisicao >= 0"
+                [class.valor-negativo]="metricas.roiSobreValorAquisicao < 0"
+              >
+                {{ metricas.roiSobreValorAquisicao | percent: '1.2-2' }}
+              </td>
+              <td
+                [class.valor-positivo]="metricas.roiSobreValorMercadoAtual >= 0"
+                [class.valor-negativo]="metricas.roiSobreValorMercadoAtual < 0"
+              >
+                {{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}
+              </td>
               <td>{{ metricas.depreciacao | number: '1.2-2' }}</td>
-              <td>{{ metricas.projecaoDeLucro | number: '1.2-2' }}</td>
+              <td
+                [class.valor-positivo]="metricas.projecaoDeLucro >= 0"
+                [class.valor-negativo]="metricas.projecaoDeLucro < 0"
+              >
+                {{ metricas.projecaoDeLucro | number: '1.2-2' }}
+              </td>
               <td>
                 {{
                   metricas.custoDeOportunidade !== null

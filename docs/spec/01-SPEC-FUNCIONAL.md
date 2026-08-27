@@ -156,8 +156,6 @@ lucro, (d) contrato/locatário.
 ## 9. Itens em aberto
 Todas as decisões que estavam pendentes foram resolvidas — ver
 [`03-DECISOES-PENDENTES.md`](03-DECISOES-PENDENTES.md) para o histórico, [`../../CONTEXT.md`](../../CONTEXT.md)
-para o glossário e [`../adr/`](../adr/) para as decisões arquiteturais registradas. Único
-item ainda propositalmente em aberto: **identidade visual/referência de design** — a spec de
-frontend (`02-PLANO-TECNICO.md §8`) cobre arquitetura Angular, mas decide deliberadamente
-adiar paleta/tipografia/estilo pra quando cada tela for implementada, em vez de fixar um
-sistema visual de antemão.
+para o glossário e [`../adr/`](../adr/) para as decisões arquiteturais registradas.
+**Identidade visual/referência de design**, citada aqui como propositalmente em aberto em
+versões anteriores desta spec, foi decidida — ver [`../design/DESIGN-SYSTEM.md`](../design/DESIGN-SYSTEM.md).

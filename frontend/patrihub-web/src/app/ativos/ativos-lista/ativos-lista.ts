@@ -4,7 +4,7 @@ import { RouterLink } from '@angular/router';
 
 import { Ativos } from '../ativos';
 import { ROTULOS_STATUS, ROTULOS_TIPO } from '../ativos-rotulos';
-import type { StatusAtivo, TipoAtivo } from '../ativos.models';
+import { StatusAtivo, type TipoAtivo } from '../ativos.models';
 
 /** Lista os Ativos do usuário autenticado (tipo, status, lucro do mês) via `GET /api/ativos`. */
 @Component({
@@ -15,6 +15,7 @@ import type { StatusAtivo, TipoAtivo } from '../ativos.models';
 })
 export class AtivosLista {
   protected readonly ativos = inject(Ativos);
+  protected readonly StatusAtivo = StatusAtivo;
 
   constructor() {
     this.ativos.carregarLista();
