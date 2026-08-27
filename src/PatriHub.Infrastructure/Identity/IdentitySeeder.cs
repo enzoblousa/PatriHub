@@ -52,7 +52,10 @@ public static class IdentitySeeder
             return;
         }
 
-        var usuario = Usuario.Registrar("Admin PatriHub", email, PapelUsuario.Admin);
+        // consentimentoLgpd: true aqui não representa um aceite de usuário real — é uma conta
+        // provisionada via configuração de infraestrutura (AdminBootstrap), não um cadastro
+        // pelo formulário público sujeito ao consentimento LGPD (ver Usuario.Registrar).
+        var usuario = Usuario.Registrar("Admin PatriHub", email, consentimentoLgpd: true, papel: PapelUsuario.Admin);
         var applicationUser = new ApplicationUser
         {
             Id = usuario.Id,
@@ -60,6 +63,7 @@ public static class IdentitySeeder
             Email = usuario.Email,
             Nome = usuario.Nome,
             CriadoEm = usuario.CriadoEm,
+            ConsentimentoLgpdEm = usuario.ConsentimentoLgpdEm,
         };
 
         // Falha aqui (ex.: AdminBootstrap:Senha não atende a política de senha) tem que travar o

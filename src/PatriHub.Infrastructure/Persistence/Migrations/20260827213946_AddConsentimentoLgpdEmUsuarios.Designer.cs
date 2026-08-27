@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PatriHub.Infrastructure.Persistence;
@@ -11,9 +12,11 @@ using PatriHub.Infrastructure.Persistence;
 namespace PatriHub.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(PatriHubDbContext))]
-    partial class PatriHubDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260827213946_AddConsentimentoLgpdEmUsuarios")]
+    partial class AddConsentimentoLgpdEmUsuarios
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

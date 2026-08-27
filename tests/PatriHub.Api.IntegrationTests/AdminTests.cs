@@ -85,7 +85,7 @@ public sealed class AdminTests(PatriHubApiFactory factory) : IClassFixture<Patri
         var admin = await factory.CriarClienteAdminAutenticadoAsync();
         var email = AutenticacaoTestHelper.EmailUnico();
         var clienteAlvo = factory.CreateClient();
-        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao));
+        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao, ConsentimentoLgpd: true));
         var usuarioAlvoId = (await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>())!.Usuario!.Id;
 
         var response = await admin.PatchAsJsonAsync($"/api/admin/usuarios/{usuarioAlvoId}/status", new AtualizarStatusUsuarioRequest(Ativo: false));
@@ -101,7 +101,7 @@ public sealed class AdminTests(PatriHubApiFactory factory) : IClassFixture<Patri
         var admin = await factory.CriarClienteAdminAutenticadoAsync();
         var email = AutenticacaoTestHelper.EmailUnico();
         var clienteAlvo = factory.CreateClient();
-        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao));
+        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao, ConsentimentoLgpd: true));
         var usuarioAlvoId = (await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>())!.Usuario!.Id;
         await admin.PatchAsJsonAsync($"/api/admin/usuarios/{usuarioAlvoId}/status", new AtualizarStatusUsuarioRequest(Ativo: false));
 
@@ -151,7 +151,7 @@ public sealed class AdminTests(PatriHubApiFactory factory) : IClassFixture<Patri
         var admin = await factory.CriarClienteAdminAutenticadoAsync();
         var email = AutenticacaoTestHelper.EmailUnico();
         var clienteAlvo = factory.CreateClient();
-        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao));
+        var registro = await clienteAlvo.PostAsJsonAsync("/api/auth/registrar", new RegistrarUsuarioRequest("Usuário Alvo", email, AutenticacaoTestHelper.SenhaPadrao, ConsentimentoLgpd: true));
         var usuarioAlvoId = (await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>())!.Usuario!.Id;
         const string novaSenha = "OutraSenhaForte456!";
 

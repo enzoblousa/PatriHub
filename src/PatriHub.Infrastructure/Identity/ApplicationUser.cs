@@ -12,4 +12,7 @@ public sealed class ApplicationUser : IdentityUser<Guid>
     public string Nome { get; set; } = string.Empty;
 
     public DateTimeOffset CriadoEm { get; set; }
+
+    /// <summary>Timestamp do aceite da Política de Privacidade no registro — ver Usuario.Registrar.</summary>
+    public DateTimeOffset ConsentimentoLgpdEm { get; set; }
 }

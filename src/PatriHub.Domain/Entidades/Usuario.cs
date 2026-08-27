@@ -16,17 +16,30 @@ public sealed class Usuario
     public string Email { get; }
     public PapelUsuario Papel { get; }
     public DateTimeOffset CriadoEm { get; }
+    public DateTimeOffset ConsentimentoLgpdEm { get; }
 
-    private Usuario(Guid id, string nome, string email, PapelUsuario papel, DateTimeOffset criadoEm)
+    private Usuario(Guid id, string nome, string email, PapelUsuario papel, DateTimeOffset criadoEm, DateTimeOffset consentimentoLgpdEm)
     {
         Id = id;
         Nome = nome;
         Email = email;
         Papel = papel;
         CriadoEm = criadoEm;
+        ConsentimentoLgpdEm = consentimentoLgpdEm;
     }
 
-    public static Usuario Registrar(string nome, string email, PapelUsuario papel = PapelUsuario.User, DateTimeOffset? agora = null)
+    /// <summary>
+    /// `consentimentoLgpd = true` por padrão só pra não obrigar todo teste alheio ao LGPD a
+    /// passar o parâmetro — o `RegistrarUsuarioRequest` da API não tem esse default (ver
+    /// AutenticacaoDtos.cs), então um registro real sempre precisa do aceite explícito do
+    /// cliente (ver docs/spec/01-SPEC-FUNCIONAL.md §8).
+    /// </summary>
+    public static Usuario Registrar(
+        string nome,
+        string email,
+        bool consentimentoLgpd = true,
+        PapelUsuario papel = PapelUsuario.User,
+        DateTimeOffset? agora = null)
     {
         if (string.IsNullOrWhiteSpace(nome))
         {
@@ -38,7 +51,15 @@ public sealed class Usuario
             throw new ArgumentException("Email do usuário não pode ser vazio.", nameof(email));
         }
 
-        return new Usuario(Guid.NewGuid(), nome.Trim(), NormalizarEmail(email), papel, agora ?? DateTimeOffset.UtcNow);
+        if (!consentimentoLgpd)
+        {
+            throw new ArgumentException(
+                "É necessário aceitar o uso dos dados conforme a Política de Privacidade.",
+                nameof(consentimentoLgpd));
+        }
+
+        var momento = agora ?? DateTimeOffset.UtcNow;
+        return new Usuario(Guid.NewGuid(), nome.Trim(), NormalizarEmail(email), papel, momento, momento);
     }
 
     /// <summary>

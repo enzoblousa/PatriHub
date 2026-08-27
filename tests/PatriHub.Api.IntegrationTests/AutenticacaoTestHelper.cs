@@ -27,7 +27,7 @@ public static class AutenticacaoTestHelper
         var client = factory.CreateClient();
         var registro = await client.PostAsJsonAsync(
             "/api/auth/registrar",
-            new RegistrarUsuarioRequest(nome ?? "Maria Silva", EmailUnico(), SenhaPadrao));
+            new RegistrarUsuarioRequest(nome ?? "Maria Silva", EmailUnico(), SenhaPadrao, ConsentimentoLgpd: true));
         var resultado = await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>();
 
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", resultado!.Token);
@@ -45,7 +45,7 @@ public static class AutenticacaoTestHelper
         var clienteRegistro = factory.CreateClient();
         var registro = await clienteRegistro.PostAsJsonAsync(
             "/api/auth/registrar",
-            new RegistrarUsuarioRequest(nome ?? "Admin Suporte", email, SenhaPadrao));
+            new RegistrarUsuarioRequest(nome ?? "Admin Suporte", email, SenhaPadrao, ConsentimentoLgpd: true));
         var resultadoRegistro = await registro.Content.ReadFromJsonAsync<ResultadoAutenticacao>();
         var usuarioId = resultadoRegistro!.Usuario!.Id;
 
