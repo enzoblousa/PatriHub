@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Auth } from '../../core/auth/auth';
 
@@ -15,9 +15,12 @@ export class Login {
   private readonly auth = inject(Auth);
   private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly enviando = signal(false);
   protected readonly erro = signal<string | null>(null);
+  /** Vindo do redirecionamento pós-exclusão de conta (ver Perfil.confirmarExclusao). */
+  protected readonly contaExcluida = this.route.snapshot.queryParamMap.get('contaExcluida') === 'true';
 
   protected readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

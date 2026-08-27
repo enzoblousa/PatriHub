@@ -1,7 +1,7 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Router, provideRouter } from '@angular/router';
+import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 
 import { environment } from '../../../environments/environment';
 import { Login } from './login';
@@ -74,5 +74,30 @@ describe('Login', () => {
     const mensagemErro = fixture.nativeElement.querySelector('.erro') as HTMLElement;
     expect(mensagemErro.textContent).toContain('Email ou senha inválidos.');
     expect(router.navigateByUrl).not.toHaveBeenCalled();
+  });
+});
+
+describe('Login vindo da exclusão de conta', () => {
+  it('mostra a mensagem de confirmação quando ?contaExcluida=true', async () => {
+    localStorage.clear();
+    await TestBed.configureTestingModule({
+      imports: [Login],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap({ contaExcluida: 'true' }) } },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(Login);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.confirmacao')?.textContent).toContain(
+      'Sua conta foi excluída com sucesso.',
+    );
   });
 });

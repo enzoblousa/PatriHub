@@ -1,0 +1,43 @@
+<section class="perfil">
+  <h1>Minha conta</h1>
+
+  @if (carregando()) {
+    <p>Carregando…</p>
+  } @else if (usuario(); as dado) {
+    <dl class="dados-conta">
+      <dt>Nome</dt>
+      <dd>{{ dado.nome }}</dd>
+      <dt>Email</dt>
+      <dd>{{ dado.email }}</dd>
+      <dt>Papel</dt>
+      <dd>{{ dado.papel }}</dd>
+    </dl>
+  }
+
+  @if (erro()) {
+    <p class="erro" role="alert">{{ erro() }}</p>
+  }
+
+  <section class="zona-de-risco">
+    <h2>Zona de risco</h2>
+
+    @if (!confirmandoExclusao()) {
+      <p>
+        Excluir sua conta remove permanentemente seus dados pessoais e todo o histórico de
+        Ativos, Lançamentos, Contratos e Locatários. Essa ação não pode ser desfeita.
+      </p>
+      <button type="button" class="excluir" (click)="iniciarExclusao()">Excluir minha conta</button>
+    } @else {
+      <p class="confirmacao-exclusao" role="alert">
+        Tem certeza que deseja excluir sua conta e todo o seu histórico? Essa ação não pode ser
+        desfeita.
+        <button type="button" [disabled]="excluindo()" (click)="confirmarExclusao()">
+          {{ excluindo() ? 'Excluindo…' : 'Confirmar exclusão' }}
+        </button>
+        <button type="button" [disabled]="excluindo()" (click)="cancelarExclusao()">
+          Cancelar
+        </button>
+      </p>
+    }
+  </section>
+</section>
