@@ -48,12 +48,28 @@ export class Auth {
       .pipe(tap((resultado) => this.persistirSessao(resultado)));
   }
 
+  /** Dados da própria conta a partir das claims do token (`GET /api/auth/me`) — usado pelo Perfil pra nunca depender só do que ficou em `localStorage` desde o login/registro. */
+  me() {
+    return this.http.get<UsuarioDto>(`${environment.apiBaseUrl}/api/auth/me`);
+  }
+
+  /** Exclusão definitiva da própria conta e dados (LGPD — ver ADR-0005). Só limpa a sessão local; navegar pro login com a mensagem de confirmação é responsabilidade de quem chama (ver Perfil). */
+  excluirConta() {
+    return this.http
+      .delete<void>(`${environment.apiBaseUrl}/api/auth/conta`)
+      .pipe(tap(() => this.limparSessao()));
+  }
+
   logout(): void {
+    this.limparSessao();
+    void this.router.navigate(['/login']);
+  }
+
+  private limparSessao(): void {
     localStorage.removeItem(CHAVE_TOKEN);
     localStorage.removeItem(CHAVE_USUARIO);
     this.tokenSignal.set(null);
     this.usuarioSignal.set(null);
-    void this.router.navigate(['/login']);
   }
 
   private persistirSessao(resultado: ResultadoAutenticacao): void {

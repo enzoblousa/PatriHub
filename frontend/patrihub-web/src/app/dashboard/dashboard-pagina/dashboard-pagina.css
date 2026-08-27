@@ -1,0 +1,29 @@
+/* `.totais` é um <dl> plano (dt,dd,dt,dd, sem wrapper por par) — grid-auto-flow:column com 2
+   linhas fixas empilha cada par num "cartão" de estatística, lado a lado, sem precisar
+   envolver cada dt/dd num elemento próprio. */
+.totais {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: auto auto;
+  gap: 0.35rem 2.5rem;
+  margin-bottom: 2rem;
+}
+
+.totais dt {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.totais dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.taxa-referencia {
+  flex-direction: row;
+  align-items: flex-end;
+  max-width: none;
+  margin-bottom: 2rem;
+}

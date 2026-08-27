@@ -23,6 +23,10 @@ export class Registro {
     nome: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     senha: ['', Validators.required],
+    // requiredTrue (não required): um checkbox desmarcado já é um valor válido de `boolean`
+    // (false), então só requiredTrue barra o submit sem o aceite — ver
+    // docs/spec/01-SPEC-FUNCIONAL.md §8.
+    consentimentoLgpd: [false, Validators.requiredTrue],
   });
 
   protected criarConta(): void {

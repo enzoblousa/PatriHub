@@ -26,11 +26,16 @@
       <p class="campo-erro">Informe uma senha.</p>
     }
 
+    <label class="checkbox">
+      <input type="checkbox" formControlName="consentimentoLgpd" />
+      Li e aceito o uso dos meus dados conforme a Política de Privacidade.
+    </label>
+
     @if (erro()) {
       <p class="erro" role="alert">{{ erro() }}</p>
     }
 
-    <button type="submit" [disabled]="enviando()">
+    <button type="submit" [disabled]="enviando() || form.controls.consentimentoLgpd.invalid">
       {{ enviando() ? 'Criando…' : 'Criar conta' }}
     </button>
   </form>

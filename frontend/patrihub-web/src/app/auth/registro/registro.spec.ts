@@ -35,12 +35,32 @@ describe('Registro', () => {
     httpMock.expectNone(`${environment.apiBaseUrl}/api/auth/registrar`);
   });
 
+  it('mantém o botão desabilitado até o checkbox de consentimento LGPD ser marcado', async () => {
+    const fixture = TestBed.createComponent(Registro);
+    const componente = fixture.componentInstance;
+    await fixture.whenStable();
+
+    componente['form'].patchValue({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!' });
+    fixture.detectChanges();
+    const botao = fixture.nativeElement.querySelector('button[type="submit"]') as HTMLButtonElement;
+    expect(botao.disabled).toBe(true);
+
+    componente['form'].patchValue({ consentimentoLgpd: true });
+    fixture.detectChanges();
+    expect(botao.disabled).toBe(false);
+  });
+
   it('registra e navega pra "/" quando o cadastro é aceito', async () => {
     const fixture = TestBed.createComponent(Registro);
     const componente = fixture.componentInstance;
     await fixture.whenStable();
 
-    componente['form'].setValue({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!' });
+    componente['form'].setValue({
+      nome: 'Ana',
+      email: 'ana@example.com',
+      senha: 'Senha123!',
+      consentimentoLgpd: true,
+    });
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
     await fixture.whenStable();
 
@@ -62,7 +82,12 @@ describe('Registro', () => {
     const componente = fixture.componentInstance;
     await fixture.whenStable();
 
-    componente['form'].setValue({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!' });
+    componente['form'].setValue({
+      nome: 'Ana',
+      email: 'ana@example.com',
+      senha: 'Senha123!',
+      consentimentoLgpd: true,
+    });
     fixture.nativeElement.querySelector('form').dispatchEvent(new Event('submit'));
     await fixture.whenStable();
 

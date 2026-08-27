@@ -1,0 +1,11 @@
+.filtro {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  max-width: none;
+  margin-bottom: 1.5rem;
+}
+
+.filtro label {
+  min-width: 10rem;
+}
