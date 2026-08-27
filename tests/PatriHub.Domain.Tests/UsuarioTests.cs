@@ -38,4 +38,20 @@ public class UsuarioTests
     {
         Assert.Throws<ArgumentException>(() => Usuario.Registrar("Maria Silva", emailInvalido));
     }
+
+    [Fact]
+    public void Registrar_sem_consentimento_lgpd_lanca_ArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => Usuario.Registrar("Maria Silva", "maria@example.com", consentimentoLgpd: false));
+    }
+
+    [Fact]
+    public void Registrar_com_consentimento_lgpd_grava_o_timestamp_do_aceite()
+    {
+        var agora = DateTimeOffset.UtcNow;
+
+        var usuario = Usuario.Registrar("Maria Silva", "maria@example.com", agora: agora);
+
+        Assert.Equal(agora, usuario.ConsentimentoLgpdEm);
+    }
 }

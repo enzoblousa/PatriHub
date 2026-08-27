@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PatriHub.Api.Autenticacao;
 using PatriHub.Application.Autenticacao;
+using PatriHub.Application.Common;
 using PatriHub.Infrastructure.Jwt;
 
 namespace PatriHub.Api.Controllers;
@@ -46,5 +47,25 @@ public sealed class AuthController(IAutenticacaoService autenticacaoService) : C
         var papel = User.FindFirstValue(ClaimTypes.Role);
 
         return Ok(new UsuarioDto(User.ObterUsuarioId(), nome ?? string.Empty, email ?? string.Empty, papel ?? string.Empty));
+    }
+
+    /// <summary>
+    /// Exclusão definitiva da própria conta e dados (LGPD — ver ADR-0005). `usuarioId` vem só
+    /// do JWT (nunca de um parâmetro na rota), mesmo padrão de <see cref="Me"/> — ninguém
+    /// exclui a conta de outra pessoa por aqui.
+    /// </summary>
+    [HttpDelete("conta")]
+    [Authorize]
+    public async Task<IActionResult> ExcluirConta()
+    {
+        var resultado = await autenticacaoService.ExcluirContaAsync(User.ObterUsuarioId());
+        if (resultado.Sucesso)
+        {
+            return NoContent();
+        }
+
+        return resultado.TipoErro == TipoErroOperacao.NaoEncontrado
+            ? NotFound(new { erro = resultado.Erro })
+            : BadRequest(new { erro = resultado.Erro });
     }
 }

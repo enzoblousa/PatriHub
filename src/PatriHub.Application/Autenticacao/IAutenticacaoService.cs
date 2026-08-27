@@ -1,3 +1,5 @@
+using PatriHub.Application.Common;
+
 namespace PatriHub.Application.Autenticacao;
 
 /// <summary>
@@ -9,4 +11,11 @@ public interface IAutenticacaoService
     Task<ResultadoAutenticacao> RegistrarAsync(RegistrarUsuarioRequest request);
 
     Task<ResultadoAutenticacao> LoginAsync(LoginRequest request);
+
+    /// <summary>
+    /// Exclusão definitiva (hard delete) da própria conta e de todo o histórico financeiro
+    /// associado — ver ADR-0005. `usuarioId` só pode vir do JWT autenticado (mesmo padrão do
+    /// `/me`), nunca de um parâmetro vindo do cliente.
+    /// </summary>
+    Task<ResultadoOperacao> ExcluirContaAsync(Guid usuarioId);
 }
