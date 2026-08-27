@@ -1,17 +1,45 @@
-/* Identidade visual fora de escopo desta spec (ver docs/spec/01-SPEC-FUNCIONAL.md §9). */
 .cabecalho {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem;
-  border-bottom: 1px solid #ddd;
+  gap: 2rem;
+  padding: 0.9rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.marca {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .navegacao {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
+  font-size: 0.875rem;
+}
+
+.navegacao a {
+  color: var(--text-muted);
+}
+
+.navegacao a:hover {
+  color: var(--text);
+  text-decoration: none;
 }
 
 .usuario {
   margin-left: auto;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.cabecalho a,
+.cabecalho button {
+  font-size: 0.8125rem;
+}
+
+.cabecalho button {
+  padding: 0.35rem 0.75rem;
 }

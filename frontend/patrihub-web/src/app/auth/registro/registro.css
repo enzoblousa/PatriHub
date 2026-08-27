@@ -1,25 +1,8 @@
-/* Identidade visual fora de escopo desta spec (ver docs/spec/01-SPEC-FUNCIONAL.md §9) —
-   apenas o essencial pra formulário ser legível. */
 .registro {
   max-width: 24rem;
-  margin: 0 auto;
-}
-
-.registro form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.campo-erro,
-.erro {
-  color: #b00020;
-  margin: 0;
-}
-
-.consentimento-lgpd {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.5rem;
-  font-size: 0.9rem;
+  margin: 4rem auto 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.25rem;
 }
