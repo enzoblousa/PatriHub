@@ -19,6 +19,11 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/registro/registro').then((m) => m.Registro),
   },
   {
+    path: 'perfil',
+    canActivate: [authGuard],
+    loadComponent: () => import('./perfil/perfil').then((m) => m.Perfil),
+  },
+  {
     path: 'ativos',
     canActivate: [authGuard],
     children: [

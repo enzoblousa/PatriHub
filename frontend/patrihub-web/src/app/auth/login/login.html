@@ -1,6 +1,10 @@
 <section class="login">
   <h1>Entrar</h1>
 
+  @if (contaExcluida) {
+    <p class="confirmacao" role="status">Sua conta foi excluída com sucesso.</p>
+  }
+
   <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
     <label>
       Email

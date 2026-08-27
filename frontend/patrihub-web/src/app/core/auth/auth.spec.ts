@@ -97,7 +97,7 @@ describe('Auth', () => {
 
     let resultado: ResultadoAutenticacao | undefined;
     service
-      .registrar({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!' })
+      .registrar({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!', consentimentoLgpd: true })
       .subscribe((r) => (resultado = r));
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/auth/registrar`);
@@ -114,7 +114,7 @@ describe('Auth', () => {
 
     let erro: unknown;
     service
-      .registrar({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!' })
+      .registrar({ nome: 'Ana', email: 'ana@example.com', senha: 'Senha123!', consentimentoLgpd: true })
       .subscribe({ error: (e) => (erro = e) });
 
     const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/auth/registrar`);
@@ -140,5 +140,36 @@ describe('Auth', () => {
     expect(localStorage.getItem('patrihub.token')).toBeNull();
     expect(localStorage.getItem('patrihub.usuario')).toBeNull();
     expect(router.navigate).toHaveBeenCalledWith(['/login']);
+  });
+
+  it('me chama GET /api/auth/me', () => {
+    const service = TestBed.inject(Auth);
+
+    let usuario: unknown;
+    service.me().subscribe((u) => (usuario = u));
+
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/auth/me`);
+    expect(req.request.method).toBe('GET');
+    req.flush(resultadoComSucesso.usuario);
+
+    expect(usuario).toEqual(resultadoComSucesso.usuario);
+  });
+
+  it('excluirConta chama DELETE /api/auth/conta e limpa a sessão, sem navegar', () => {
+    localStorage.setItem('patrihub.token', resultadoComSucesso.token!);
+    localStorage.setItem('patrihub.usuario', JSON.stringify(resultadoComSucesso.usuario));
+    const service = TestBed.inject(Auth);
+
+    let concluido = false;
+    service.excluirConta().subscribe(() => (concluido = true));
+
+    const req = httpMock.expectOne(`${environment.apiBaseUrl}/api/auth/conta`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+
+    expect(concluido).toBe(true);
+    expect(service.estaAutenticado()).toBe(false);
+    expect(localStorage.getItem('patrihub.token')).toBeNull();
+    expect(router.navigate).not.toHaveBeenCalled();
   });
 });

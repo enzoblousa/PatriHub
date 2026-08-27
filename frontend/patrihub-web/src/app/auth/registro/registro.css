@@ -16,3 +16,10 @@
   color: #b00020;
   margin: 0;
 }
+
+.consentimento-lgpd {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}

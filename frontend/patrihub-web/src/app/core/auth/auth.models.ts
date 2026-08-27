@@ -6,6 +6,7 @@ export interface RegistrarUsuarioRequest {
   nome: string;
   email: string;
   senha: string;
+  consentimentoLgpd: boolean;
 }
 
 export interface LoginRequest {
