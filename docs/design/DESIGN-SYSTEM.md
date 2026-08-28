@@ -189,14 +189,20 @@ próprio; um punhado de telas ganhou ajuste de layout específico:
 | Dashboard (`dashboard/dashboard-pagina`) | `.stat` (cartão de estatística, §5.4) + `.taxa-referencia` horizontal |
 | Ativos → Listagem (`ativos/ativos-lista`) | Badge de status (§5.3) |
 | Perfil (`perfil/`) | `.dados-conta`/`.zona-de-risco` como cartão |
-| Lançamentos → Listagem (`lancamentos/lancamentos-lista`) | `.filtro` horizontal |
+| Lançamentos → Listagem (`lancamentos/lancamentos-lista`) | `.filtro` horizontal + sinal semântico na coluna Valor (§6) |
 | Ativo → Detalhe (`ativos/ativo-detalhe`) | Espaçamento de `.acoes-status` |
 | Todo o resto (formulários de Ativo/Lançamento/Contrato/Locatário, Contratos/Locatários listagem, Admin) | Sem CSS próprio — herda 100% da base global (tabela-cartão, formulário, botão pílula) |
 
+Sinal semântico de valor (§6) já cobre, além do Dashboard e `AtivosLista`, a coluna Valor de
+`LancamentosLista` (Receita = positivo, Despesa = negativo — o sinal vem do `Tipo`, não do
+número) e os espelhos de leitura do Admin (`admin-usuario-lancamentos`,
+`admin-usuario-ativos`).
+
 **Próximo passo natural**: estender badge de status (§5.3) pro Status de Contrato
-(`Ativo`/`Encerrado`/`Inadimplente` — `Ativo` = `--ok`) e sinal semântico de valor (§6) pra
-`LancamentosLista` e `AtivoDetalhe`. Mesmo padrão já em `ativos-lista.ts`/`.html` — importar o
-enum como valor (não `type`), expor no componente, bindar `[class.x]` no template.
+(`Ativo`/`Encerrado`/`Inadimplente` — `Ativo` = `--ok`). `AtivoDetalhe` fica de fora do sinal
+semântico de propósito — `AtivoDetalheDto` não expõe lucro, só `ValorAquisicao`/
+`ValorMercadoAtual`, que não têm um sinal "bom/ruim" claro sem inventar uma comparação (mesma
+cautela de §6 sobre Depreciação).
 
 ## 10. Checklist pra uma tela nova
 

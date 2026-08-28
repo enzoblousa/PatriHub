@@ -28,7 +28,12 @@
             <td>{{ rotulosTipo[ativo.tipo] }}</td>
             <td>{{ rotulosStatus[ativo.status] }}</td>
             <td>{{ ativo.valorMercadoAtual | number: '1.2-2' }}</td>
-            <td>{{ ativo.lucroDoMes | number: '1.2-2' }}</td>
+            <td
+              [class.valor-positivo]="ativo.lucroDoMes >= 0"
+              [class.valor-negativo]="ativo.lucroDoMes < 0"
+            >
+              {{ ativo.lucroDoMes | number: '1.2-2' }}
+            </td>
           </tr>
         }
       </tbody>
