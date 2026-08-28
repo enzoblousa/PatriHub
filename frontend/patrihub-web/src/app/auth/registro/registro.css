@@ -1,8 +1,13 @@
 .registro {
-  max-width: 24rem;
-  margin: 4rem auto 0;
+  max-width: 23rem;
+  margin: 4.5rem auto 0;
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 2.25rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  padding: 2.5rem;
+}
+
+.registro h1 {
+  margin-bottom: 1.75rem;
 }

@@ -1,18 +1,22 @@
 .dados-conta {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem;
   max-width: 32rem;
+  margin-bottom: 1.5rem;
 }
 
 .zona-de-risco {
-  border: 1px solid var(--danger);
-  border-radius: var(--radius);
-  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--sinal-neg-soft);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.75rem;
   max-width: 32rem;
 }
 
 .zona-de-risco h2 {
-  color: var(--danger);
+  color: var(--sinal-neg);
 }

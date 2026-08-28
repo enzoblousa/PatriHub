@@ -1,0 +1,28 @@
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border-radius: var(--radius-full);
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--surface-muted);
+}
+
+.badge-status::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+}
+
+.badge-status--ok {
+  color: var(--sinal-pos);
+  background: var(--sinal-pos-soft);
+}
+
+.badge-status--ok::before {
+  background: var(--sinal-pos);
+}

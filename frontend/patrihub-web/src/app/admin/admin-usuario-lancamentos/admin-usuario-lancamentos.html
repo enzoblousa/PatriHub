@@ -28,7 +28,12 @@
             <td>{{ apelidoDoAtivo(lancamento.ativoId) }}</td>
             <td>{{ rotulosTipo[lancamento.tipo] }}</td>
             <td>{{ rotulosCategoria[lancamento.categoria] }}</td>
-            <td>{{ lancamento.valor | number: '1.2-2' }}</td>
+            <td
+              [class.valor-positivo]="lancamento.tipo === TipoLancamento.Receita"
+              [class.valor-negativo]="lancamento.tipo === TipoLancamento.Despesa"
+            >
+              {{ lancamento.valor | number: '1.2-2' }}
+            </td>
             <td>{{ lancamento.data }}</td>
             <td>{{ lancamento.descricao }}</td>
           </tr>

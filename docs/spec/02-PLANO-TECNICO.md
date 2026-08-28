@@ -124,6 +124,6 @@ comuns + tabela filha (`Imoveis` ou `Carros`) com PK = FK para `Ativos.Id` (EF C
   (Karma+Jasmine ou Vitest) para componentes/services; `HttpTestingController` mocka o
   `HttpClient` nos testes de service que chamam a API — sem Testcontainers aqui, já que não há
   banco no frontend.
-- **Identidade visual:** propositalmente fora deste plano técnico (ver `01-SPEC-FUNCIONAL.md
-  §9`) — paleta, tipografia e estilo geral são decididos tela a tela na implementação, não
-  fixados de antemão.
+- **Identidade visual:** ver [`../design/DESIGN-SYSTEM.md`](../design/DESIGN-SYSTEM.md) —
+  paleta, tipografia e componentes, aplicados a fundo em 3 telas-chave e como base global no
+  resto (cobertura detalhada no próprio documento).

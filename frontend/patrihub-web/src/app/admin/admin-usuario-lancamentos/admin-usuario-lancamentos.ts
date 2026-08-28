@@ -8,6 +8,7 @@ import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { buscarRotulo } from '../../core/util/buscar-rotulo';
 import { ROTULOS_CATEGORIA, ROTULOS_TIPO } from '../../lancamentos/lancamentos-categorias';
 import type { LancamentoDto } from '../../lancamentos/lancamentos.models';
+import { TipoLancamento } from '../../lancamentos/lancamentos.models';
 import { Admin } from '../admin';
 
 /**
@@ -32,6 +33,7 @@ export class AdminUsuarioLancamentos {
 
   protected readonly rotulosTipo = ROTULOS_TIPO;
   protected readonly rotulosCategoria = ROTULOS_CATEGORIA;
+  protected readonly TipoLancamento = TipoLancamento;
 
   constructor() {
     forkJoin({
