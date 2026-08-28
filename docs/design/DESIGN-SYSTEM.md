@@ -5,86 +5,84 @@ Registra a identidade visual do frontend (`frontend/patrihub-web`), decidida em 
 qualquer tela nova ou revisão de tela existente — quando o CSS de um componente e este
 documento discordarem, ajuste o CSS.
 
+*Histórico*: esta é a terceira direção visual do projeto. A primeira ("azul institucional")
+foi descartada por ser genérica demais; a segunda ("utilitário denso", terminal escuro estilo
+mesa de operações) foi descartada por ler como HUD de jogo em vez de ferramenta profissional.
+Esta direção é inspirada em dashboards de fintech pessoal modernos (referências guardadas
+fora do repo) — claro, arredondado, acolhedor — e foi adotada pro app inteiro de uma vez, não
+só em telas-chave.
+
 ## 1. Direção
 
-**Utilitário denso, corporativo.** PatriHub não é um app consumer — é uma ferramenta que
-alguém abre todo dia pra olhar números do próprio patrimônio. A referência é uma ferramenta
-fintech B2B séria (o tipo de painel que um banco ou uma fintech dá pro próprio operador), não
-um HUD de jogo nem um terminal de hacker: densidade de informação e precisão numérica
-importam mais que calor visual, mas a execução tem que ler como profissional, nunca como
-tela de menu ou console de estimação de terminal retrô.
+**Fintech pessoal amigável.** PatriHub acompanha o patrimônio de uma pessoa física — o tom é
+de ferramenta financeira pessoal moderna (o tipo de app que alguém *gosta* de abrir pra ver
+como o próprio dinheiro está indo), não um painel corporativo frio nem um terminal técnico.
+Acolhimento e clareza vêm antes de densidade de informação.
 
-Quatro regras seguem disso, e valem mais que qualquer detalhe abaixo:
+Regras que valem mais que qualquer detalhe abaixo:
 
-1. **Cor é sinal, nunca decoração.** Só duas cores carregam significado (§2) e só aparecem
-   onde o significado existe. Nenhum elemento é colorido "pra ficar bonito" — e mesmo essas
-   duas cores são propositalmente contidas (chroma baixo), nunca neon.
-2. **Número é mono, sempre.** Todo valor financeiro, percentual, data ou id usa
-   `--font-mono` com `tabular-nums` — colunas de tabela alinham de verdade.
-3. **Sem sombra, sem gradiente, sem ilustração.** Hierarquia vem de tipografia, espaçamento e
-   hairlines (bordas de 1px), não de profundidade falsa.
-4. **Caixa alta é rótulo estrutural, não título nem botão.** Reservada pra metadado pequeno
-   (cabeçalho de tabela, rótulo de campo, badge) — ver §3. Título, botão e item de navegação
-   ficam em caixa normal; caixa alta em tudo é o que lembra tela de menu de jogo.
-
-*Nota de revisão*: a primeira versão desta direção usava verde/vermelho bem mais saturados,
-scanline de fundo, um ponto pulsante no cabeçalho e caixa alta em título/botão/navegação —
-lido como HUD de jogo, não como ferramenta profissional. Esta versão corrige isso; se uma
-mudança futura reintroduzir qualquer um desses quatro elementos, é sinal de que a regra 4 (ou
-o espírito geral desta seção) está sendo esquecida.
+1. **Cartão, não grade.** Toda superfície de conteúdo (tabela, formulário, estatística) é um
+   cartão com cantos arredondados e sombra leve — nunca uma grade crua encostada na borda da
+   tela.
+2. **Cor é sinal financeiro, não decoração geral.** Verde/vermelho são reservados pra valor
+   com sinal (lucro, status "bom"/"ruim"); azul é a identidade da marca (ação primária, link,
+   item ativo da navegação, foco). Nenhuma cor aparece só "pra ficar bonito".
+3. **Caixa normal em tudo que se lê.** Nada de caixa alta em título, botão ou item de
+   navegação — isso é herança da direção anterior (terminal) e não combina com o tom
+   acolhedor desta.
+4. **Uma família tipográfica, pesos fazem o trabalho.** Sem combinar mono + sans; hierarquia
+   vem de peso e tamanho, não de trocar de fonte.
 
 ## 2. Cor
 
-Escuro é o tema base (`:root` em `styles.css`) — grafite frio dominando, dois sinais
-semânticos. Claro é a alternativa (`:root[data-theme='claro']`, ver §10), com os mesmos
-tokens redefinidos — nunca cor direta fora desses dois blocos.
+Tema único, claro (sem alternância claro/escuro — as referências desta direção são todas
+claras, e inventar um escuro sem referência real não valia o esforço).
 
 | Token | Uso |
 |---|---|
-| `--bg` / `--surface` / `--surface-raised` | Fundo da página / cards e inputs / hover e elementos elevados |
-| `--border` / `--border-strong` | Hairlines discretas / bordas de input, cabeçalho de tabela |
-| `--text` / `--text-muted` / `--text-dim` | Texto principal / rótulos e legendas / cabeçalho de tabela, placeholder |
-| `--sinal-pos` (+ `-dim`, `-hover`) / `--on-sinal-pos` | **Positivo/ativo/confirmação**: lucro ≥ 0, Contrato/Ativo em estado "bom", CTA primário (`button[type=submit]`), foco de input / cor do texto sobre um fundo `--sinal-pos` sólido |
-| `--sinal-neg` (+ `-dim`) | **Negativo/risco**: lucro < 0, erro, exclusão, zona de risco |
+| `--bg` / `--surface` / `--surface-muted` | Fundo da página (cinza-azulado bem claro) / cartões e inputs (branco) / hover, cabeçalho de tabela |
+| `--border` / `--border-strong` | Borda padrão de cartão / borda de input e botão |
+| `--text` / `--text-muted` / `--text-dim` | Texto principal / rótulos e legendas / texto terciário (placeholder, nota de rodapé) |
+| `--accent` (+ `-hover`, `-soft`) / `--on-accent` | **Identidade da marca**: ação primária (`button[type=submit]`), link, item ativo da sidebar, anel de foco / texto sobre um fundo `--accent` sólido |
+| `--sinal-pos` (+ `-soft`) | **Positivo/ativo**: lucro ≥ 0, Status `Alugado`/Contrato `Ativo` |
+| `--sinal-neg` (+ `-soft`) | **Negativo/risco**: lucro < 0, erro, exclusão, zona de risco |
 
-Ambos os tons de sinal usam chroma baixo (~0.09–0.13) de propósito — o suficiente pra ler como
-verde/vermelho, longe do verde/vermelho saturado de HUD ou alerta de sistema.
+Sem terceiro sinal (ex.: âmbar). Um status que não é claramente bom nem ruim (`Vago`,
+`Manutenção`, `À venda`, `Encerrado`) fica neutro (`--text-muted`/`--surface-muted`) — ver
+§5.3.
 
-**Não existe um terceiro sinal** (ex.: âmbar pra "atenção"). Um status que não é claramente
-bom nem ruim (`Vago`, `Manutenção`, `À venda`, `Encerrado`) fica neutro — ver §5.3. Resistir à
-tentação de adicionar uma cor nova pra um caso específico; se parecer necessário, é sinal de
-que o problema é outro (hierarquia tipográfica, agrupamento) — resolver por aí primeiro.
-
-**Nunca hardcode uma cor num `*.css` de componente** (nem em dark nem em light) — sempre
-`var(--token)`. É o que permite o tema claro (§10) recolorir o app inteiro sem tocar em CSS
-de feature; um `oklch(...)` direto ali quebra o toggle silenciosamente.
+**Nunca hardcode uma cor num `*.css` de componente** — sempre `var(--token)`. Se um tom novo
+parecer necessário, é quase sempre sinal de que o problema é outro (hierarquia, agrupamento).
 
 ## 3. Tipografia
 
-Uma família só, duas larguras — em vez de combinar duas famílias diferentes (o que a direção
-anterior fazia): **IBM Plex Sans Condensed** pra UI, **IBM Plex Mono** pra todo número.
-Reforça "sistema técnico" em vez de "produto de marca": os dois cortes existem na mesma
-fundição, desenhados pra funcionar juntos.
+**Figtree** — única família do sistema, do título ao rótulo pequeno, variando peso (400–800),
+não faixa larga (`--font-display` e `--font-body` apontam pro mesmo valor). Números usam
+`font-variant-numeric: tabular-nums` dentro da própria Figtree (sem fonte mono separada) pra
+coluna de tabela alinhar sem precisar trocar de tipo.
 
-- `--font-display` / `--font-body`: IBM Plex Sans Condensed. **Caixa alta com
-  letter-spacing é só pra rótulo estrutural pequeno** — `label`, `th`, `dt`, `fieldset
-  legend`, badge de status (§5.3) — ver `styles.css`. Título (`h1`/`h2`), `button`, link de
-  navegação (`.navegacao a`, `.acoes a`) e a marca no cabeçalho ficam em **caixa normal**: são
-  a coisa que se lê e se clica, não um metadado — caixa alta ali é o que lembra menu de jogo
-  (regra 4, §1).
-- `--font-mono`: IBM Plex Mono, com `font-variant-numeric: tabular-nums`. Todo `input`,
-  `td`, `dd` usa mono por padrão (ver `styles.css`) — a exceção é uma célula de tabela com
-  link/botão/form dentro (`td:has(a)`, `td:has(button)`, `td:has(form)`), que volta pra
-  `--font-body` porque não é dado, é ação.
+- `h1`/`h2`: peso 700, `letter-spacing: -0.01em` (aperta um pouco o título, comum em type
+  scales modernos).
+- Rótulo de campo (`label`), cabeçalho de tabela (`th`), termo de definição (`dt`): peso 600,
+  tamanho pequeno, `--text-muted` — sem caixa alta (regra 3, §1).
+- Número grande de destaque (readout de estatística, `.stat dd`): peso 700,
+  `letter-spacing: -0.02em`, ~1.875rem.
 
-## 4. Geometria e espaçamento
+## 4. Geometria, sombra e espaçamento
 
-- `--radius: 4px` (cards, painéis) / `--radius-sm: 2px` (inputs, botões) — cantos quase
-  retos, não o `8px`/`12px` "app friendly" comum. Nunca usar um raio fora desses dois tokens.
-- Sem `box-shadow` em lugar nenhum do sistema. Elevação e agrupamento vêm de
-  `--surface`/`--surface-raised` + borda de 1px.
-- Densidade: `font-size` de tabela é `0.8125rem` (menor que o corpo, `15px`) — tabela deve
-  caber mais linha na tela, não ser confortável de ler frase por frase.
+- `--radius-full: 999px` — botões, badges, chip de ação (`.acoes a`). Pílula é a forma padrão
+  de controle interativo pequeno.
+- `--radius-lg: 20px` — cartões grandes (tabela, painel de estatística, cartão de
+  login/registro).
+- `--radius: 12px` — inputs, botões secundários menores, cartão de tamanho médio.
+- `--radius-sm: 8px` — reservado pra elemento pequeno que não deve ser pílula nem cartão
+  grande (hoje sem uso ativo — existe pra não faltar um degrau menor quando precisar).
+- **Sombra é elevação real agora** (ao contrário da direção anterior): `--shadow-sm` em
+  elemento no nível da página (tabela, botão primário, badge não usa); `--shadow` em cartão
+  "flutuante" isolado (login/registro, painel do Perfil). Nunca as duas ao mesmo tempo no
+  mesmo elemento.
+- Nenhum raio ou sombra fora desses tokens — inventar um valor pontual quebra a consistência
+  entre telas.
 
 ## 5. Componentes
 
@@ -94,138 +92,123 @@ daquela tela.
 
 ### 5.1 Botões
 
-`button[type=submit]` é a ação primária do form (preenchido, `--sinal-pos`); qualquer outro
-`button` é neutro (contorno). `.excluir` é a única variante — contorno em `--sinal-neg`, pro
-gatilho de uma exclusão (ver `AtivoDetalhe`, `Perfil`, `LancamentosLista`). Não criar uma
-variante nova sem necessidade real — dois níveis (primário/neutro) mais um destrutivo bastam
-pra tudo que o app faz hoje.
+Pílula (`--radius-full`) sempre. `button[type=submit]` é a ação primária do form — preenchida
+em `--accent`, com `--shadow-sm`; qualquer outro `button` é neutro (contorno, fundo branco).
+`.excluir` é a única variante de risco — fundo `--sinal-neg-soft`, texto `--sinal-neg`. Não
+criar uma variante nova sem necessidade real.
 
 ### 5.2 Tabelas
 
-Componente central da direção. Cabeçalho em `--font-display` caixa alta pequena (`th`),
-corpo em `--font-mono` (`td`). Hover de linha soma um `border-left` de 2px em
-`--border-strong` — neutro de propósito: é só "isto é a linha sob o cursor", não um sinal de
-dado, então não usa a cor de sinal (ver regra 1, §1).
+O `<table>` inteiro é o cartão — `border-radius: var(--radius-lg)` + `overflow: hidden` +
+`box-shadow: var(--shadow-sm)` direto no elemento, sem precisar de um `<div>` wrapper (exige
+`border-collapse: separate; border-spacing: 0` pro raio funcionar nas bordas das células).
+Cabeçalho com fundo `--surface-muted`; hover de linha também `--surface-muted`, sem sinal de
+cor (hover é neutro — só "isto está sob o cursor", ver regra 2, §1).
 
 ### 5.3 Badge de status
 
-Ponto colorido (`::before`) + rótulo mono caixa alta. Só a classe modificadora
-`--ok` (ex.: `badge-status--ok` em `AtivosLista`, pro Status `Alugado`) usa `--sinal-pos`; sem
-modificador, o badge fica neutro (`--text-dim`). Ver `ativos-lista.css`/`.html` como
+Pílula pequena com ponto colorido (`::before`) + texto, fundo `--surface-muted` por padrão.
+Só a classe modificadora `--ok` (ex.: `badge-status--ok` em `AtivosLista`, pro Status
+`Alugado`) usa `--sinal-pos`/`--sinal-pos-soft`. Ver `ativos-lista.css`/`.html` como
 referência pra estender esse padrão a Contrato (`Ativo` = ok) e outros status.
 
-### 5.4 Blocos de alerta
+### 5.4 Estatística em destaque
+
+Um `dt`/`dd` de uma `<dl>` envolvidos num `<div class="stat">` (ver `dashboard-pagina.html`)
+— cartão próprio (`--surface`, borda, `--radius-lg`, `--shadow-sm`) com o rótulo pequeno em
+cima e o número grande embaixo. Envolver em `<div>` (em vez de deixar `dt`/`dd` soltos) é
+válido em HTML5 dentro de `<dl>` e é o que permite cada estatística virar um cartão
+independente.
+
+### 5.5 Blocos de alerta
 
 `.erro`, `.confirmacao`, `.aviso` e `[role="alert"]` (confirmação inline de exclusão) usam a
-mesma anatomia — fundo `-dim` da cor do sinal + `border-left` de 2px sólido, nunca borda
-inteira ao redor. `.aviso` (informativo, sem sinal pos/neg) usa `--text-muted` no lugar de
-uma cor de sinal.
+mesma anatomia — fundo `-soft` da cor do sinal, `border-radius: var(--radius)`, sem borda
+lateral de destaque (isso seria o padrão "card com accent na lateral" que a diretriz de
+design considera clichê — aqui a cor de fundo já basta). `.aviso` (informativo, sem sinal
+pos/neg) usa o tom `--accent-soft`.
 
-### 5.5 Formulário
+### 5.6 Formulário
 
-Pilha vertical de `label` (caixa alta, pequeno, `--text-muted`) + `input`/`select` em mono.
-`.filtro` (barra de filtro de uma listagem) é a exceção documentada: vira barra horizontal
-via CSS de componente (`lancamentos-lista.css`) em vez do empilhamento vertical padrão.
+Pilha vertical de `label` (peso 600, pequeno, `--text-muted`) + `input`/`select` com borda e
+`--radius`, foco em anel azul suave (`box-shadow: 0 0 0 3px var(--accent-soft)`, sem outline
+duro). `.filtro` (barra de filtro de uma listagem) é a exceção documentada: vira barra
+horizontal via CSS de componente (`lancamentos-lista.css`).
 
 ## 6. Sinal semântico de valor
 
-Duas classes utilitárias — `.valor-positivo` / `.valor-negativo` — coloram um número quando
-o sinal dele (positivo/negativo) tem significado direto pro usuário. Aplicadas via
+Duas classes utilitárias — `.valor-positivo` / `.valor-negativo` — coloram (e deixam em
+negrito) um número quando o sinal dele tem significado direto pro usuário. Aplicadas via
 `[class.valor-positivo]="x >= 0"` no template (ver `dashboard-pagina.html`,
 `ativos-lista.html`), nunca automaticamente — nem todo número é lucro.
 
 **Quando NÃO aplicar**: a coluna `Depreciação` do dashboard é o exemplo — negativo ali
-significa valorização (bom), então colorir do mesmo jeito que Lucro (positivo=verde) inverteria
-a leitura sem nenhuma legenda visível além da `<caption>` da tabela. Na dúvida se o sinal
-matemático corresponde ao sinal semântico pro usuário, **não** aplique a classe — deixe o
-número neutro.
+significa valorização (bom), então colorir do mesmo jeito que Lucro inverteria a leitura sem
+nenhuma legenda visível além da `<caption>` da tabela. Na dúvida se o sinal matemático
+corresponde ao sinal semântico pro usuário, **não** aplique a classe.
 
 ## 7. Movimento
 
-Minimalista ao ponto de quase não existir — nenhuma animação persistente/em loop (um elemento
-pulsando ou piscando sem parar é HUD, não ferramenta profissional, ver regra 4 §1):
+Mínimo, só pra suavizar transição de estado — nada em loop:
 
-- `main` tem um fade-in de 200ms (opacidade só, sem deslocamento) na entrada de cada rota
-  (`@keyframes entrar`), e respeita `prefers-reduced-motion: reduce` (`animation: none`).
-- Fora isso, só transições de estado pontuais (`width` da sidebar ao colapsar, `border-color`
-  num hover) — nunca decorativas, nunca em loop.
-- Sem hover-lift, sem confete, sem indicador "ao vivo" piscando. Se surgir vontade de
-  adicionar uma animação nova, perguntar primeiro se ela carrega informação (estado mudou) ou
-  é só enfeite — só a primeira se justifica aqui, e mesmo assim uma vez, não em loop.
+- `main` tem um fade-in de 200ms na entrada de cada rota (`@keyframes entrar`), respeitando
+  `prefers-reduced-motion: reduce`.
+- Botões e links de navegação têm transição curta de cor/fundo no hover (`0.12s`).
+- Sidebar colapsa com transição de `width` (`0.16s`).
+- Nada além disso — sem indicador piscando, sem confete, sem hover-lift decorativo.
 
 ## 8. Layout: cabeçalho + sidebar retrátil
 
-`app.html`/`app.css` (`App`, o componente raiz) são o único lugar que monta a casca da
-aplicação — nenhuma tela individual reimplementa cabeçalho ou navegação.
+`app.html`/`app.css` (`App`, o componente raiz) montam a casca da aplicação — nenhuma tela
+individual reimplementa cabeçalho ou navegação.
 
-- **Cabeçalho** (`.cabecalho`): barra fina de topo, sempre visível. Da esquerda pra direita —
-  botão de alternar a sidebar (só quando autenticado), marca "PatriHub" (texto simples, caixa
-  normal — ver §3), toggle de tema (§9, sempre visível, mesmo deslogado) e, só autenticado,
-  nome do usuário + link Perfil + botão Sair.
+- **Cabeçalho** (`.cabecalho`): barra branca de topo com borda inferior sutil. Botão de
+  alternar a sidebar (só autenticado) + marca "PatriHub" à esquerda; nome do usuário + link
+  Perfil + botão Sair à direita (só autenticado).
 - **Sidebar** (`.sidebar`, dentro de `.corpo`): navegação vertical, só renderizada quando
-  autenticado. Cada link é ícone (SVG inline, traço `stroke-width: 1.5`, sem preenchimento —
-  nunca emoji) + `<span class="rotulo">`. `routerLinkActive="ativo"` marca o item da rota
-  atual (fundo `--sinal-pos-dim` + texto `--sinal-pos`) — o link da raiz (`/`) usa
-  `[routerLinkActiveOptions]="{ exact: true }"` pra não ficar sempre ativo.
+  autenticado. Cada link é ícone (SVG inline, traço, sem preenchimento — nunca emoji) +
+  `<span class="rotulo">`. `routerLinkActive="ativo"` marca o item da rota atual (pílula
+  `--accent-soft` + texto `--accent`) — o link da raiz (`/`) usa
+  `[routerLinkActiveOptions]="{ exact: true }"`.
 - **Colapso**: `sidebarColapsada` (signal em `App`, persistido em
   `localStorage.patrihub.sidebarColapsada`) alterna `.sidebar--colapsada`, que estreita a
-  largura (`12rem` → `2.9rem`) e esconde `.rotulo` — só os ícones ficam, alinhados. Transição
-  é só `width`, 160ms; nada de reflow brusco.
+  largura e esconde `.rotulo` — só os ícones ficam.
 - **Novo item de navegação**: siga o padrão de um `<a>` existente em `app.html` — ícone
-  próprio (não reaproveite o de outro item), `routerLinkActive="ativo"`, `<span
-  class="rotulo">`. Se o item é só pra Admin, envolva no mesmo `@if
-  (auth.usuario()?.papel === 'Admin')` já usado pro link Admin.
+  próprio, `routerLinkActive="ativo"`, `<span class="rotulo">`. Item só pra Admin vai dentro
+  do mesmo `@if (auth.usuario()?.papel === 'Admin')` já usado pro link Admin.
 
-## 9. Tema claro/escuro
+## 9. Cobertura atual
 
-`core/tema/tema.ts` (serviço `Tema`) é a única fonte de verdade: um signal `tema` (`'escuro'
-| 'claro'`), método `alternar()`, persistência em `localStorage.patrihub.tema`, aplicado como
-`document.documentElement.setAttribute('data-theme', ...)`. `index.html` tem um script inline
-que lê essa chave e já aplica `data-theme="claro"` antes do Angular subir — sem isso, uma
-sessão em modo claro piscaria escuro por um frame no primeiro load.
+Aplicado ao app inteiro nesta rodada — tokens globais (`styles.css`) cobrem toda tela sem CSS
+próprio; um punhado de telas ganhou ajuste de layout específico:
 
-- Escuro é o **padrão** (nenhum atributo, ou `data-theme="escuro"`); claro é
-  `data-theme="claro"`. `:root[data-theme='claro']` em `styles.css` redefine todo token de
-  cor de §2 — nunca parcialmente.
-- O botão de toggle (`.botao-tema`, no cabeçalho) mostra o ícone do que **vai virar** ao
-  clicar — sol enquanto está escuro (convite a clarear), lua enquanto está claro. Sempre
-  visível, autenticado ou não.
-- Testar uma mudança de cor nos dois temas antes de considerar pronta — o jeito mais rápido é
-  `document.querySelector('.botao-tema').click()` no console do navegador.
-
-## 10. Cobertura atual
-
-Decisão desta rodada (ver conversa) foi aplicar o sistema a fundo em **3 telas-chave** antes
-de estender — sistema fica validado antes de replicar:
-
-| Tela/parte | Profundidade |
+| Tela/parte | O que tem CSS de componente |
 |---|---|
-| Casca (cabeçalho + sidebar, §8) e tema claro/escuro (§9) | Completa, cross-cutting — todo o app, autenticado ou não |
-| Login / Registro (`auth/`) | Completa — cartão simples, sem elemento decorativo |
-| Dashboard (`dashboard/dashboard-pagina`) | Completa — readouts de estatística + tabela com sinal semântico |
-| Ativos → Listagem (`ativos/ativos-lista`) | Completa — badge de status + sinal semântico de lucro |
-| Todo o resto (Ativos detalhe/form, Lançamentos, Locatários, Contratos, Admin, Perfil) | Base global só — tokens, tipografia e componentes de `styles.css` já se aplicam; badge de status (§5.3) e sinal semântico de valor (§6) ainda não estendidos pras tabelas dessas telas |
+| Casca (cabeçalho + sidebar, §8) | Layout completo da navegação |
+| Login / Registro (`auth/`) | Cartão flutuante (`--shadow`, `--radius-lg`) |
+| Dashboard (`dashboard/dashboard-pagina`) | `.stat` (cartão de estatística, §5.4) + `.taxa-referencia` horizontal |
+| Ativos → Listagem (`ativos/ativos-lista`) | Badge de status (§5.3) |
+| Perfil (`perfil/`) | `.dados-conta`/`.zona-de-risco` como cartão |
+| Lançamentos → Listagem (`lancamentos/lancamentos-lista`) | `.filtro` horizontal |
+| Ativo → Detalhe (`ativos/ativo-detalhe`) | Espaçamento de `.acoes-status` |
+| Todo o resto (formulários de Ativo/Lançamento/Contrato/Locatário, Contratos/Locatários listagem, Admin) | Sem CSS próprio — herda 100% da base global (tabela-cartão, formulário, botão pílula) |
 
 **Próximo passo natural**: estender badge de status (§5.3) pro Status de Contrato
 (`Ativo`/`Encerrado`/`Inadimplente` — `Ativo` = `--ok`) e sinal semântico de valor (§6) pra
-`LancamentosLista` (Receita positivo / Despesa negativo, ou o valor em si) e
-`AtivoDetalhe`. Cada extensão é o mesmo padrão já em `ativos-lista.ts`/`.html` — importar o
+`LancamentosLista` e `AtivoDetalhe`. Mesmo padrão já em `ativos-lista.ts`/`.html` — importar o
 enum como valor (não `type`), expor no componente, bindar `[class.x]` no template.
 
-## 11. Checklist pra uma tela nova
+## 10. Checklist pra uma tela nova
 
 1. Título com `<h1>`/`<h2>` — não precisa de classe, `styles.css` já cobre.
-2. Tabela? Estruture como as existentes (`<table>` simples, sem `<div>` de wrapper) — o
-   resto vem de graça.
-3. Tem um valor com sinal significativo (lucro, saldo)? Aplique `.valor-positivo`/
-   `.valor-negativo` via `[class.x]`, checando §6 antes (o sinal matemático bate com o
-   semântico?).
-4. Tem um status categórico? Considere um badge (§5.3) em vez de texto puro, se a tela for
-   uma listagem densa.
-5. Botão novo: `type="submit"` se for a ação primária do form, `type="button"` neutro caso
-   contrário, `.excluir` só se for mesmo destrutivo. Não crie uma variante de cor nova.
-6. Rodou `ng build`? O budget de `anyComponentStyle` é 4-8kB por componente — se estourar,
-   é sinal de que o CSS deveria estar em `styles.css`, não sendo duplicado ali.
-7. Toda cor nova é `var(--token)`, nunca `oklch(...)`/hex direto num `*.css` de componente —
-   ver §2. Testou a tela nos dois temas (`.botao-tema` no console, §9)?
-8. Título, botão, link de navegação: caixa normal, nunca caixa alta (regra 4, §1 e §3).
+2. Tabela? `<table>` simples, sem `<div>` de wrapper — o cartão vem de graça do estilo global.
+3. Estatística em destaque? Envolva `dt`/`dd` num `<div class="stat">` dentro da `<dl>` (§5.4).
+4. Tem um valor com sinal significativo (lucro, saldo)? Aplique `.valor-positivo`/
+   `.valor-negativo` via `[class.x]`, checando §6 antes.
+5. Tem um status categórico? Considere um badge (§5.3) em vez de texto puro numa listagem.
+6. Botão novo: `type="submit"` se for a ação primária do form, `type="button"` neutro caso
+   contrário, `.excluir` só se for mesmo destrutivo.
+7. Título, botão, link de navegação: caixa normal, nunca caixa alta (regra 3, §1).
+8. Toda cor nova é `var(--token)`, nunca `oklch(...)`/hex direto num `*.css` de componente.
+9. Rodou `ng build`? O budget de `anyComponentStyle` é 4-8kB por componente — se estourar, é
+   sinal de que o CSS deveria estar em `styles.css`, não sendo duplicado ali.

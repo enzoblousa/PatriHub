@@ -2,7 +2,6 @@ import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
 import { Auth } from './core/auth/auth';
-import { Tema } from './core/tema/tema';
 
 const CHAVE_SIDEBAR_COLAPSADA = 'patrihub.sidebarColapsada';
 
@@ -14,7 +13,6 @@ const CHAVE_SIDEBAR_COLAPSADA = 'patrihub.sidebarColapsada';
 })
 export class App {
   protected readonly auth = inject(Auth);
-  protected readonly tema = inject(Tema);
 
   protected readonly sidebarColapsada = signal(localStorage.getItem(CHAVE_SIDEBAR_COLAPSADA) === 'true');
 

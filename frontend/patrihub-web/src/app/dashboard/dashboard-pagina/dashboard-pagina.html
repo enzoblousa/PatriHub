@@ -5,21 +5,25 @@
     <p>Carregando…</p>
   } @else if (dashboard.dado(); as patrimonio) {
     <dl class="totais">
-      <dt>Lucro total do mês</dt>
-      <dd
-        [class.valor-positivo]="patrimonio.lucroTotalDoMes >= 0"
-        [class.valor-negativo]="patrimonio.lucroTotalDoMes < 0"
-      >
-        {{ patrimonio.lucroTotalDoMes | number: '1.2-2' }}
-      </dd>
+      <div class="stat">
+        <dt>Lucro total do mês</dt>
+        <dd
+          [class.valor-positivo]="patrimonio.lucroTotalDoMes >= 0"
+          [class.valor-negativo]="patrimonio.lucroTotalDoMes < 0"
+        >
+          {{ patrimonio.lucroTotalDoMes | number: '1.2-2' }}
+        </dd>
+      </div>
 
-      <dt>Lucro total acumulado</dt>
-      <dd
-        [class.valor-positivo]="patrimonio.lucroTotalAcumulado >= 0"
-        [class.valor-negativo]="patrimonio.lucroTotalAcumulado < 0"
-      >
-        {{ patrimonio.lucroTotalAcumulado | number: '1.2-2' }}
-      </dd>
+      <div class="stat">
+        <dt>Lucro total acumulado</dt>
+        <dd
+          [class.valor-positivo]="patrimonio.lucroTotalAcumulado >= 0"
+          [class.valor-negativo]="patrimonio.lucroTotalAcumulado < 0"
+        >
+          {{ patrimonio.lucroTotalAcumulado | number: '1.2-2' }}
+        </dd>
+      </div>
     </dl>
 
     <form class="taxa-referencia" [formGroup]="form" (ngSubmit)="recalcular()">

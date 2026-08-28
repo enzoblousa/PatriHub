@@ -8,7 +8,6 @@ import { App } from './app';
 describe('App', () => {
   beforeEach(async () => {
     localStorage.clear();
-    document.documentElement.removeAttribute('data-theme');
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter([])],
@@ -102,19 +101,5 @@ describe('App', () => {
 
     expect(sidebar.classList.contains('sidebar--colapsada')).toBe(true);
     expect(localStorage.getItem('patrihub.sidebarColapsada')).toBe('true');
-  });
-
-  it('clicar no botão de tema alterna claro/escuro e aplica no <html>', async () => {
-    const fixture = TestBed.createComponent(App);
-    await fixture.whenStable();
-
-    const compiled = fixture.nativeElement as HTMLElement;
-    const botaoTema = compiled.querySelector('.botao-tema') as HTMLButtonElement;
-    expect(document.documentElement.getAttribute('data-theme')).toBe('escuro');
-
-    botaoTema.click();
-    await fixture.whenStable();
-
-    expect(document.documentElement.getAttribute('data-theme')).toBe('claro');
   });
 });

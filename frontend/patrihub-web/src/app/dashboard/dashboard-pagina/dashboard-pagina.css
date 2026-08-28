@@ -1,26 +1,28 @@
-/* `.totais` é um <dl> plano (dt,dd,dt,dd, sem wrapper por par) — grid-auto-flow:column com 2
-   linhas fixas empilha cada par num "readout" de estatística, lado a lado, sem precisar
-   envolver cada dt/dd num elemento próprio. */
 .totais {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: min-content;
-  grid-template-rows: auto auto;
-  gap: 0.4rem 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   margin: 0 0 2rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.totais dt {
-  white-space: nowrap;
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem 1.5rem;
+  min-width: 12rem;
 }
 
-.totais dd {
-  font-size: 2rem;
-  font-weight: 500;
+.stat dt {
+  margin-bottom: 0.35rem;
+}
+
+.stat dd {
+  font-size: 1.875rem;
+  font-weight: 700;
   color: var(--text);
-  white-space: nowrap;
+  letter-spacing: -0.02em;
 }
 
 .taxa-referencia {
