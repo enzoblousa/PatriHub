@@ -24,6 +24,9 @@ public sealed class PatriHubApiFactory : WebApplicationFactory<Program>, IAsyncL
             configBuilder.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:PatriHubDb"] = _postgres.GetConnectionString(),
+                // Testes não precisam (nem devem pagar o custo de) a massa de dados demo —
+                // cada teste cria só os dados que precisa via CenarioTestHelper/AutenticacaoTestHelper.
+                ["SeedDadosDemo"] = "false",
             });
         });
     }

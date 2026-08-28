@@ -6,6 +6,7 @@ using PatriHub.Infrastructure;
 using PatriHub.Infrastructure.Identity;
 using PatriHub.Infrastructure.Jwt;
 using PatriHub.Infrastructure.Persistence;
+using PatriHub.Infrastructure.Seed;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,6 +67,7 @@ using (var scope = app.Services.CreateScope())
     await db.Database.MigrateAsync();
     await IdentitySeeder.SeedRolesAsync(scope.ServiceProvider);
     await IdentitySeeder.SeedAdminAsync(scope.ServiceProvider, app.Configuration);
+    await DadosDemoSeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
 }
 
 app.Run();
