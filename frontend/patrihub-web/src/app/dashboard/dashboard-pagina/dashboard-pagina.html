@@ -36,12 +36,21 @@
           step="0.01"
         />
       </label>
-      <button type="submit" [disabled]="dashboard.carregando()">Recalcular custo de oportunidade</button>
+      <button type="submit" [disabled]="dashboard.carregando()">
+        Recalcular custo de oportunidade
+      </button>
     </form>
 
     @if (patrimonio.ativos.length === 0) {
       <p>Você ainda não cadastrou nenhum Ativo.</p>
     } @else {
+      <app-grafico-barras
+        class="grafico-lucro"
+        titulo="Lucro acumulado por Ativo"
+        [rotulos]="rotulosAtivos()"
+        [valores]="lucrosAcumulados()"
+      />
+
       <table>
         <caption>
           Depreciação negativa significa valorização (ValorMercadoAtual acima do ValorAquisição).
@@ -98,8 +107,12 @@
                 {{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}
               </td>
               <td
-                [class.valor-positivo]="metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual >= 0"
-                [class.valor-negativo]="metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual < 0"
+                [class.valor-positivo]="
+                  metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual >= 0
+                "
+                [class.valor-negativo]="
+                  metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual < 0
+                "
               >
                 {{
                   metricas.roiSobreValorFipeAtual !== null
@@ -109,7 +122,10 @@
               </td>
               <td>
                 @if (metricas.divergenciaFipeAtual !== null) {
-                  <span class="badge-status" [class.badge-status--risco]="metricas.alertaDivergenciaFipe === true">
+                  <span
+                    class="badge-status"
+                    [class.badge-status--risco]="metricas.alertaDivergenciaFipe === true"
+                  >
                     {{ metricas.divergenciaFipeAtual | percent: '1.2-2' }}
                   </span>
                 } @else {
