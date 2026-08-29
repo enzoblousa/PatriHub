@@ -38,9 +38,17 @@ _Avoid_: usar "ROI" para essa métrica — são números diferentes
 
 **ROI**:
 Retorno percentual **total** de um Ativo: lucro acumulado (incluindo valorização ou
-depreciação) sobre a base de investimento. Calculado duas vezes — sobre `ValorAquisição` e
-sobre `ValorMercadoAtual` — e exibido lado a lado, por serem leituras diferentes.
+depreciação) sobre a base de investimento. Calculado sobre `ValorAquisição` e sobre
+`ValorMercadoAtual` para qualquer Ativo — e, só para Carro, também sobre `ValorFipeAtual`
+(terceira leitura, mais "objetiva" que a autoavaliação de `ValorMercadoAtual`) — exibidos
+lado a lado, por serem leituras diferentes.
 _Avoid_: usar "Yield" para essa métrica
+
+**Divergência FIPE** (Carro):
+Diferença percentual entre `ValorMercadoAtual` (autoavaliação do usuário) e `ValorFipeAtual`
+(referência de mercado da Tabela FIPE). Sinalizada como alerta no dashboard quando ultrapassa
+`CalculadoraFinanceira.LimiarDivergenciaFipe` (15%, em valor absoluto) — indício de que o
+usuário esqueceu de atualizar o `ValorMercadoAtual`.
 
 **Inadimplente (status do Contrato)**:
 Atribuído automaticamente por um job periódico: um Contrato `Ativo` vira `Inadimplente`

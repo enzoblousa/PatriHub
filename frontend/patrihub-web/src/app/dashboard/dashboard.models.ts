@@ -16,6 +16,12 @@ export interface MetricasAtivoDto {
   /** null quando `taxaReferenciaAnual` não foi informada na consulta. */
   custoDeOportunidade: number | null;
   projecaoDeLucro: number;
+  /** Terceira leitura de ROI, sobre ValorFipeAtual — null quando o Ativo não é Carro (issue #46). */
+  roiSobreValorFipeAtual: number | null;
+  /** Divergência entre ValorMercadoAtual e ValorFipeAtual — null quando o Ativo não é Carro. */
+  divergenciaFipeAtual: number | null;
+  /** Se divergenciaFipeAtual ultrapassa o limiar de alerta — null quando o Ativo não é Carro. */
+  alertaDivergenciaFipe: boolean | null;
 }
 
 /** Visão consolidada do patrimônio do usuário — soma de todos os Ativos, com a lista por Ativo pra comparação. */

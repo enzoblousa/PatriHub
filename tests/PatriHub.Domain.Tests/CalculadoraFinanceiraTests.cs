@@ -172,6 +172,43 @@ public class CalculadoraFinanceiraTests
     }
 
     [Fact]
+    public void DivergenciaFipe_divide_a_diferenca_entre_ValorMercadoAtual_e_ValorFipeAtual_pela_ValorFipeAtual()
+    {
+        // Usuário avaliou o carro em 60.000, FIPE marca 50.000 — 20% acima da referência de mercado.
+        var divergencia = CalculadoraFinanceira.DivergenciaFipe(valorMercadoAtual: 60_000m, valorFipeAtual: 50_000m);
+
+        Assert.Equal(0.2m, divergencia);
+    }
+
+    [Fact]
+    public void DivergenciaFipe_e_negativa_quando_ValorMercadoAtual_esta_abaixo_da_ValorFipeAtual()
+    {
+        var divergencia = CalculadoraFinanceira.DivergenciaFipe(valorMercadoAtual: 40_000m, valorFipeAtual: 50_000m);
+
+        Assert.Equal(-0.2m, divergencia);
+    }
+
+    [Fact]
+    public void DivergenciaFipe_com_ValorFipeAtual_zero_retorna_zero_em_vez_de_lancar()
+    {
+        var divergencia = CalculadoraFinanceira.DivergenciaFipe(valorMercadoAtual: 40_000m, valorFipeAtual: 0m);
+
+        Assert.Equal(0m, divergencia);
+    }
+
+    [Theory]
+    [InlineData(0.15, false)] // exatamente no limiar não alerta — só acima dele
+    [InlineData(0.1501, true)]
+    [InlineData(-0.1501, true)] // divergência negativa também alerta, pelo valor absoluto
+    [InlineData(0.05, false)]
+    public void UltrapassaLimiarDeDivergenciaFipe_alerta_quando_o_valor_absoluto_passa_do_limiar(decimal divergencia, bool esperado)
+    {
+        var alerta = CalculadoraFinanceira.UltrapassaLimiarDeDivergenciaFipe(divergencia);
+
+        Assert.Equal(esperado, alerta);
+    }
+
+    [Fact]
     public void CustoDeOportunidade_multiplica_ValorMercadoAtual_pela_taxa_anual()
     {
         var custo = CalculadoraFinanceira.CustoDeOportunidade(valorMercadoAtual: 350_000m, taxaReferenciaAnual: 0.12m);

@@ -45,6 +45,8 @@
       <table>
         <caption>
           Depreciação negativa significa valorização (ValorMercadoAtual acima do ValorAquisição).
+          ROI (FIPE) e Divergência FIPE só se aplicam a Carro (travessão pra Imóvel); divergência
+          destacada quando ultrapassa o limiar de alerta.
         </caption>
         <thead>
           <tr>
@@ -54,6 +56,8 @@
             <th>Yield</th>
             <th>ROI (aquisição)</th>
             <th>ROI (mercado)</th>
+            <th>ROI (FIPE)</th>
+            <th>Divergência FIPE</th>
             <th>Depreciação</th>
             <th>Projeção de lucro</th>
             <th>Custo de oportunidade</th>
@@ -92,6 +96,25 @@
                 [class.valor-negativo]="metricas.roiSobreValorMercadoAtual < 0"
               >
                 {{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}
+              </td>
+              <td
+                [class.valor-positivo]="metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual >= 0"
+                [class.valor-negativo]="metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual < 0"
+              >
+                {{
+                  metricas.roiSobreValorFipeAtual !== null
+                    ? (metricas.roiSobreValorFipeAtual | percent: '1.2-2')
+                    : '—'
+                }}
+              </td>
+              <td>
+                @if (metricas.divergenciaFipeAtual !== null) {
+                  <span class="badge-status" [class.badge-status--risco]="metricas.alertaDivergenciaFipe === true">
+                    {{ metricas.divergenciaFipeAtual | percent: '1.2-2' }}
+                  </span>
+                } @else {
+                  —
+                }
               </td>
               <td>{{ metricas.depreciacao | number: '1.2-2' }}</td>
               <td

@@ -64,6 +64,17 @@ public sealed class DashboardService(PatriHubDbContext db) : IDashboardService
         var lucroTotalComValorizacao = CalculadoraFinanceira.LucroTotalComValorizacao(
             lucroAcumulado, ativo.ValorAquisicao, ativo.ValorMercadoAtual);
 
+        // Leituras específicas de Carro (ValorFipeAtual não existe em Imóvel) — ver issue #46.
+        decimal? roiSobreValorFipeAtual = null;
+        decimal? divergenciaFipeAtual = null;
+        bool? alertaDivergenciaFipe = null;
+        if (ativo is Carro carro)
+        {
+            roiSobreValorFipeAtual = CalculadoraFinanceira.Roi(lucroTotalComValorizacao, carro.ValorFipeAtual);
+            divergenciaFipeAtual = CalculadoraFinanceira.DivergenciaFipe(ativo.ValorMercadoAtual, carro.ValorFipeAtual);
+            alertaDivergenciaFipe = CalculadoraFinanceira.UltrapassaLimiarDeDivergenciaFipe(divergenciaFipeAtual.Value);
+        }
+
         return new MetricasAtivoDto(
             ativo.Id,
             ativo.Apelido,
@@ -78,6 +89,9 @@ public sealed class DashboardService(PatriHubDbContext db) : IDashboardService
             CustoDeOportunidade: taxaReferenciaAnual is { } taxa
                 ? CalculadoraFinanceira.CustoDeOportunidade(ativo.ValorMercadoAtual, taxa)
                 : null,
-            ProjecaoDeLucro: CalculadoraFinanceira.ProjecaoDeLucro(lancamentos, dataReferencia));
+            ProjecaoDeLucro: CalculadoraFinanceira.ProjecaoDeLucro(lancamentos, dataReferencia),
+            RoiSobreValorFipeAtual: roiSobreValorFipeAtual,
+            DivergenciaFipeAtual: divergenciaFipeAtual,
+            AlertaDivergenciaFipe: alertaDivergenciaFipe);
     }
 }

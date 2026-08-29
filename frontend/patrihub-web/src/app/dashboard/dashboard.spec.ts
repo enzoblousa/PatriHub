@@ -25,6 +25,9 @@ describe('Dashboard', () => {
         depreciacao: -50_000,
         custoDeOportunidade: null,
         projecaoDeLucro: 2_000,
+        roiSobreValorFipeAtual: null,
+        divergenciaFipeAtual: null,
+        alertaDivergenciaFipe: null,
       },
     ],
   };
