@@ -40,7 +40,6 @@
   position: fixed;
   transform: translateX(-50%);
   width: max-content;
-  max-width: 16rem;
   background: var(--text);
   color: var(--surface);
   font-size: 0.75rem;
