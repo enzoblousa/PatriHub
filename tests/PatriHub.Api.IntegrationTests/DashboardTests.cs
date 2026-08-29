@@ -70,9 +70,41 @@ public sealed class DashboardTests(PatriHubApiFactory factory) : IClassFixture<P
         Assert.Equal(53_800m / 300_000m, metricas.RoiSobreValorAquisicao);
         Assert.Equal(53_800m / 350_000m, metricas.RoiSobreValorMercadoAtual);
         Assert.Null(metricas.CustoDeOportunidade);
+        // Imóvel não tem ValorFipeAtual — leituras específicas de Carro ficam null (ver issue #46).
+        Assert.Null(metricas.RoiSobreValorFipeAtual);
+        Assert.Null(metricas.DivergenciaFipeAtual);
+        Assert.Null(metricas.AlertaDivergenciaFipe);
 
         Assert.Equal(3_800m, dashboard.LucroTotalDoMes);
         Assert.Equal(3_800m, dashboard.LucroTotalAcumulado);
+    }
+
+    [Fact]
+    public async Task Obter_retorna_ROI_sobre_FIPE_para_Carro()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        await CenarioTestHelper.CriarCarroAsync(client); // ValorAquisicao 90_000, ValorMercadoAtual 85_000, ValorFipeAtual 80_000
+
+        var dashboard = await client.GetFromJsonAsync<PatrimonioConsolidadoDto>("/api/dashboard");
+
+        var metricas = Assert.Single(dashboard!.Ativos);
+        // Sem Lançamentos: lucro acumulado 0, lucro total com valorização = 85_000 − 90_000 = −5_000.
+        Assert.Equal(-5_000m / 80_000m, metricas.RoiSobreValorFipeAtual);
+        Assert.Equal((85_000m - 80_000m) / 80_000m, metricas.DivergenciaFipeAtual);
+        Assert.False(metricas.AlertaDivergenciaFipe); // 6,25% de divergência, abaixo do limiar de 15%
+    }
+
+    [Fact]
+    public async Task Obter_sinaliza_alerta_quando_divergencia_da_FIPE_ultrapassa_o_limiar()
+    {
+        var client = await factory.CriarClienteAutenticadoAsync();
+        // ValorMercadoAtual 85_000 vs. ValorFipeAtual 60_000 — 41,7% de divergência, acima do limiar de 15%.
+        await CenarioTestHelper.CriarCarroAsync(client, valorFipeAtual: 60_000m);
+
+        var dashboard = await client.GetFromJsonAsync<PatrimonioConsolidadoDto>("/api/dashboard");
+
+        var metricas = Assert.Single(dashboard!.Ativos);
+        Assert.True(metricas.AlertaDivergenciaFipe);
     }
 
     [Fact]

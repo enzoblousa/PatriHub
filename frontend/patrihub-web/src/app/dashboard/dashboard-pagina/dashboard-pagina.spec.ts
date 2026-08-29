@@ -20,6 +20,9 @@ const patrimonio = {
       depreciacao: -50_000,
       custoDeOportunidade: null,
       projecaoDeLucro: 2_000,
+      roiSobreValorFipeAtual: null,
+      divergenciaFipeAtual: null,
+      alertaDivergenciaFipe: null,
     },
   ],
 };
@@ -62,6 +65,40 @@ describe('DashboardPagina', () => {
 
     const ultimaCelula = fixture.nativeElement.querySelector('tbody tr td:last-child');
     expect(ultimaCelula.textContent.trim()).toBe('—');
+  });
+
+  it('mostra ROI (FIPE) e Divergência FIPE como travessão quando o Ativo não é Carro', async () => {
+    const fixture = TestBed.createComponent(DashboardPagina);
+    await fixture.whenStable();
+    httpMock.expectOne((r) => r.url === baseUrl).flush(patrimonio);
+    await fixture.whenStable();
+
+    const celulas = fixture.nativeElement.querySelectorAll('tbody tr td') as NodeListOf<HTMLElement>;
+    // ROI (FIPE) é a 7ª coluna, Divergência FIPE a 8ª (Ativo, Lucro do mês, Lucro acumulado,
+    // Yield, ROI aquisição, ROI mercado, ROI FIPE, Divergência FIPE, …).
+    expect(celulas[6].textContent?.trim()).toBe('—');
+    expect(celulas[7].textContent?.trim()).toBe('—');
+  });
+
+  it('destaca a Divergência FIPE quando ultrapassa o limiar de alerta', async () => {
+    const fixture = TestBed.createComponent(DashboardPagina);
+    await fixture.whenStable();
+    httpMock.expectOne((r) => r.url === baseUrl).flush({
+      ...patrimonio,
+      ativos: [
+        {
+          ...patrimonio.ativos[0],
+          roiSobreValorFipeAtual: -5_000 / 80_000,
+          divergenciaFipeAtual: 0.417,
+          alertaDivergenciaFipe: true,
+        },
+      ],
+    });
+    await fixture.whenStable();
+
+    const celulas = fixture.nativeElement.querySelectorAll('tbody tr td') as NodeListOf<HTMLElement>;
+    const badge = celulas[7].querySelector('.badge-status');
+    expect(badge?.classList).toContain('badge-status--risco');
   });
 
   it('recalcular converte o percentual digitado em fração e refaz a chamada', async () => {

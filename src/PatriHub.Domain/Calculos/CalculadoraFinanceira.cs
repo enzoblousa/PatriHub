@@ -64,6 +64,24 @@ public static class CalculadoraFinanceira
         valorBase == 0 ? 0m : lucroTotalComValorizacao / valorBase;
 
     /// <summary>
+    /// Divergência percentual entre a autoavaliação do usuário (ValorMercadoAtual) e a referência
+    /// de mercado da Tabela FIPE (ValorFipeAtual, específico de Carro) — positiva quando
+    /// ValorMercadoAtual está acima da FIPE, negativa quando está abaixo (ver issue #46).
+    /// </summary>
+    public static decimal DivergenciaFipe(decimal valorMercadoAtual, decimal valorFipeAtual) =>
+        valorFipeAtual == 0 ? 0m : (valorMercadoAtual - valorFipeAtual) / valorFipeAtual;
+
+    /// <summary>
+    /// Limiar acima do qual a <see cref="DivergenciaFipe"/> (em valor absoluto) é sinalizada como
+    /// um alerta pro usuário — ex.: ele esqueceu de atualizar o ValorMercadoAtual. Ver issue #46.
+    /// </summary>
+    public const decimal LimiarDivergenciaFipe = 0.15m;
+
+    /// <summary>Se a divergência (em valor absoluto) ultrapassa <see cref="LimiarDivergenciaFipe"/>.</summary>
+    public static bool UltrapassaLimiarDeDivergenciaFipe(decimal divergenciaFipe) =>
+        Math.Abs(divergenciaFipe) > LimiarDivergenciaFipe;
+
+    /// <summary>
     /// Custo de oportunidade = ValorMercadoAtual × taxa de referência anual informada manualmente
     /// pelo usuário (ex.: CDI/Selic) — sem integração com índice oficial no MVP.
     /// </summary>
