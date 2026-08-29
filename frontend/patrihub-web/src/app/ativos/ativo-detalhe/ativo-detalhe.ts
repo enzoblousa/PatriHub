@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
 import {
   ROTULOS_MOTORIZACAO,
@@ -20,7 +21,7 @@ import { Motorizacao, StatusAtivo, TipoAtivo } from '../ativos.models';
  */
 @Component({
   selector: 'app-ativo-detalhe',
-  imports: [RouterLink],
+  imports: [RouterLink, Ajuda],
   templateUrl: './ativo-detalhe.html',
   styleUrl: './ativo-detalhe.css',
 })

@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
 import { ROTULOS_MOTORIZACAO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
 import type { CarroRequest } from '../ativos.models';
@@ -20,7 +21,7 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-carro',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Ajuda],
   templateUrl: './ativo-form-carro.html',
   styleUrl: './ativo-form-carro.css',
 })

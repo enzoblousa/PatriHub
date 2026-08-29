@@ -34,13 +34,32 @@
         <dt>Área</dt>
         <dd>{{ imovel.areaM2 }} m²</dd>
 
-        <dt>Matrícula</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Matrícula
+            <app-ajuda
+              texto="Número de registro do imóvel no Cartório de Registro de Imóveis — identifica oficialmente o imóvel."
+            />
+          </span>
+        </dt>
         <dd>{{ imovel.matricula }}</dd>
 
-        <dt>IPTU mensal</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            IPTU mensal
+            <app-ajuda
+              texto="Valor mensal do Imposto Predial e Territorial Urbano — o imposto municipal cobrado sobre o imóvel."
+            />
+          </span>
+        </dt>
         <dd>{{ imovel.valorIptuMensal }}</dd>
 
-        <dt>Condomínio mensal</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Condomínio mensal
+            <app-ajuda texto="Taxa mensal paga ao condomínio do imóvel, quando houver." />
+          </span>
+        </dt>
         <dd>{{ imovel.valorCondominioMensal }}</dd>
       }
 
@@ -54,16 +73,35 @@
         <dt>Ano fabricação / modelo</dt>
         <dd>{{ carro.anoFabricacao }} / {{ carro.anoModelo }}</dd>
 
-        <dt>Valor FIPE atual</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Valor FIPE atual
+            <app-ajuda
+              texto="Preço de referência da Tabela FIPE pra esse modelo/ano hoje, usado no cálculo de ROI (FIPE) e Divergência FIPE no dashboard."
+            />
+          </span>
+        </dt>
         <dd>{{ carro.valorFipeAtual }}</dd>
 
         <dt>Km</dt>
         <dd>{{ carro.km }}</dd>
 
-        <dt>Motorização</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Motorização
+            <app-ajuda texto="Se o carro é 100% elétrico (só recarga) ou a combustão." />
+          </span>
+        </dt>
         <dd>{{ rotuloMotorizacao(carro.motorizacao) }}</dd>
 
-        <dt>Consumo médio</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Consumo médio
+            <app-ajuda
+              texto="Quantos km o carro roda por litro de combustível (ou por kWh de bateria, se for Elétrico)."
+            />
+          </span>
+        </dt>
         <dd>{{ carro.consumoMedio }} {{ unidadeConsumoMedio(carro.motorizacao) }}</dd>
       }
 

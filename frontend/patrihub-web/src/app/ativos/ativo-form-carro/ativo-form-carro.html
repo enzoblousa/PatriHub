@@ -54,7 +54,12 @@
       </label>
 
       <label>
-        Valor FIPE atual
+        <span class="rotulo-com-ajuda">
+          Valor FIPE atual
+          <app-ajuda
+            texto="Preço de referência da Tabela FIPE pra esse modelo/ano hoje — não é o quanto você pagou, é o valor de mercado atual segundo a FIPE."
+          />
+        </span>
         <input type="number" formControlName="valorFipeAtual" min="0" step="0.01" />
       </label>
 
@@ -64,7 +69,12 @@
       </label>
 
       <label>
-        Motorização
+        <span class="rotulo-com-ajuda">
+          Motorização
+          <app-ajuda
+            texto="Se o carro é 100% elétrico (só recarga) ou a combustão. Muda a unidade do campo Consumo médio logo abaixo."
+          />
+        </span>
         <select formControlName="motorizacao">
           @for (opcao of opcoesMotorizacao; track opcao) {
             <option [value]="opcao">{{ rotulosMotorizacao[opcao] }}</option>
@@ -73,7 +83,12 @@
       </label>
 
       <label>
-        Consumo médio ({{ unidadeConsumoMedio() }})
+        <span class="rotulo-com-ajuda">
+          Consumo médio ({{ unidadeConsumoMedio() }})
+          <app-ajuda
+            texto="Quantos km o carro roda por litro de combustível (ou por kWh de bateria, se for Elétrico)."
+          />
+        </span>
         <input type="number" formControlName="consumoMedio" min="0" step="0.1" />
       </label>
 
@@ -96,12 +111,22 @@
           </label>
 
           <label>
-            Saldo devedor
+            <span class="rotulo-com-ajuda">
+              Saldo devedor
+              <app-ajuda
+                texto="Quanto ainda falta pagar do financiamento hoje — não é a soma das parcelas restantes, é o valor de quitação."
+              />
+            </span>
             <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
           </label>
 
           <label>
-            Taxa de juros anual
+            <span class="rotulo-com-ajuda">
+              Taxa de juros anual
+              <app-ajuda
+                texto="Percentual de juros cobrado por ano pelo financiamento (ex.: 12 = 12% ao ano)."
+              />
+            </span>
             <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
           </label>
 

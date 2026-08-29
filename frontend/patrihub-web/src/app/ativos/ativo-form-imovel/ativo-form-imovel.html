@@ -43,17 +43,32 @@
       </label>
 
       <label>
-        Matrícula
+        <span class="rotulo-com-ajuda">
+          Matrícula
+          <app-ajuda
+            texto="Número de registro do imóvel no Cartório de Registro de Imóveis — identifica oficialmente o imóvel, não é o número do IPTU nem do endereço."
+          />
+        </span>
         <input type="text" formControlName="matricula" />
       </label>
 
       <label>
-        IPTU mensal
+        <span class="rotulo-com-ajuda">
+          IPTU mensal
+          <app-ajuda
+            texto="Valor mensal do Imposto Predial e Territorial Urbano — o imposto municipal cobrado sobre o imóvel."
+          />
+        </span>
         <input type="number" formControlName="valorIptuMensal" min="0" step="0.01" />
       </label>
 
       <label>
-        Condomínio mensal
+        <span class="rotulo-com-ajuda">
+          Condomínio mensal
+          <app-ajuda
+            texto="Taxa mensal paga ao condomínio, quando o imóvel faz parte de um (prédio, condomínio fechado etc.). Deixe 0 se não tiver."
+          />
+        </span>
         <input type="number" formControlName="valorCondominioMensal" min="0" step="0.01" />
       </label>
 
@@ -115,12 +130,22 @@
           </label>
 
           <label>
-            Saldo devedor
+            <span class="rotulo-com-ajuda">
+              Saldo devedor
+              <app-ajuda
+                texto="Quanto ainda falta pagar do financiamento hoje — não é a soma das parcelas restantes, é o valor de quitação."
+              />
+            </span>
             <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
           </label>
 
           <label>
-            Taxa de juros anual
+            <span class="rotulo-com-ajuda">
+              Taxa de juros anual
+              <app-ajuda
+                texto="Percentual de juros cobrado por ano pelo financiamento (ex.: 12 = 12% ao ano)."
+              />
+            </span>
             <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
           </label>
 

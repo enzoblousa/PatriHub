@@ -3,6 +3,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
 import type { ImovelRequest } from '../ativos.models';
 import { TipoImovel } from '../ativos.models';
@@ -20,7 +21,7 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-imovel',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Ajuda],
   templateUrl: './ativo-form-imovel.html',
   styleUrl: './ativo-form-imovel.css',
 })
