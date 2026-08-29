@@ -49,7 +49,9 @@ Campos comuns a Imóvel e Carro:
 - Placa, Marca, Modelo, AnoFabricação/AnoModelo
 - ValorFIPEAtual (atualização manual — sem integração no MVP)
 - KM atual
-- ConsumoMedio (km/l)
+- Motorização (`Combustão` | `Elétrico` — só BEV; híbrido fica classificado como `Combustão`
+  por ora, ver ADR-0006)
+- ConsumoMedio (km/l pra Combustão, km/kWh pra Elétrico — unidade depende de Motorização)
 - Dados de financiamento (mesma estrutura do imóvel, se Financiado = true)
 
 ### 4.5 Locatário
@@ -70,8 +72,9 @@ Campos comuns a Imóvel e Carro:
   Tipo (`Receita` | `Despesa`), Categoria, Valor, Data, Descrição (texto livre)
 - Categorias de Receita (fixas no MVP): `Aluguel`, `TaxaDeServiço`, `MultaPorAtraso`, `Outras`
 - Categorias de Despesa (fixas no MVP): `IPTU`, `Condomínio`, `Manutenção`, `Reforma`,
-  `Seguro`, `IPVA`, `Multa`, `Financiamento`, `Administração`, `Imposto de Renda`, `Outras`.
-  Customização pelo usuário fica para v2.
+  `Seguro`, `IPVA`, `Multa`, `Financiamento`, `Administração`, `Imposto de Renda`,
+  `Abastecimento` (combustível ou recarga elétrica, mesma categoria pros dois — ver
+  CONTEXT.md), `Outras`. Customização pelo usuário fica para v2.
 - Sem anexos no MVP (apenas o valor é registrado, conforme resposta #20).
 
 ## 5. Regras de negócio — Cálculos financeiros

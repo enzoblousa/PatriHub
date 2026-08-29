@@ -36,6 +36,7 @@ public sealed class AtivosTests(PatriHubApiFactory factory) : IClassFixture<Patr
         AnoModelo: 2022,
         ValorFipeAtual: 105_000m,
         Km: 30_000m,
+        Motorizacao: Motorizacao.Combustao,
         ConsumoMedio: 14.5m,
         Financiamento: null);
 

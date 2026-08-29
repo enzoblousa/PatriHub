@@ -40,6 +40,7 @@ public static class CenarioTestHelper
         AnoModelo: 2020,
         ValorFipeAtual: valorFipeAtual,
         Km: 40_000m,
+        Motorizacao: Motorizacao.Combustao,
         ConsumoMedio: 12m,
         Financiamento: null);
 

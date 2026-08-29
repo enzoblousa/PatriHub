@@ -4,7 +4,7 @@ namespace PatriHub.Domain.Tests;
 
 public class CarroTests
 {
-    private static Carro CarroValido(Guid? usuarioId = null) =>
+    private static Carro CarroValido(Guid? usuarioId = null, Motorizacao motorizacao = Motorizacao.Combustao) =>
         Carro.Cadastrar(
             usuarioId ?? Guid.NewGuid(),
             "Corolla",
@@ -18,6 +18,7 @@ public class CarroTests
             anoModelo: 2022,
             valorFipeAtual: 105_000m,
             km: 30_000m,
+            motorizacao: motorizacao,
             consumoMedio: 14.5m);
 
     [Fact]
@@ -49,7 +50,7 @@ public class CarroTests
     {
         Assert.Throws<ArgumentException>(() => Carro.Cadastrar(
             Guid.NewGuid(), "Corolla", new DateOnly(2022, 3, 15), 120_000m, 100_000m,
-            placaInvalida, "Toyota", "Corolla", 2022, 2022, 105_000m, 30_000m, 14.5m));
+            placaInvalida, "Toyota", "Corolla", 2022, 2022, 105_000m, 30_000m, Motorizacao.Combustao, 14.5m));
     }
 
     [Fact]
@@ -57,7 +58,7 @@ public class CarroTests
     {
         Assert.Throws<ArgumentException>(() => Carro.Cadastrar(
             Guid.NewGuid(), "Corolla", new DateOnly(2022, 3, 15), 120_000m, 100_000m,
-            "ABC1D23", "Toyota", "Corolla", anoFabricacao: 2022, anoModelo: 2021, 105_000m, 30_000m, 14.5m));
+            "ABC1D23", "Toyota", "Corolla", anoFabricacao: 2022, anoModelo: 2021, 105_000m, 30_000m, Motorizacao.Combustao, 14.5m));
     }
 
     [Fact]
@@ -65,7 +66,7 @@ public class CarroTests
     {
         Assert.Throws<ArgumentException>(() => Carro.Cadastrar(
             Guid.NewGuid(), "Corolla", new DateOnly(2022, 3, 15), 120_000m, 100_000m,
-            "ABC1D23", "Toyota", "Corolla", 2022, 2022, 105_000m, km: -1m, consumoMedio: 14.5m));
+            "ABC1D23", "Toyota", "Corolla", 2022, 2022, 105_000m, km: -1m, motorizacao: Motorizacao.Combustao, consumoMedio: 14.5m));
     }
 
     [Fact]
@@ -75,12 +76,33 @@ public class CarroTests
 
         carro.Atualizar(
             "Corolla Prata", new DateOnly(2022, 3, 15), 120_000m, valorMercadoAtual: 95_000m,
-            "XYZ9A88", "Toyota", "Corolla", 2022, 2023, 98_000m, 45_000m, 13m, financiamento: null);
+            "XYZ9A88", "Toyota", "Corolla", 2022, 2023, 98_000m, 45_000m, Motorizacao.Combustao, 13m, financiamento: null);
 
         Assert.Equal(95_000m, carro.ValorMercadoAtual);
         Assert.Equal("Corolla Prata", carro.Apelido);
         Assert.Equal("XYZ9A88", carro.Placa);
         Assert.Equal(45_000m, carro.Km);
+    }
+
+    [Fact]
+    public void Cadastrar_com_Motorizacao_Eletrico_nao_exige_nada_alem_do_enum()
+    {
+        var carro = CarroValido(motorizacao: Motorizacao.Eletrico);
+
+        Assert.Equal(Motorizacao.Eletrico, carro.Motorizacao);
+    }
+
+    [Fact]
+    public void Atualizar_troca_a_Motorizacao()
+    {
+        var carro = CarroValido(motorizacao: Motorizacao.Combustao);
+
+        carro.Atualizar(
+            carro.Apelido, carro.DataAquisicao, carro.ValorAquisicao, carro.ValorMercadoAtual,
+            carro.Placa, carro.Marca, carro.Modelo, carro.AnoFabricacao, carro.AnoModelo,
+            carro.ValorFipeAtual, carro.Km, Motorizacao.Eletrico, carro.ConsumoMedio, financiamento: null);
+
+        Assert.Equal(Motorizacao.Eletrico, carro.Motorizacao);
     }
 
     [Fact]

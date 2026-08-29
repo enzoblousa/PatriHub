@@ -56,6 +56,7 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.AnoModelo,
                 request.ValorFipeAtual,
                 request.Km,
+                request.Motorizacao,
                 request.ConsumoMedio,
                 MapearFinanciamento(request.Financiamento)),
             out var erro))
@@ -117,6 +118,7 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
                 request.AnoModelo,
                 request.ValorFipeAtual,
                 request.Km,
+                request.Motorizacao,
                 request.ConsumoMedio,
                 MapearFinanciamento(request.Financiamento)),
             out var erro))
@@ -254,6 +256,6 @@ public sealed class AtivoService(PatriHubDbContext db) : IAtivoService
             ? new ImovelDetalheDto(MapearEnderecoDto(imovel.Endereco), imovel.TipoImovel, imovel.AreaM2, imovel.Matricula, imovel.ValorIptuMensal, imovel.ValorCondominioMensal)
             : null,
         ativo is Carro carro
-            ? new CarroDetalheDto(carro.Placa, carro.Marca, carro.Modelo, carro.AnoFabricacao, carro.AnoModelo, carro.ValorFipeAtual, carro.Km, carro.ConsumoMedio)
+            ? new CarroDetalheDto(carro.Placa, carro.Marca, carro.Modelo, carro.AnoFabricacao, carro.AnoModelo, carro.ValorFipeAtual, carro.Km, carro.Motorizacao, carro.ConsumoMedio)
             : null);
 }

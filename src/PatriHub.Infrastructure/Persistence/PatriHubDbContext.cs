@@ -74,6 +74,7 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
             entity.Property(c => c.Modelo).IsRequired().HasMaxLength(100);
             entity.Property(c => c.ValorFipeAtual).HasPrecision(18, 2);
             entity.Property(c => c.Km).HasPrecision(10, 1);
+            entity.Property(c => c.Motorizacao).HasConversion<string>().HasMaxLength(20).HasDefaultValue(Motorizacao.Combustao);
             entity.Property(c => c.ConsumoMedio).HasPrecision(6, 2);
         });
 

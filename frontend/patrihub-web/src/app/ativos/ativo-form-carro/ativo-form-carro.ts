@@ -4,7 +4,9 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Ativos } from '../ativos';
+import { ROTULOS_MOTORIZACAO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
 import type { CarroRequest } from '../ativos.models';
+import { Motorizacao } from '../ativos.models';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
@@ -38,6 +40,10 @@ export class AtivoFormCarro {
 
   protected readonly financiamentoForm = criarFinanciamentoForm(this.formBuilder);
 
+  protected readonly Motorizacao = Motorizacao;
+  protected readonly opcoesMotorizacao = [Motorizacao.Combustao, Motorizacao.Eletrico];
+  protected readonly rotulosMotorizacao = ROTULOS_MOTORIZACAO;
+
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],
     dataAquisicao: ['', Validators.required],
@@ -50,8 +56,14 @@ export class AtivoFormCarro {
     anoModelo: [new Date().getFullYear(), Validators.required],
     valorFipeAtual: [0, [Validators.required, Validators.min(0)]],
     km: [0, [Validators.required, Validators.min(0)]],
+    motorizacao: [Motorizacao.Combustao, Validators.required],
     consumoMedio: [0, [Validators.required, Validators.min(0)]],
   });
+
+  /** Unidade de leitura de `consumoMedio` depende da Motorização escolhida — ver CONTEXT.md. */
+  protected unidadeConsumoMedio(): string {
+    return UNIDADE_CONSUMO_MEDIO[this.form.controls.motorizacao.value];
+  }
 
   constructor() {
     if (this.ativoId !== null) {
@@ -69,6 +81,7 @@ export class AtivoFormCarro {
             anoModelo: detalhe.carro?.anoModelo,
             valorFipeAtual: detalhe.carro?.valorFipeAtual,
             km: detalhe.carro?.km,
+            motorizacao: detalhe.carro?.motorizacao,
             consumoMedio: detalhe.carro?.consumoMedio,
           });
           if (detalhe.financiamento) {

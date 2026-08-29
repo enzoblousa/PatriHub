@@ -26,6 +26,16 @@ export enum TipoImovel {
   Terreno = 3,
 }
 
+/**
+ * Só BEV (100% elétrico) — híbrido continua `Combustao` por ora (ver CONTEXT.md
+ * "Motorização" e docs/adr/0006-motorizacao-eletrica-em-carro.md). Determina a unidade de
+ * leitura de `consumoMedio` (km/l para Combustao, km/kWh para Eletrico).
+ */
+export enum Motorizacao {
+  Combustao = 0,
+  Eletrico = 1,
+}
+
 export interface EnderecoDto {
   rua: string;
   numero: string;
@@ -71,6 +81,7 @@ export interface CarroRequest {
   anoModelo: number;
   valorFipeAtual: number;
   km: number;
+  motorizacao: Motorizacao;
   consumoMedio: number;
   financiamento: DadosFinanciamentoDto | null;
 }
@@ -106,6 +117,7 @@ export interface CarroDetalheDto {
   anoModelo: number;
   valorFipeAtual: number;
   km: number;
+  motorizacao: Motorizacao;
   consumoMedio: number;
 }
 
