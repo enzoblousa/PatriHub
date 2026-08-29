@@ -2,6 +2,7 @@ import { DecimalPipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { GraficoBarras } from '../../shared/grafico-barras/grafico-barras';
 import { Dashboard } from '../dashboard';
 
@@ -13,7 +14,7 @@ import { Dashboard } from '../dashboard';
  */
 @Component({
   selector: 'app-dashboard-pagina',
-  imports: [ReactiveFormsModule, DecimalPipe, PercentPipe, GraficoBarras],
+  imports: [ReactiveFormsModule, DecimalPipe, PercentPipe, GraficoBarras, Ajuda],
   templateUrl: './dashboard-pagina.html',
   styleUrl: './dashboard-pagina.css',
 })

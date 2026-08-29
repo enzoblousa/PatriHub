@@ -54,7 +54,12 @@
       </label>
 
       <label>
-        Valor FIPE atual
+        <span class="rotulo-com-ajuda">
+          Valor FIPE atual
+          <app-ajuda
+            texto="Preço de referência da Tabela FIPE pra esse modelo/ano hoje — não é o quanto você pagou, é o valor de mercado atual segundo a FIPE."
+          />
+        </span>
         <input type="number" formControlName="valorFipeAtual" min="0" step="0.01" />
       </label>
 
@@ -64,7 +69,10 @@
       </label>
 
       <label>
-        Motorização
+        <span class="rotulo-com-ajuda">
+          Motorização
+          <app-ajuda [texto]="textosAjuda.motorizacao" />
+        </span>
         <select formControlName="motorizacao">
           @for (opcao of opcoesMotorizacao; track opcao) {
             <option [value]="opcao">{{ rotulosMotorizacao[opcao] }}</option>
@@ -73,7 +81,10 @@
       </label>
 
       <label>
-        Consumo médio ({{ unidadeConsumoMedio() }})
+        <span class="rotulo-com-ajuda">
+          Consumo médio ({{ unidadeConsumoMedio() }})
+          <app-ajuda [texto]="textosAjuda.consumoMedio" />
+        </span>
         <input type="number" formControlName="consumoMedio" min="0" step="0.1" />
       </label>
 
@@ -96,17 +107,26 @@
           </label>
 
           <label>
-            Saldo devedor
+            <span class="rotulo-com-ajuda">
+              Saldo devedor
+              <app-ajuda [texto]="textosAjudaFinanciamento.saldoDevedor" />
+            </span>
             <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
           </label>
 
           <label>
-            Taxa de juros anual
+            <span class="rotulo-com-ajuda">
+              Taxa de juros anual
+              <app-ajuda [texto]="textosAjudaFinanciamento.taxaJurosAnual" />
+            </span>
             <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
           </label>
 
           <label>
-            Parcelas restantes
+            <span class="rotulo-com-ajuda">
+              Parcelas restantes
+              <app-ajuda [texto]="textosAjudaFinanciamento.parcelasRestantes" />
+            </span>
             <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
           </label>
         </fieldset>

@@ -3,14 +3,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
-import { ROTULOS_MOTORIZACAO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
+import { ROTULOS_MOTORIZACAO, TEXTOS_AJUDA_CARRO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
 import type { CarroRequest } from '../ativos.models';
 import { Motorizacao } from '../ativos.models';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
   preencherFinanciamentoForm,
+  TEXTOS_AJUDA_FINANCIAMENTO,
 } from '../financiamento-form';
 
 /**
@@ -20,7 +22,7 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-carro',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Ajuda],
   templateUrl: './ativo-form-carro.html',
   styleUrl: './ativo-form-carro.css',
 })
@@ -43,6 +45,8 @@ export class AtivoFormCarro {
   protected readonly Motorizacao = Motorizacao;
   protected readonly opcoesMotorizacao = [Motorizacao.Combustao, Motorizacao.Eletrico];
   protected readonly rotulosMotorizacao = ROTULOS_MOTORIZACAO;
+  protected readonly textosAjuda = TEXTOS_AJUDA_CARRO;
+  protected readonly textosAjudaFinanciamento = TEXTOS_AJUDA_FINANCIAMENTO;
 
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],

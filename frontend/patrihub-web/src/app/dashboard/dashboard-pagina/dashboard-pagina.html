@@ -28,7 +28,12 @@
 
     <form class="taxa-referencia" [formGroup]="form" (ngSubmit)="recalcular()">
       <label>
-        Taxa de referência anual (%)
+        <span class="rotulo-com-ajuda">
+          Taxa de referência anual (%)
+          <app-ajuda
+            texto="Taxa anual de referência pra investimentos (ex.: CDI/Selic), preenchida por você — usada só pra calcular o Custo de oportunidade na tabela abaixo."
+          />
+        </span>
         <input
           type="number"
           formControlName="taxaReferenciaAnualPercentual"
@@ -62,14 +67,70 @@
             <th>Ativo</th>
             <th>Lucro do mês</th>
             <th>Lucro acumulado</th>
-            <th>Yield</th>
-            <th>ROI (aquisição)</th>
-            <th>ROI (mercado)</th>
-            <th>ROI (FIPE)</th>
-            <th>Divergência FIPE</th>
-            <th>Depreciação</th>
-            <th>Projeção de lucro</th>
-            <th>Custo de oportunidade</th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                Yield
+                <app-ajuda
+                  texto="Retorno só da renda de aluguel líquida sobre o Valor de mercado atual — não conta valorização nem depreciação do Ativo."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                ROI (aquisição)
+                <app-ajuda
+                  texto="Retorno total (lucro acumulado + valorização) sobre o Valor de aquisição — ao contrário do Yield, inclui a variação de valor de mercado."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                ROI (mercado)
+                <app-ajuda
+                  texto="Mesmo cálculo do ROI (aquisição), mas dividido pelo Valor de mercado atual em vez do valor pago na aquisição."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                ROI (FIPE)
+                <app-ajuda
+                  texto="Só pra Carro: o mesmo retorno total, mas dividido pelo Valor FIPE atual em vez do Valor de mercado informado por você."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                Divergência FIPE
+                <app-ajuda
+                  texto="Só pra Carro: o quanto o Valor de mercado atual informado por você diverge da Tabela FIPE. Destacado quando passa de 15% — pode ser hora de atualizar o valor."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                Depreciação
+                <app-ajuda
+                  texto="Valor de aquisição menos Valor de mercado atual. Negativo significa valorização — o Ativo vale mais hoje do que quando foi comprado."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                Projeção de lucro
+                <app-ajuda
+                  texto="Média do lucro dos 3 meses completos anteriores — uma projeção simples pro próximo mês, sem considerar tendência."
+                />
+              </span>
+            </th>
+            <th>
+              <span class="rotulo-com-ajuda">
+                Custo de oportunidade
+                <app-ajuda
+                  texto="Valor de mercado atual × a Taxa de referência anual preenchida acima — quanto esse valor renderia numa aplicação de referência em vez de estar nesse Ativo."
+                />
+              </span>
+            </th>
           </tr>
         </thead>
         <tbody>

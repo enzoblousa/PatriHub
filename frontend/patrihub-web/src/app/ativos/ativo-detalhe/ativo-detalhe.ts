@@ -2,11 +2,14 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
 import {
   ROTULOS_MOTORIZACAO,
   ROTULOS_STATUS,
   ROTULOS_TIPO,
+  TEXTOS_AJUDA_CARRO,
+  TEXTOS_AJUDA_IMOVEL,
   UNIDADE_CONSUMO_MEDIO,
 } from '../ativos-rotulos';
 import type { AtivoDetalheDto } from '../ativos.models';
@@ -20,7 +23,7 @@ import { Motorizacao, StatusAtivo, TipoAtivo } from '../ativos.models';
  */
 @Component({
   selector: 'app-ativo-detalhe',
-  imports: [RouterLink],
+  imports: [RouterLink, Ajuda],
   templateUrl: './ativo-detalhe.html',
   styleUrl: './ativo-detalhe.css',
 })
@@ -31,6 +34,8 @@ export class AtivoDetalhe {
 
   protected readonly TipoAtivo = TipoAtivo;
   protected readonly StatusAtivo = StatusAtivo;
+  protected readonly textosAjudaCarro = TEXTOS_AJUDA_CARRO;
+  protected readonly textosAjudaImovel = TEXTOS_AJUDA_IMOVEL;
 
   protected readonly ativoId = this.route.snapshot.paramMap.get('id')!;
   protected readonly detalhe = signal<AtivoDetalheDto | null>(null);

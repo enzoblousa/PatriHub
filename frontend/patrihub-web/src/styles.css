@@ -135,6 +135,14 @@ label {
   color: var(--text-muted);
 }
 
+/* Rótulo/cabeçalho/termo acompanhado do ícone de ajuda (ver shared/ajuda) — só organiza texto +
+   ícone lado a lado, herda o alinhamento do elemento pai (label, th, dt). */
+.rotulo-com-ajuda {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 label.checkbox {
   flex-direction: row;
   align-items: center;

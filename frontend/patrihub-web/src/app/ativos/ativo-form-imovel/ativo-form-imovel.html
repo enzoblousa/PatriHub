@@ -38,22 +38,36 @@
       </label>
 
       <label>
-        Área (m²)
+        <span class="rotulo-com-ajuda">
+          Área (m²)
+          <app-ajuda [texto]="textosAjuda.areaM2" />
+        </span>
         <input type="number" formControlName="areaM2" min="0.01" step="0.01" />
       </label>
 
       <label>
-        Matrícula
+        <span class="rotulo-com-ajuda">
+          Matrícula
+          <app-ajuda [texto]="textosAjuda.matricula" />
+        </span>
         <input type="text" formControlName="matricula" />
       </label>
 
       <label>
-        IPTU mensal
+        <span class="rotulo-com-ajuda">
+          IPTU mensal
+          <app-ajuda [texto]="textosAjuda.iptuMensal" />
+        </span>
         <input type="number" formControlName="valorIptuMensal" min="0" step="0.01" />
       </label>
 
       <label>
-        Condomínio mensal
+        <span class="rotulo-com-ajuda">
+          Condomínio mensal
+          <app-ajuda
+            texto="Taxa mensal paga ao condomínio, quando o imóvel faz parte de um (prédio, condomínio fechado etc.). Deixe 0 se não tiver."
+          />
+        </span>
         <input type="number" formControlName="valorCondominioMensal" min="0" step="0.01" />
       </label>
 
@@ -115,17 +129,26 @@
           </label>
 
           <label>
-            Saldo devedor
+            <span class="rotulo-com-ajuda">
+              Saldo devedor
+              <app-ajuda [texto]="textosAjudaFinanciamento.saldoDevedor" />
+            </span>
             <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
           </label>
 
           <label>
-            Taxa de juros anual
+            <span class="rotulo-com-ajuda">
+              Taxa de juros anual
+              <app-ajuda [texto]="textosAjudaFinanciamento.taxaJurosAnual" />
+            </span>
             <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
           </label>
 
           <label>
-            Parcelas restantes
+            <span class="rotulo-com-ajuda">
+              Parcelas restantes
+              <app-ajuda [texto]="textosAjudaFinanciamento.parcelasRestantes" />
+            </span>
             <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
           </label>
         </fieldset>

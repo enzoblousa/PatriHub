@@ -3,13 +3,16 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
+import { Ajuda } from '../../shared/ajuda/ajuda';
 import { Ativos } from '../ativos';
+import { TEXTOS_AJUDA_IMOVEL } from '../ativos-rotulos';
 import type { ImovelRequest } from '../ativos.models';
 import { TipoImovel } from '../ativos.models';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
   preencherFinanciamentoForm,
+  TEXTOS_AJUDA_FINANCIAMENTO,
 } from '../financiamento-form';
 
 /**
@@ -20,7 +23,7 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-imovel',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Ajuda],
   templateUrl: './ativo-form-imovel.html',
   styleUrl: './ativo-form-imovel.css',
 })
@@ -46,6 +49,8 @@ export class AtivoFormImovel {
   protected readonly temFinanciamento = signal(false);
 
   protected readonly financiamentoForm = criarFinanciamentoForm(this.formBuilder);
+  protected readonly textosAjuda = TEXTOS_AJUDA_IMOVEL;
+  protected readonly textosAjudaFinanciamento = TEXTOS_AJUDA_FINANCIAMENTO;
 
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],
