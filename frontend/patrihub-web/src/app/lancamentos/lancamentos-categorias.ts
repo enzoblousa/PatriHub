@@ -20,6 +20,7 @@ const CATEGORIAS_DESPESA: readonly CategoriaLancamento[] = [
   CategoriaLancamento.Financiamento,
   CategoriaLancamento.Administracao,
   CategoriaLancamento.ImpostoDeRenda,
+  CategoriaLancamento.Abastecimento,
   CategoriaLancamento.Outras,
 ];
 
@@ -51,5 +52,6 @@ export const ROTULOS_CATEGORIA: Record<CategoriaLancamento, string> = {
   [CategoriaLancamento.Financiamento]: 'Financiamento',
   [CategoriaLancamento.Administracao]: 'Administração',
   [CategoriaLancamento.ImpostoDeRenda]: 'Imposto de renda',
+  [CategoriaLancamento.Abastecimento]: 'Abastecimento',
   [CategoriaLancamento.Outras]: 'Outras',
 };

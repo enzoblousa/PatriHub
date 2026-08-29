@@ -3,9 +3,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Ativos } from '../ativos';
-import { ROTULOS_STATUS, ROTULOS_TIPO } from '../ativos-rotulos';
+import {
+  ROTULOS_MOTORIZACAO,
+  ROTULOS_STATUS,
+  ROTULOS_TIPO,
+  UNIDADE_CONSUMO_MEDIO,
+} from '../ativos-rotulos';
 import type { AtivoDetalheDto } from '../ativos.models';
-import { StatusAtivo, TipoAtivo } from '../ativos.models';
+import { Motorizacao, StatusAtivo, TipoAtivo } from '../ativos.models';
 
 /**
  * Detalhe completo de um Ativo (`GET /api/ativos/{id}`): permite marcar `Manutenção`/`À venda`
@@ -45,6 +50,14 @@ export class AtivoDetalhe {
 
   protected rotuloStatus(status: StatusAtivo): string {
     return ROTULOS_STATUS[status];
+  }
+
+  protected rotuloMotorizacao(motorizacao: Motorizacao): string {
+    return ROTULOS_MOTORIZACAO[motorizacao];
+  }
+
+  protected unidadeConsumoMedio(motorizacao: Motorizacao): string {
+    return UNIDADE_CONSUMO_MEDIO[motorizacao];
   }
 
   protected rotaEdicao(): string[] {

@@ -24,6 +24,7 @@ const carroValido = {
   anoModelo: 2022,
   valorFipeAtual: 105_000,
   km: 30_000,
+  motorizacao: 0,
   consumoMedio: 14.5,
 };
 
@@ -125,6 +126,7 @@ describe('AtivoFormCarro', () => {
           anoModelo: 2022,
           valorFipeAtual: 105_000,
           km: 30_000,
+          motorizacao: 0,
           consumoMedio: 14.5,
         },
       });
@@ -159,6 +161,7 @@ describe('AtivoFormCarro', () => {
           anoModelo: 2022,
           valorFipeAtual: 105_000,
           km: 30_000,
+          motorizacao: 0,
           consumoMedio: 14.5,
         },
       });

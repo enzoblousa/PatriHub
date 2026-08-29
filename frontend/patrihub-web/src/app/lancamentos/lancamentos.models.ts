@@ -27,7 +27,8 @@ export enum CategoriaLancamento {
   Financiamento = 10,
   Administracao = 11,
   ImpostoDeRenda = 12,
-  Outras = 13,
+  Abastecimento = 13,
+  Outras = 14,
 }
 
 /** Corpo de criação (POST) e edição (PUT) de um Lançamento — os mesmos campos são exigidos nos dois casos. */

@@ -172,6 +172,7 @@ public static class DadosDemoSeeder
             AnoModelo: 2021,
             ValorFipeAtual: 118_000m,
             Km: 42_000m,
+            Motorizacao: Motorizacao.Combustao,
             ConsumoMedio: 12.5m,
             Financiamento: new DadosFinanciamentoDto(2_100m, 38_000m, 14.2m, 18))), "Civic Touring 2021");
 

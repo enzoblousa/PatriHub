@@ -1,5 +1,16 @@
 namespace PatriHub.Domain.Entidades;
 
+/// <summary>
+/// Só BEV (100% elétrico) — híbrido (HEV/PHEV) fica classificado como <see cref="Combustao"/>
+/// até que o suporte a consumo misto seja necessário. Ver CONTEXT.md ("Motorização") e
+/// docs/adr/0006-motorizacao-eletrica-em-carro.md.
+/// </summary>
+public enum Motorizacao
+{
+    Combustao,
+    Eletrico
+}
+
 /// <summary>Especialização de Ativo. Ver 01-SPEC-FUNCIONAL.md §4.4.</summary>
 public sealed class Carro : Ativo
 {
@@ -12,6 +23,12 @@ public sealed class Carro : Ativo
     public int AnoModelo { get; private set; }
     public decimal ValorFipeAtual { get; private set; }
     public decimal Km { get; private set; }
+    public Motorizacao Motorizacao { get; private set; }
+
+    /// <summary>
+    /// "Quanto o carro anda por unidade de energia" — a unidade de leitura depende de
+    /// <see cref="Motorizacao"/> (km/l pra Combustão, km/kWh pra Elétrico); ver CONTEXT.md.
+    /// </summary>
     public decimal ConsumoMedio { get; private set; }
 
     private Carro()
@@ -44,13 +61,14 @@ public sealed class Carro : Ativo
         int anoModelo,
         decimal valorFipeAtual,
         decimal km,
+        Motorizacao motorizacao,
         decimal consumoMedio,
         DadosFinanciamento? financiamento = null,
         DateTimeOffset? agora = null)
     {
         var momento = agora ?? DateTimeOffset.UtcNow;
         var carro = new Carro(usuarioId, apelido, dataAquisicao, valorAquisicao, valorMercadoAtual, financiamento, momento);
-        carro.AtualizarDadosDoCarro(placa, marca, modelo, anoFabricacao, anoModelo, valorFipeAtual, km, consumoMedio);
+        carro.AtualizarDadosDoCarro(placa, marca, modelo, anoFabricacao, anoModelo, valorFipeAtual, km, motorizacao, consumoMedio);
         return carro;
     }
 
@@ -67,12 +85,13 @@ public sealed class Carro : Ativo
         int anoModelo,
         decimal valorFipeAtual,
         decimal km,
+        Motorizacao motorizacao,
         decimal consumoMedio,
         DadosFinanciamento? financiamento,
         DateTimeOffset? agora = null)
     {
         AtualizarDadosComuns(apelido, dataAquisicao, valorAquisicao, valorMercadoAtual, financiamento, agora);
-        AtualizarDadosDoCarro(placa, marca, modelo, anoFabricacao, anoModelo, valorFipeAtual, km, consumoMedio);
+        AtualizarDadosDoCarro(placa, marca, modelo, anoFabricacao, anoModelo, valorFipeAtual, km, motorizacao, consumoMedio);
     }
 
     private void AtualizarDadosDoCarro(
@@ -83,6 +102,7 @@ public sealed class Carro : Ativo
         int anoModelo,
         decimal valorFipeAtual,
         decimal km,
+        Motorizacao motorizacao,
         decimal consumoMedio)
     {
         if (string.IsNullOrWhiteSpace(placa))
@@ -135,6 +155,7 @@ public sealed class Carro : Ativo
         AnoModelo = anoModelo;
         ValorFipeAtual = valorFipeAtual;
         Km = km;
+        Motorizacao = motorizacao;
         ConsumoMedio = consumoMedio;
     }
 }

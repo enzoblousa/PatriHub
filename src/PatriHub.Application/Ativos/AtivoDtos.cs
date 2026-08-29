@@ -33,6 +33,7 @@ public sealed record CarroRequest(
     int AnoModelo,
     decimal ValorFipeAtual,
     decimal Km,
+    Motorizacao Motorizacao,
     decimal ConsumoMedio,
     DadosFinanciamentoDto? Financiamento);
 
@@ -63,6 +64,7 @@ public sealed record CarroDetalheDto(
     int AnoModelo,
     decimal ValorFipeAtual,
     decimal Km,
+    Motorizacao Motorizacao,
     decimal ConsumoMedio);
 
 /// <summary>
