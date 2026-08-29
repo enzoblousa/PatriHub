@@ -50,6 +50,20 @@ Diferença percentual entre `ValorMercadoAtual` (autoavaliação do usuário) e 
 `CalculadoraFinanceira.LimiarDivergenciaFipe` (15%, em valor absoluto) — indício de que o
 usuário esqueceu de atualizar o `ValorMercadoAtual`.
 
+**Motorização** (Carro):
+Classifica um Carro como `Combustão` ou `Elétrico`; todo Carro cadastrado antes dessa
+distinção é considerado `Combustão` por padrão. Determina a unidade de leitura de
+`ConsumoMedio` (km/l para Combustão, km/kWh para Elétrico) — o campo continua sendo "o
+quanto o carro anda por unidade de energia", só a unidade de leitura muda. Não modela
+híbridos (HEV/PHEV) — ficam classificados como `Combustão` até que isso seja necessário.
+_Avoid_: Combustível (isso é a categoria de despesa Abastecimento, não o tipo do carro), Tipo
+de motor
+
+**Abastecimento** (categoria de Lançamento, despesa):
+Categoria única de despesa para reabastecimento de combustível (Carro `Combustão`) e recarga
+de energia (Carro `Elétrico`) — o mesmo Lançamento serve pros dois casos.
+_Avoid_: Combustível, Recarga (usar Abastecimento pra cobrir ambos)
+
 **Inadimplente (status do Contrato)**:
 Atribuído automaticamente por um job periódico: um Contrato `Ativo` vira `Inadimplente`
 quando passam 5 dias de carência após o vencimento sem um Lançamento tipo Receita,
