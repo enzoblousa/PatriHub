@@ -60,8 +60,11 @@
         <dt>Km</dt>
         <dd>{{ carro.km }}</dd>
 
+        <dt>Motorização</dt>
+        <dd>{{ rotuloMotorizacao(carro.motorizacao) }}</dd>
+
         <dt>Consumo médio</dt>
-        <dd>{{ carro.consumoMedio }} km/l</dd>
+        <dd>{{ carro.consumoMedio }} {{ unidadeConsumoMedio(carro.motorizacao) }}</dd>
       }
 
       @if (ativo.financiado && ativo.financiamento; as financiamento) {

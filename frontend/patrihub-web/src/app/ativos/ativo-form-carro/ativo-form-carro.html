@@ -64,7 +64,16 @@
       </label>
 
       <label>
-        Consumo médio (km/l)
+        Motorização
+        <select formControlName="motorizacao">
+          @for (opcao of opcoesMotorizacao; track opcao) {
+            <option [value]="opcao">{{ rotulosMotorizacao[opcao] }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Consumo médio ({{ unidadeConsumoMedio() }})
         <input type="number" formControlName="consumoMedio" min="0" step="0.1" />
       </label>
 

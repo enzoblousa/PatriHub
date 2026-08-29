@@ -31,6 +31,12 @@ public enum CategoriaLancamento
     Administracao,
     ImpostoDeRenda,
 
+    /// <summary>
+    /// Reabastecimento de combustível (Carro Combustão) e recarga de energia (Carro Elétrico)
+    /// — categoria única pros dois casos, ver CONTEXT.md ("Abastecimento") e ADR-0006.
+    /// </summary>
+    Abastecimento,
+
     // Comum a Receita e Despesa
     Outras
 }
@@ -62,6 +68,7 @@ public sealed class Lancamento
         CategoriaLancamento.Financiamento,
         CategoriaLancamento.Administracao,
         CategoriaLancamento.ImpostoDeRenda,
+        CategoriaLancamento.Abastecimento,
         CategoriaLancamento.Outras
     };
 
