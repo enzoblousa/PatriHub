@@ -26,3 +26,23 @@ export const UNIDADE_CONSUMO_MEDIO: Record<Motorizacao, string> = {
   [Motorizacao.Combustao]: 'km/l',
   [Motorizacao.Eletrico]: 'km/kWh',
 };
+
+/**
+ * Textos explicativos (ver `shared/ajuda`) de campos de Carro/Imóvel usados tanto no
+ * formulário quanto no detalhe — centralizados aqui pra não divergir entre as duas telas,
+ * mesmo racional dos `ROTULOS_*` acima.
+ */
+export const TEXTOS_AJUDA_CARRO = {
+  motorizacao:
+    'Se o carro é 100% elétrico (só recarga) ou a combustão — determina a unidade do Consumo médio (km/l ou km/kWh).',
+  consumoMedio:
+    'Quantos km o carro roda por litro de combustível (ou por kWh de bateria, se for Elétrico).',
+} as const;
+
+export const TEXTOS_AJUDA_IMOVEL = {
+  matricula:
+    'Número de registro do imóvel no Cartório de Registro de Imóveis — identifica oficialmente o imóvel, não é o número do IPTU nem do endereço.',
+  areaM2: 'Área construída ou útil do imóvel, em metros quadrados.',
+  iptuMensal:
+    'Valor mensal do Imposto Predial e Territorial Urbano — o imposto municipal cobrado sobre o imóvel.',
+} as const;

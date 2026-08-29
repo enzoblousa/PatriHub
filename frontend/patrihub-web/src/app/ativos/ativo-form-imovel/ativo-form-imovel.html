@@ -38,16 +38,17 @@
       </label>
 
       <label>
-        Área (m²)
+        <span class="rotulo-com-ajuda">
+          Área (m²)
+          <app-ajuda [texto]="textosAjuda.areaM2" />
+        </span>
         <input type="number" formControlName="areaM2" min="0.01" step="0.01" />
       </label>
 
       <label>
         <span class="rotulo-com-ajuda">
           Matrícula
-          <app-ajuda
-            texto="Número de registro do imóvel no Cartório de Registro de Imóveis — identifica oficialmente o imóvel, não é o número do IPTU nem do endereço."
-          />
+          <app-ajuda [texto]="textosAjuda.matricula" />
         </span>
         <input type="text" formControlName="matricula" />
       </label>
@@ -55,9 +56,7 @@
       <label>
         <span class="rotulo-com-ajuda">
           IPTU mensal
-          <app-ajuda
-            texto="Valor mensal do Imposto Predial e Territorial Urbano — o imposto municipal cobrado sobre o imóvel."
-          />
+          <app-ajuda [texto]="textosAjuda.iptuMensal" />
         </span>
         <input type="number" formControlName="valorIptuMensal" min="0" step="0.01" />
       </label>
@@ -132,9 +131,7 @@
           <label>
             <span class="rotulo-com-ajuda">
               Saldo devedor
-              <app-ajuda
-                texto="Quanto ainda falta pagar do financiamento hoje — não é a soma das parcelas restantes, é o valor de quitação."
-              />
+              <app-ajuda [texto]="textosAjudaFinanciamento.saldoDevedor" />
             </span>
             <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
           </label>
@@ -142,15 +139,16 @@
           <label>
             <span class="rotulo-com-ajuda">
               Taxa de juros anual
-              <app-ajuda
-                texto="Percentual de juros cobrado por ano pelo financiamento (ex.: 12 = 12% ao ano)."
-              />
+              <app-ajuda [texto]="textosAjudaFinanciamento.taxaJurosAnual" />
             </span>
             <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
           </label>
 
           <label>
-            Parcelas restantes
+            <span class="rotulo-com-ajuda">
+              Parcelas restantes
+              <app-ajuda [texto]="textosAjudaFinanciamento.parcelasRestantes" />
+            </span>
             <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
           </label>
         </fieldset>

@@ -31,15 +31,18 @@
           {{ imovel.endereco.cep }}
         </dd>
 
-        <dt>Área</dt>
+        <dt>
+          <span class="rotulo-com-ajuda">
+            Área
+            <app-ajuda [texto]="textosAjudaImovel.areaM2" />
+          </span>
+        </dt>
         <dd>{{ imovel.areaM2 }} m²</dd>
 
         <dt>
           <span class="rotulo-com-ajuda">
             Matrícula
-            <app-ajuda
-              texto="Número de registro do imóvel no Cartório de Registro de Imóveis — identifica oficialmente o imóvel."
-            />
+            <app-ajuda [texto]="textosAjudaImovel.matricula" />
           </span>
         </dt>
         <dd>{{ imovel.matricula }}</dd>
@@ -47,9 +50,7 @@
         <dt>
           <span class="rotulo-com-ajuda">
             IPTU mensal
-            <app-ajuda
-              texto="Valor mensal do Imposto Predial e Territorial Urbano — o imposto municipal cobrado sobre o imóvel."
-            />
+            <app-ajuda [texto]="textosAjudaImovel.iptuMensal" />
           </span>
         </dt>
         <dd>{{ imovel.valorIptuMensal }}</dd>
@@ -89,7 +90,7 @@
         <dt>
           <span class="rotulo-com-ajuda">
             Motorização
-            <app-ajuda texto="Se o carro é 100% elétrico (só recarga) ou a combustão." />
+            <app-ajuda [texto]="textosAjudaCarro.motorizacao" />
           </span>
         </dt>
         <dd>{{ rotuloMotorizacao(carro.motorizacao) }}</dd>
@@ -97,9 +98,7 @@
         <dt>
           <span class="rotulo-com-ajuda">
             Consumo médio
-            <app-ajuda
-              texto="Quantos km o carro roda por litro de combustível (ou por kWh de bateria, se for Elétrico)."
-            />
+            <app-ajuda [texto]="textosAjudaCarro.consumoMedio" />
           </span>
         </dt>
         <dd>{{ carro.consumoMedio }} {{ unidadeConsumoMedio(carro.motorizacao) }}</dd>
