@@ -42,7 +42,8 @@ public static class DependencyInjection
                 options.User.RequireUniqueEmail = true;
             })
             .AddRoles<IdentityRole<Guid>>()
-            .AddEntityFrameworkStores<PatriHubDbContext>();
+            .AddEntityFrameworkStores<PatriHubDbContext>()
+            .AddErrorDescriber<IdentityErrorDescriberPtBr>();
 
         services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.SectionName));
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
