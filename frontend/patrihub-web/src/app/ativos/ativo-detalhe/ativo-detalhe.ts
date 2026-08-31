@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
@@ -23,7 +24,7 @@ import { Motorizacao, StatusAtivo, TipoAtivo } from '../ativos.models';
  */
 @Component({
   selector: 'app-ativo-detalhe',
-  imports: [RouterLink, Ajuda],
+  imports: [RouterLink, Ajuda, DecimalPipe],
   templateUrl: './ativo-detalhe.html',
   styleUrl: './ativo-detalhe.css',
 })

@@ -15,10 +15,10 @@
       <dd>{{ ativo.dataAquisicao }}</dd>
 
       <dt>Valor de aquisição</dt>
-      <dd>{{ ativo.valorAquisicao }}</dd>
+      <dd>{{ ativo.valorAquisicao | number: '1.2-2' }}</dd>
 
       <dt>Valor de mercado atual</dt>
-      <dd>{{ ativo.valorMercadoAtual }}</dd>
+      <dd>{{ ativo.valorMercadoAtual | number: '1.2-2' }}</dd>
 
       @if (ativo.imovel; as imovel) {
         <dt>Endereço</dt>
@@ -53,7 +53,7 @@
             <app-ajuda [texto]="textosAjudaImovel.iptuMensal" />
           </span>
         </dt>
-        <dd>{{ imovel.valorIptuMensal }}</dd>
+        <dd>{{ imovel.valorIptuMensal | number: '1.2-2' }}</dd>
 
         <dt>
           <span class="rotulo-com-ajuda">
@@ -61,7 +61,7 @@
             <app-ajuda texto="Taxa mensal paga ao condomínio do imóvel, quando houver." />
           </span>
         </dt>
-        <dd>{{ imovel.valorCondominioMensal }}</dd>
+        <dd>{{ imovel.valorCondominioMensal | number: '1.2-2' }}</dd>
       }
 
       @if (ativo.carro; as carro) {
@@ -82,10 +82,10 @@
             />
           </span>
         </dt>
-        <dd>{{ carro.valorFipeAtual }}</dd>
+        <dd>{{ carro.valorFipeAtual | number: '1.2-2' }}</dd>
 
         <dt>Km</dt>
-        <dd>{{ carro.km }}</dd>
+        <dd>{{ carro.km | number }}</dd>
 
         <dt>
           <span class="rotulo-com-ajuda">
@@ -107,9 +107,9 @@
       @if (ativo.financiado && ativo.financiamento; as financiamento) {
         <dt>Financiamento</dt>
         <dd>
-          Parcela {{ financiamento.valorParcela }} — saldo devedor
-          {{ financiamento.saldoDevedor }} — {{ financiamento.parcelasRestantes }} parcelas
-          restantes ({{ financiamento.taxaJurosAnual }}% a.a.)
+          Parcela {{ financiamento.valorParcela | number: '1.2-2' }} — saldo devedor
+          {{ financiamento.saldoDevedor | number: '1.2-2' }} — {{ financiamento.parcelasRestantes }}
+          parcelas restantes ({{ financiamento.taxaJurosAnual }}% a.a.)
         </dd>
       }
     </dl>
