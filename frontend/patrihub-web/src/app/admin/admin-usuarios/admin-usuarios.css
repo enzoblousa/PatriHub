@@ -1,0 +1,8 @@
+/* Angular remove o espaço em branco entre os dois <a> no template (whitespace insignificante),
+   então sem isso "Ver Ativos" e "Ver Lançamentos" colam um no outro ("Ver AtivosVer
+   Lançamentos") — mesmo idioma de .acoes-status em ativo-detalhe.css. */
+.acoes-ver {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0 0 0.6rem;
+}
