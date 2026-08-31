@@ -56,161 +56,164 @@
         [valores]="lucrosAcumulados()"
       />
 
-      <table>
-        <caption>
-          Depreciação negativa significa valorização (ValorMercadoAtual acima do ValorAquisição).
-          ROI (FIPE) e Divergência FIPE só se aplicam a Carro (travessão pra Imóvel); divergência
-          destacada quando ultrapassa o limiar de alerta.
-        </caption>
-        <thead>
-          <tr>
-            <th>Ativo</th>
-            <th>Lucro do mês</th>
-            <th>Lucro acumulado</th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                Yield
-                <app-ajuda
-                  texto="Retorno só da renda de aluguel líquida sobre o Valor de mercado atual — não conta valorização nem depreciação do Ativo."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                ROI (aquisição)
-                <app-ajuda
-                  texto="Retorno total (lucro acumulado + valorização) sobre o Valor de aquisição — ao contrário do Yield, inclui a variação de valor de mercado."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                ROI (mercado)
-                <app-ajuda
-                  texto="Mesmo cálculo do ROI (aquisição), mas dividido pelo Valor de mercado atual em vez do valor pago na aquisição."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                ROI (FIPE)
-                <app-ajuda
-                  texto="Só pra Carro: o mesmo retorno total, mas dividido pelo Valor FIPE atual em vez do Valor de mercado informado por você."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                Divergência FIPE
-                <app-ajuda
-                  texto="Só pra Carro: o quanto o Valor de mercado atual informado por você diverge da Tabela FIPE. Destacado quando passa de 15% — pode ser hora de atualizar o valor."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                Depreciação
-                <app-ajuda
-                  texto="Valor de aquisição menos Valor de mercado atual. Negativo significa valorização — o Ativo vale mais hoje do que quando foi comprado."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                Projeção de lucro
-                <app-ajuda
-                  texto="Média do lucro dos 3 meses completos anteriores — uma projeção simples pro próximo mês, sem considerar tendência."
-                />
-              </span>
-            </th>
-            <th>
-              <span class="rotulo-com-ajuda">
-                Custo de oportunidade
-                <app-ajuda
-                  texto="Valor de mercado atual × a Taxa de referência anual preenchida acima — quanto esse valor renderia numa aplicação de referência em vez de estar nesse Ativo."
-                />
-              </span>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (metricas of patrimonio.ativos; track metricas.ativoId) {
+      <div class="tabela-scroll">
+        <table>
+          <caption>
+            Depreciação negativa significa valorização (ValorMercadoAtual acima do
+            ValorAquisição). ROI (FIPE) e Divergência FIPE só se aplicam a Carro (travessão pra
+            Imóvel); divergência destacada quando ultrapassa o limiar de alerta.
+          </caption>
+          <thead>
             <tr>
-              <td>{{ metricas.apelido }}</td>
-              <td
-                [class.valor-positivo]="metricas.lucroDoMes >= 0"
-                [class.valor-negativo]="metricas.lucroDoMes < 0"
-              >
-                {{ metricas.lucroDoMes | number: '1.2-2' }}
-              </td>
-              <td
-                [class.valor-positivo]="metricas.lucroAcumulado >= 0"
-                [class.valor-negativo]="metricas.lucroAcumulado < 0"
-              >
-                {{ metricas.lucroAcumulado | number: '1.2-2' }}
-              </td>
-              <td
-                [class.valor-positivo]="metricas.yield >= 0"
-                [class.valor-negativo]="metricas.yield < 0"
-              >
-                {{ metricas.yield | percent: '1.2-2' }}
-              </td>
-              <td
-                [class.valor-positivo]="metricas.roiSobreValorAquisicao >= 0"
-                [class.valor-negativo]="metricas.roiSobreValorAquisicao < 0"
-              >
-                {{ metricas.roiSobreValorAquisicao | percent: '1.2-2' }}
-              </td>
-              <td
-                [class.valor-positivo]="metricas.roiSobreValorMercadoAtual >= 0"
-                [class.valor-negativo]="metricas.roiSobreValorMercadoAtual < 0"
-              >
-                {{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}
-              </td>
-              <td
-                [class.valor-positivo]="
-                  metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual >= 0
-                "
-                [class.valor-negativo]="
-                  metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual < 0
-                "
-              >
-                {{
-                  metricas.roiSobreValorFipeAtual !== null
-                    ? (metricas.roiSobreValorFipeAtual | percent: '1.2-2')
-                    : '—'
-                }}
-              </td>
-              <td>
-                @if (metricas.divergenciaFipeAtual !== null) {
-                  <span
-                    class="badge-status"
-                    [class.badge-status--risco]="metricas.alertaDivergenciaFipe === true"
-                  >
-                    {{ metricas.divergenciaFipeAtual | percent: '1.2-2' }}
-                  </span>
-                } @else {
-                  —
-                }
-              </td>
-              <td>{{ metricas.depreciacao | number: '1.2-2' }}</td>
-              <td
-                [class.valor-positivo]="metricas.projecaoDeLucro >= 0"
-                [class.valor-negativo]="metricas.projecaoDeLucro < 0"
-              >
-                {{ metricas.projecaoDeLucro | number: '1.2-2' }}
-              </td>
-              <td>
-                {{
-                  metricas.custoDeOportunidade !== null
-                    ? (metricas.custoDeOportunidade | number: '1.2-2')
-                    : '—'
-                }}
-              </td>
+              <th>Ativo</th>
+              <th>Lucro do mês</th>
+              <th>Lucro acumulado</th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  Yield
+                  <app-ajuda
+                    texto="Retorno só da renda de aluguel líquida sobre o Valor de mercado atual — não conta valorização nem depreciação do Ativo."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  ROI (aquisição)
+                  <app-ajuda
+                    texto="Retorno total (lucro acumulado + valorização) sobre o Valor de aquisição — ao contrário do Yield, inclui a variação de valor de mercado."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  ROI (mercado)
+                  <app-ajuda
+                    texto="Mesmo cálculo do ROI (aquisição), mas dividido pelo Valor de mercado atual em vez do valor pago na aquisição."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  ROI (FIPE)
+                  <app-ajuda
+                    texto="Só pra Carro: o mesmo retorno total, mas dividido pelo Valor FIPE atual em vez do Valor de mercado informado por você."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  Divergência FIPE
+                  <app-ajuda
+                    texto="Só pra Carro: o quanto o Valor de mercado atual informado por você diverge da Tabela FIPE. Destacado quando passa de 15% — pode ser hora de atualizar o valor."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  Depreciação
+                  <app-ajuda
+                    texto="Valor de aquisição menos Valor de mercado atual. Negativo significa valorização — o Ativo vale mais hoje do que quando foi comprado."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  Projeção de lucro
+                  <app-ajuda
+                    texto="Média do lucro dos 3 meses completos anteriores — uma projeção simples pro próximo mês, sem considerar tendência."
+                  />
+                </span>
+              </th>
+              <th>
+                <span class="rotulo-com-ajuda">
+                  Custo de oportunidade
+                  <app-ajuda
+                    texto="Valor de mercado atual × a Taxa de referência anual preenchida acima — quanto esse valor renderia numa aplicação de referência em vez de estar nesse Ativo."
+                  />
+                </span>
+              </th>
             </tr>
-          }
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            @for (metricas of patrimonio.ativos; track metricas.ativoId) {
+              <tr>
+                <td>{{ metricas.apelido }}</td>
+                <td
+                  [class.valor-positivo]="metricas.lucroDoMes >= 0"
+                  [class.valor-negativo]="metricas.lucroDoMes < 0"
+                >
+                  {{ metricas.lucroDoMes | number: '1.2-2' }}
+                </td>
+                <td
+                  [class.valor-positivo]="metricas.lucroAcumulado >= 0"
+                  [class.valor-negativo]="metricas.lucroAcumulado < 0"
+                >
+                  {{ metricas.lucroAcumulado | number: '1.2-2' }}
+                </td>
+                <td
+                  [class.valor-positivo]="metricas.yield >= 0"
+                  [class.valor-negativo]="metricas.yield < 0"
+                >
+                  {{ metricas.yield | percent: '1.2-2' }}
+                </td>
+                <td
+                  [class.valor-positivo]="metricas.roiSobreValorAquisicao >= 0"
+                  [class.valor-negativo]="metricas.roiSobreValorAquisicao < 0"
+                >
+                  {{ metricas.roiSobreValorAquisicao | percent: '1.2-2' }}
+                </td>
+                <td
+                  [class.valor-positivo]="metricas.roiSobreValorMercadoAtual >= 0"
+                  [class.valor-negativo]="metricas.roiSobreValorMercadoAtual < 0"
+                >
+                  {{ metricas.roiSobreValorMercadoAtual | percent: '1.2-2' }}
+                </td>
+                <td
+                  [class.valor-positivo]="
+                    metricas.roiSobreValorFipeAtual !== null &&
+                    metricas.roiSobreValorFipeAtual >= 0
+                  "
+                  [class.valor-negativo]="
+                    metricas.roiSobreValorFipeAtual !== null && metricas.roiSobreValorFipeAtual < 0
+                  "
+                >
+                  {{
+                    metricas.roiSobreValorFipeAtual !== null
+                      ? (metricas.roiSobreValorFipeAtual | percent: '1.2-2')
+                      : '—'
+                  }}
+                </td>
+                <td>
+                  @if (metricas.divergenciaFipeAtual !== null) {
+                    <span
+                      class="badge-status"
+                      [class.badge-status--risco]="metricas.alertaDivergenciaFipe === true"
+                    >
+                      {{ metricas.divergenciaFipeAtual | percent: '1.2-2' }}
+                    </span>
+                  } @else {
+                    —
+                  }
+                </td>
+                <td>{{ metricas.depreciacao | number: '1.2-2' }}</td>
+                <td
+                  [class.valor-positivo]="metricas.projecaoDeLucro >= 0"
+                  [class.valor-negativo]="metricas.projecaoDeLucro < 0"
+                >
+                  {{ metricas.projecaoDeLucro | number: '1.2-2' }}
+                </td>
+                <td>
+                  {{
+                    metricas.custoDeOportunidade !== null
+                      ? (metricas.custoDeOportunidade | number: '1.2-2')
+                      : '—'
+                  }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
     }
   }
 </section>

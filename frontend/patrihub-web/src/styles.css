@@ -288,12 +288,25 @@ table {
   overflow: hidden;
 }
 
+/* Padding horizontal igual ao de th/td (ver abaixo) — sem ele o texto da legenda começa em
+   cima do canto arredondado da <table>, e o `overflow: hidden` dela corta os primeiros pixels
+   do primeiro caractere (bug real: "Depreciação" renderizando como "Jepreciação"). */
 caption {
   caption-side: top;
   text-align: left;
   font-size: 0.8125rem;
   color: var(--text-dim);
+  padding: 0 1.1rem;
   margin-bottom: 0.5rem;
+}
+
+/* Wrapper opcional pra tabela larga (muitas colunas) não estourar a largura de `main` — sem
+   ele, o overflow se propaga por main → .corpo → .shell até o <body>, arrastando a página
+   inteira (sidebar incluída) na horizontal em vez de só a tabela rolar dentro da própria área.
+   Envolver o <table> com `<div class="tabela-scroll">` quando a tabela tiver muitas colunas
+   (ver dashboard-pagina.html). */
+.tabela-scroll {
+  overflow-x: auto;
 }
 
 th {
