@@ -30,7 +30,7 @@
             <td>{{ usuario.papel }}</td>
             <td>{{ usuario.ativo ? 'Ativa' : 'Desativada' }}</td>
             <td>
-              <p>
+              <p class="acoes-ver">
                 <a [routerLink]="['/admin/usuarios', usuario.id, 'ativos']">Ver Ativos</a>
                 <a [routerLink]="['/admin/usuarios', usuario.id, 'lancamentos']">Ver Lançamentos</a>
               </p>
