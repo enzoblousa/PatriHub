@@ -89,6 +89,9 @@ npm test
 Versão beta em produção, rodando 100% em tiers grátis (sem cartão de crédito em nenhuma
 perna):
 
+- **Frontend**: https://patrihub.pages.dev
+- **API**: https://patrihub-api-3lz1.onrender.com (`/health` pra smoke test rápido)
+
 - **[Render](https://render.com)** — API (`src/PatriHub.Api/Dockerfile`), free web service.
   Definido como Blueprint em [`render.yaml`](render.yaml).
 - **[Neon](https://neon.tech)** — Postgres gerenciado, free tier. Nunca deleta dado — só
@@ -108,7 +111,7 @@ primeira sincronização do blueprint (ou na criação manual do serviço):
 | `Jwt__Secret` | Segredo novo gerado só para produção (ex.: `openssl rand -base64 48`) — nunca o valor de dev do `appsettings.json` |
 | `AdminBootstrap__Email` | Email real da primeira conta Admin |
 | `AdminBootstrap__Senha` | Senha forte real — nunca o valor de dev do `appsettings.json` |
-| `Cors__AllowedOrigins__0` | URL do Cloudflare Pages (ex.: `https://patrihub.pages.dev`) |
+| `Cors__AllowedOrigins__0` | URL do Cloudflare Pages: `https://patrihub.pages.dev` (sem barra no final — CORS compara a origem de forma exata) |
 
 Os demais valores (`ASPNETCORE_ENVIRONMENT`, `SeedDadosDemo=false`, `Jwt__Issuer`/`Audience`/
 `ExpiraEmDias`) já vêm fixados no `render.yaml`, não-secretos.
