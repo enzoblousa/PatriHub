@@ -24,9 +24,10 @@ Regras que valem mais que qualquer detalhe abaixo:
 1. **Cartão, não grade.** Toda superfície de conteúdo (tabela, formulário, estatística) é um
    cartão com cantos arredondados e sombra leve — nunca uma grade crua encostada na borda da
    tela.
-2. **Cor é sinal financeiro, não decoração geral.** Verde/vermelho são reservados pra valor
-   com sinal (lucro, status "bom"/"ruim"); azul é a identidade da marca (ação primária, link,
-   item ativo da navegação, foco). Nenhuma cor aparece só "pra ficar bonito".
+2. **Cor é sinal financeiro, não decoração geral.** Verde vivo/vermelho são reservados pra
+   valor com sinal (lucro, status "bom"/"ruim"); verde escuro + dourado são a identidade da
+   marca (ação primária, link, item ativo da navegação, foco — ver §2 sobre como esse verde se
+   diferencia do verde de sinal). Nenhuma cor aparece só "pra ficar bonito".
 3. **Caixa normal em tudo que se lê.** Nada de caixa alta em título, botão ou item de
    navegação — isso é herança da direção anterior (terminal) e não combina com o tom
    acolhedor desta.
@@ -40,16 +41,23 @@ claras, e inventar um escuro sem referência real não valia o esforço).
 
 | Token | Uso |
 |---|---|
-| `--bg` / `--surface` / `--surface-muted` | Fundo da página (cinza-azulado bem claro) / cartões e inputs (branco) / hover, cabeçalho de tabela |
+| `--bg` / `--surface` / `--surface-muted` | Fundo da página (cinza-esverdeado bem claro) / cartões e inputs (branco) / hover, cabeçalho de tabela |
 | `--border` / `--border-strong` | Borda padrão de cartão / borda de input e botão |
 | `--text` / `--text-muted` / `--text-dim` | Texto principal / rótulos e legendas / texto terciário (placeholder, nota de rodapé) |
 | `--accent` (+ `-hover`, `-soft`) / `--on-accent` | **Identidade da marca**: ação primária (`button[type=submit]`), link, item ativo da sidebar, anel de foco / texto sobre um fundo `--accent` sólido |
+| `--accent-gold` (+ `-soft`) | **Acento secundário**: só em uso pontual e informativo (`.aviso`) — não é cor de ação primária |
 | `--sinal-pos` (+ `-soft`) | **Positivo/ativo**: lucro ≥ 0, Status `Alugado`/Contrato `Ativo` |
 | `--sinal-neg` (+ `-soft`) | **Negativo/risco**: lucro < 0, erro, exclusão, zona de risco |
 
-Sem terceiro sinal (ex.: âmbar). Um status que não é claramente bom nem ruim (`Vago`,
-`Manutenção`, `À venda`, `Encerrado`) fica neutro (`--text-muted`/`--surface-muted`) — ver
-§5.3.
+`--accent` é um verde propositalmente mais escuro/dessaturado que `--sinal-pos` (que é um
+verde vivo) — a marca e o sinal de "lucro/positivo" precisam ficar visualmente distintos
+quando aparecem na mesma tela (ex.: botão primário ao lado de uma coluna de valor positivo),
+senão a cor deixa de comunicar sinal financeiro sem ambiguidade (regra 2, §1).
+
+Sem terceiro sinal financeiro (ex.: âmbar pra status). `--accent-gold` não é esse terceiro
+sinal — é acento de marca, não indica bom/ruim. Um status que não é claramente bom nem ruim
+(`Vago`, `Manutenção`, `À venda`, `Encerrado`) fica neutro (`--text-muted`/`--surface-muted`) —
+ver §5.3.
 
 **Nunca hardcode uma cor num `*.css` de componente** — sempre `var(--token)`. Se um tom novo
 parecer necessário, é quase sempre sinal de que o problema é outro (hierarquia, agrupamento).
@@ -126,12 +134,14 @@ independente.
 mesma anatomia — fundo `-soft` da cor do sinal, `border-radius: var(--radius)`, sem borda
 lateral de destaque (isso seria o padrão "card com accent na lateral" que a diretriz de
 design considera clichê — aqui a cor de fundo já basta). `.aviso` (informativo, sem sinal
-pos/neg) usa o tom `--accent-soft`.
+pos/neg) usa o tom `--accent-gold-soft`/`--accent-gold` — o único lugar do sistema onde o
+dourado aparece, propositalmente fora de `--accent` pra não se misturar com a cor de ação
+primária (ver §2).
 
 ### 5.6 Formulário
 
 Pilha vertical de `label` (peso 600, pequeno, `--text-muted`) + `input`/`select` com borda e
-`--radius`, foco em anel azul suave (`box-shadow: 0 0 0 3px var(--accent-soft)`, sem outline
+`--radius`, foco em anel verde suave (`box-shadow: 0 0 0 3px var(--accent-soft)`, sem outline
 duro). `.filtro` (barra de filtro de uma listagem) é a exceção documentada: vira barra
 horizontal via CSS de componente (`lancamentos-lista.css`).
 

@@ -1,28 +1,38 @@
 /* Identidade visual do PatriHub — docs/design/DESIGN-SYSTEM.md tem o racional completo.
    Direção: fintech pessoal amigável — inspirada em dashboards financeiros modernos
-   (referências em InspiracoesUI/), claro, arredondado, azul como identidade. É a terceira
-   direção visual do projeto (as duas anteriores foram descartadas): antes era um "terminal
-   técnico" escuro e denso; agora prioriza acolhimento e clareza sobre densidade de dados.
+   (referências em InspiracoesUI/), claro, arredondado, verde + dourado como identidade. É a
+   terceira direção visual do projeto (as duas anteriores foram descartadas): antes era um
+   "terminal técnico" escuro e denso; agora prioriza acolhimento e clareza sobre densidade de
+   dados. A identidade de cor foi atualizada de azul para verde + dourado dentro desta mesma
+   direção (§2 do DESIGN-SYSTEM.md).
 
    Tokens + estilos base de elemento cobrem a maior parte de toda tela sem CSS por
    componente; cada `*.css` de feature é só ajuste de layout específico daquela tela. */
 
 :root {
-  --bg: oklch(97.3% 0.004 250);
+  --bg: oklch(97.3% 0.004 160);
   --surface: oklch(100% 0 0);
-  --surface-muted: oklch(95.5% 0.007 250);
-  --border: oklch(90% 0.008 250);
-  --border-strong: oklch(83% 0.011 250);
-  --text: oklch(21% 0.012 255);
-  --text-muted: oklch(47% 0.014 255);
-  --text-dim: oklch(63% 0.012 255);
+  --surface-muted: oklch(95.5% 0.007 160);
+  --border: oklch(90% 0.008 160);
+  --border-strong: oklch(83% 0.011 160);
+  --text: oklch(21% 0.012 160);
+  --text-muted: oklch(47% 0.014 160);
+  --text-dim: oklch(63% 0.012 160);
 
-  /* Identidade da marca — azul, usado em ações primárias, foco, item ativo da navegação e
-     links. Ver DESIGN-SYSTEM.md §Cor. */
-  --accent: oklch(55% 0.16 253);
-  --accent-hover: oklch(48% 0.16 253);
-  --accent-soft: oklch(93.5% 0.03 253);
-  --on-accent: oklch(99% 0.005 253);
+  /* Identidade da marca — verde profundo, usado em ações primárias, foco, item ativo da
+     navegação e links. Deliberadamente mais escuro/dessaturado que --sinal-pos (abaixo) pra
+     não se confundir com o sinal de "lucro/positivo" quando os dois aparecem na mesma tela.
+     Ver DESIGN-SYSTEM.md §Cor. */
+  --accent: oklch(35% 0.08 165);
+  --accent-hover: oklch(28% 0.08 165);
+  --accent-soft: oklch(93% 0.025 165);
+  --on-accent: oklch(99% 0.005 165);
+
+  /* Acento secundário — dourado, sobre a base verde. Só em uso pontual (ex.: `.aviso`,
+     bloco informativo) pra não competir com --accent como cor de ação primária. Ver
+     DESIGN-SYSTEM.md §Cor. */
+  --accent-gold: oklch(58% 0.13 85);
+  --accent-gold-soft: oklch(94% 0.045 85);
 
   /* Sinal financeiro — verde/vermelho só em valor com sinal (lucro, status). Nunca usado como
      decoração fora desse contexto. */
@@ -39,8 +49,8 @@
   --radius-sm: 8px;
   --radius-full: 999px;
 
-  --shadow-sm: 0 1px 2px oklch(25% 0.02 255 / 0.05);
-  --shadow: 0 8px 24px oklch(25% 0.03 255 / 0.08), 0 1px 2px oklch(25% 0.02 255 / 0.05);
+  --shadow-sm: 0 1px 2px oklch(25% 0.02 160 / 0.05);
+  --shadow: 0 8px 24px oklch(25% 0.03 160 / 0.08), 0 1px 2px oklch(25% 0.02 160 / 0.05);
 }
 
 * {
@@ -391,8 +401,8 @@ dd {
 }
 
 .aviso {
-  background: var(--accent-soft);
-  color: var(--accent-hover);
+  background: var(--accent-gold-soft);
+  color: var(--accent-gold);
   border-radius: var(--radius);
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
