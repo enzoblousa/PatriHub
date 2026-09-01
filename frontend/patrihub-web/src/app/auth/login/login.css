@@ -8,6 +8,15 @@
   padding: 2.5rem;
 }
 
+.login-logo {
+  display: block;
+  width: 3.5rem;
+  height: 3.5rem;
+  object-fit: contain;
+  margin: 0 auto 1rem;
+}
+
 .login h1 {
   margin-bottom: 1.75rem;
+  text-align: center;
 }

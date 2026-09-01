@@ -14,11 +14,20 @@
 }
 
 .marca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   font-family: var(--font-display);
   font-size: 1.125rem;
   font-weight: 800;
   color: var(--text);
   letter-spacing: -0.02em;
+}
+
+.marca-logo {
+  width: 3rem;
+  height: 3rem;
+  object-fit: contain;
 }
 
 .cabecalho-acoes {
