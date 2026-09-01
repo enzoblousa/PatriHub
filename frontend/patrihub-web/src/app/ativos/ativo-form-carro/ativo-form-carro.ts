@@ -4,10 +4,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Ajuda } from '../../shared/ajuda/ajuda';
+import { MoedaDirective } from '../../shared/mascaras/moeda.directive';
+import { PercentualDirective } from '../../shared/mascaras/percentual.directive';
+import { PlacaDirective } from '../../shared/mascaras/placa.directive';
 import { Ativos } from '../ativos';
 import { ROTULOS_MOTORIZACAO, TEXTOS_AJUDA_CARRO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
 import type { CarroRequest } from '../ativos.models';
 import { Motorizacao } from '../ativos.models';
+import { anoFabricacaoValidator, anoMaximoCarro, anoModeloValidator } from '../ativos-validadores';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
@@ -22,7 +26,14 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-carro',
-  imports: [ReactiveFormsModule, RouterLink, Ajuda],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    Ajuda,
+    MoedaDirective,
+    PercentualDirective,
+    PlacaDirective,
+  ],
   templateUrl: './ativo-form-carro.html',
   styleUrl: './ativo-form-carro.css',
 })
@@ -47,6 +58,8 @@ export class AtivoFormCarro {
   protected readonly rotulosMotorizacao = ROTULOS_MOTORIZACAO;
   protected readonly textosAjuda = TEXTOS_AJUDA_CARRO;
   protected readonly textosAjudaFinanciamento = TEXTOS_AJUDA_FINANCIAMENTO;
+  /** Exibido nas mensagens de erro de `anoFabricacao`/`anoModelo` — ver `ativos-validadores.ts`. */
+  protected readonly anoMaximoCarro = anoMaximoCarro();
 
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],
@@ -56,8 +69,8 @@ export class AtivoFormCarro {
     placa: ['', Validators.required],
     marca: ['', Validators.required],
     modelo: ['', Validators.required],
-    anoFabricacao: [new Date().getFullYear(), Validators.required],
-    anoModelo: [new Date().getFullYear(), Validators.required],
+    anoFabricacao: [new Date().getFullYear(), [Validators.required, anoFabricacaoValidator]],
+    anoModelo: [new Date().getFullYear(), [Validators.required, anoModeloValidator]],
     valorFipeAtual: [0, [Validators.required, Validators.min(0)]],
     km: [0, [Validators.required, Validators.min(0)]],
     motorizacao: [Motorizacao.Combustao, Validators.required],
@@ -70,6 +83,13 @@ export class AtivoFormCarro {
   }
 
   constructor() {
+    // `anoModeloValidator` lê `anoFabricacao` pelo `parent` do controle (validação cruzada,
+    // ver ativos-validadores.ts) — Angular só reroda o validador de um controle quando o valor
+    // dele mesmo muda, então precisamos revalidar `anoModelo` manualmente quando o irmão muda.
+    this.form.controls.anoFabricacao.valueChanges.subscribe(() => {
+      this.form.controls.anoModelo.updateValueAndValidity();
+    });
+
     if (this.ativoId !== null) {
       this.ativos.obterDetalhe(this.ativoId).subscribe({
         next: (detalhe) => {
