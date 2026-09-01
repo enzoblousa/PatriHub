@@ -54,7 +54,7 @@ public sealed class Usuario
         if (!consentimentoLgpd)
         {
             throw new ArgumentException(
-                "É necessário aceitar o uso dos dados conforme a Política de Privacidade.",
+                "É necessário aceitar o uso dos dados desta versão beta.",
                 nameof(consentimentoLgpd));
         }
 

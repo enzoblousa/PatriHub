@@ -1,0 +1,63 @@
+name: Frontend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-cd.yml"
+  pull_request:
+    paths:
+      - "frontend/**"
+      - ".github/workflows/frontend-ci-cd.yml"
+
+defaults:
+  run:
+    working-directory: frontend/patrihub-web
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/patrihub-web/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      # ng test neste repo usa Vitest + jsdom (@angular/build:unit-test) — sem Karma/Chrome,
+      # não precisa de nenhum setup de navegador headless.
+      - name: Testes
+        run: npx ng test --watch=false
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: frontend/patrihub-web/package-lock.json
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Build de produção
+        run: npx ng build --configuration production
+
+      - name: Deploy no Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: patrihub
+          directory: frontend/patrihub-web/dist/patrihub-web/browser

@@ -1,0 +1,47 @@
+name: Backend CI/CD
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "PatriHub.slnx"
+      - ".github/workflows/backend-ci-cd.yml"
+  pull_request:
+    paths:
+      - "src/**"
+      - "tests/**"
+      - "PatriHub.slnx"
+      - ".github/workflows/backend-ci-cd.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore PatriHub.slnx
+
+      - name: Build
+        run: dotnet build PatriHub.slnx --no-restore --configuration Release
+
+      # PatriHub.Api.IntegrationTests usa Testcontainers.PostgreSql — os runners ubuntu-latest
+      # já têm um daemon Docker disponível por padrão, nenhum setup extra é necessário.
+      - name: Test
+        run: dotnet test PatriHub.slnx --no-build --configuration Release
+
+  deploy:
+    needs: test
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      # Render está com Auto-Deploy desligado (ver render.yaml) — o único jeito de disparar um
+      # deploy é este hook, e ele só roda depois que os testes acima passam.
+      - name: Disparar deploy no Render
+        run: curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK_URL }}"

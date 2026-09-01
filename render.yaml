@@ -1,0 +1,41 @@
+# Blueprint do Render para a API do PatriHub. Ver README.md §Deploy.
+#
+# `sync: false` nas variáveis abaixo faz o dashboard do Render pedir cada valor na primeira
+# sincronização do blueprint (ou na criação manual do serviço) — essa é a "documentação viva"
+# de quais env vars são obrigatórias em produção, sem precisar de validação extra no código.
+services:
+  - type: web
+    name: patrihub-api
+    runtime: docker
+    dockerfilePath: src/PatriHub.Api/Dockerfile
+    dockerContext: .
+    plan: free
+    healthCheckPath: /health
+    # Deploy só acontece via o hook disparado pelo GitHub Actions depois que os testes passam
+    # (ver .github/workflows/backend-ci-cd.yml) — nunca automaticamente a cada push.
+    autoDeploy: false
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: SeedDadosDemo
+        value: "false"
+      - key: Jwt__Issuer
+        value: PatriHub
+      - key: Jwt__Audience
+        value: PatriHub
+      - key: Jwt__ExpiraEmDias
+        value: "7"
+      # Segredos e valores específicos do ambiente — preenchidos manualmente no dashboard do
+      # Render, nunca commitados. Ver README.md §Deploy para o significado de cada um.
+      - key: ConnectionStrings__PatriHubDb
+        sync: false
+      - key: Jwt__Secret
+        sync: false
+      - key: AdminBootstrap__Email
+        sync: false
+      - key: AdminBootstrap__Senha
+        sync: false
+      - key: Cors__AllowedOrigins__0
+        sync: false

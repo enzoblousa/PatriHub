@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PatriHub.Api.Autenticacao;
 using PatriHub.Application.Autenticacao;
 using PatriHub.Application.Common;
@@ -14,6 +15,7 @@ public sealed class AuthController(IAutenticacaoService autenticacaoService) : C
 {
     [HttpPost("registrar")]
     [AllowAnonymous]
+    [EnableRateLimiting("AuthEndpoints")]
     public async Task<IActionResult> Registrar([FromBody] RegistrarUsuarioRequest request)
     {
         var resultado = await autenticacaoService.RegistrarAsync(request);
@@ -27,6 +29,7 @@ public sealed class AuthController(IAutenticacaoService autenticacaoService) : C
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [EnableRateLimiting("AuthEndpoints")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var resultado = await autenticacaoService.LoginAsync(request);

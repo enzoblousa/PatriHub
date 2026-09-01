@@ -1,5 +1,7 @@
 using System.Text;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PatriHub.Infrastructure;
@@ -53,13 +55,38 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Só os endpoints anônimos de autenticação (registrar/login) usam essa policy — ver
+// AuthController. Limite configurável (RateLimiting:Auth:*) para poder ser neutralizado nos
+// testes de integração sem tocar em nenhuma asserção (ver PatriHubApiFactory).
+const string AuthRateLimiterPolicy = "AuthEndpoints";
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+    options.AddPolicy(AuthRateLimiterPolicy, httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = builder.Configuration.GetValue("RateLimiting:Auth:PermitLimit", 5),
+                Window = TimeSpan.FromSeconds(builder.Configuration.GetValue("RateLimiting:Auth:WindowSeconds", 60)),
+                QueueLimit = 0,
+            }));
+});
+
 var app = builder.Build();
 
 app.UseCors(FrontendCorsPolicy);
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// Sem autenticação, sem rate limit, sem tocar no banco de propósito — uma instabilidade
+// passageira do Neon não pode fazer o Render considerar o serviço inteiro fora do ar. Também
+// serve como URL de smoke-test mais rápida depois de um deploy.
+app.MapGet("/health", () => Results.Ok());
 
 using (var scope = app.Services.CreateScope())
 {
