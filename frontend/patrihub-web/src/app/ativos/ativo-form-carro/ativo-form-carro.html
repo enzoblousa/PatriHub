@@ -67,7 +67,9 @@
         />
       </label>
       @if (form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched) {
-        <p class="campo-erro" id="valorAquisicao-erro">Informe um valor de aquisição válido.</p>
+        <p class="campo-erro" id="valorAquisicao-erro">
+          {{ mensagemErro(form.controls.valorAquisicao, mensagensComuns.valorAquisicao) }}
+        </p>
       }
 
       <label>
@@ -92,7 +94,9 @@
         />
       </label>
       @if (form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched) {
-        <p class="campo-erro" id="valorMercadoAtual-erro">Informe um valor de mercado válido.</p>
+        <p class="campo-erro" id="valorMercadoAtual-erro">
+          {{ mensagemErro(form.controls.valorMercadoAtual, mensagensComuns.valorMercadoAtual) }}
+        </p>
       }
 
       <label>
@@ -110,7 +114,9 @@
         />
       </label>
       @if (form.controls.placa.invalid && form.controls.placa.touched) {
-        <p class="campo-erro" id="placa-erro">Informe a placa.</p>
+        <p class="campo-erro" id="placa-erro">
+          {{ mensagemErro(form.controls.placa, mensagensCarro.placa) }}
+        </p>
       }
 
       <label>
@@ -166,7 +172,7 @@
       </label>
       @if (form.controls.anoFabricacao.invalid && form.controls.anoFabricacao.touched) {
         <p class="campo-erro" id="anoFabricacao-erro">
-          Informe um ano de fabricação entre 1900 e {{ anoMaximoCarro }}.
+          {{ mensagemErro(form.controls.anoFabricacao, mensagensCarro.anoFabricacao) }}
         </p>
       }
 
@@ -189,8 +195,7 @@
       </label>
       @if (form.controls.anoModelo.invalid && form.controls.anoModelo.touched) {
         <p class="campo-erro" id="anoModelo-erro">
-          O ano do modelo deve ser maior ou igual ao ano de fabricação e no máximo
-          {{ anoMaximoCarro }}.
+          {{ mensagemErro(form.controls.anoModelo, mensagensCarro.anoModelo) }}
         </p>
       }
 
@@ -221,7 +226,9 @@
         />
       </label>
       @if (form.controls.valorFipeAtual.invalid && form.controls.valorFipeAtual.touched) {
-        <p class="campo-erro" id="valorFipeAtual-erro">Informe um valor FIPE válido.</p>
+        <p class="campo-erro" id="valorFipeAtual-erro">
+          {{ mensagemErro(form.controls.valorFipeAtual, mensagensCarro.valorFipeAtual) }}
+        </p>
       }
 
       <label>
@@ -239,7 +246,7 @@
         />
       </label>
       @if (form.controls.km.invalid && form.controls.km.touched) {
-        <p class="campo-erro" id="km-erro">Informe a quilometragem.</p>
+        <p class="campo-erro" id="km-erro">{{ mensagemErro(form.controls.km, mensagensCarro.km) }}</p>
       }
 
       <label>
@@ -294,7 +301,9 @@
         />
       </label>
       @if (form.controls.consumoMedio.invalid && form.controls.consumoMedio.touched) {
-        <p class="campo-erro" id="consumoMedio-erro">Informe o consumo médio.</p>
+        <p class="campo-erro" id="consumoMedio-erro">
+          {{ mensagemErro(form.controls.consumoMedio, mensagensCarro.consumoMedio) }}
+        </p>
       }
 
       <label class="checkbox">
@@ -338,7 +347,11 @@
             financiamentoForm.controls.valorParcela.invalid &&
             financiamentoForm.controls.valorParcela.touched
           ) {
-            <p class="campo-erro" id="valorParcela-erro">Informe o valor da parcela.</p>
+            <p class="campo-erro" id="valorParcela-erro">
+              {{
+                mensagemErro(financiamentoForm.controls.valorParcela, mensagensFinanciamento.valorParcela)
+              }}
+            </p>
           }
 
           <label>
@@ -372,7 +385,11 @@
             financiamentoForm.controls.saldoDevedor.invalid &&
             financiamentoForm.controls.saldoDevedor.touched
           ) {
-            <p class="campo-erro" id="saldoDevedor-erro">Informe o saldo devedor.</p>
+            <p class="campo-erro" id="saldoDevedor-erro">
+              {{
+                mensagemErro(financiamentoForm.controls.saldoDevedor, mensagensFinanciamento.saldoDevedor)
+              }}
+            </p>
           }
 
           <label>
@@ -406,7 +423,14 @@
             financiamentoForm.controls.taxaJurosAnual.invalid &&
             financiamentoForm.controls.taxaJurosAnual.touched
           ) {
-            <p class="campo-erro" id="taxaJurosAnual-erro">Informe a taxa de juros anual.</p>
+            <p class="campo-erro" id="taxaJurosAnual-erro">
+              {{
+                mensagemErro(
+                  financiamentoForm.controls.taxaJurosAnual,
+                  mensagensFinanciamento.taxaJurosAnual
+                )
+              }}
+            </p>
           }
 
           <label>
@@ -440,7 +464,12 @@
             financiamentoForm.controls.parcelasRestantes.touched
           ) {
             <p class="campo-erro" id="parcelasRestantes-erro">
-              Informe quantas parcelas ainda restam.
+              {{
+                mensagemErro(
+                  financiamentoForm.controls.parcelasRestantes,
+                  mensagensFinanciamento.parcelasRestantes
+                )
+              }}
             </p>
           }
         </fieldset>

@@ -10,11 +10,19 @@ import { MoedaDirective } from '../../shared/mascaras/moeda.directive';
 import { PercentualDirective } from '../../shared/mascaras/percentual.directive';
 import { Ativos } from '../ativos';
 import { TEXTOS_AJUDA_IMOVEL } from '../ativos-rotulos';
+import {
+  cepValidator,
+  MENSAGENS_ATIVO_COMUM,
+  MENSAGENS_IMOVEL,
+  mensagemErro,
+  ufValidator,
+} from '../ativos-validadores';
 import type { ImovelRequest } from '../ativos.models';
 import { TipoImovel } from '../ativos.models';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
+  MENSAGENS_FINANCIAMENTO,
   preencherFinanciamentoForm,
   TEXTOS_AJUDA_FINANCIAMENTO,
 } from '../financiamento-form';
@@ -64,6 +72,12 @@ export class AtivoFormImovel {
   protected readonly textosAjuda = TEXTOS_AJUDA_IMOVEL;
   protected readonly textosAjudaFinanciamento = TEXTOS_AJUDA_FINANCIAMENTO;
 
+  /** Resolve a mensagem de erro por tipo de violação — ver docs/adr/0008. */
+  protected readonly mensagemErro = mensagemErro;
+  protected readonly mensagensComuns = MENSAGENS_ATIVO_COMUM;
+  protected readonly mensagensImovel = MENSAGENS_IMOVEL;
+  protected readonly mensagensFinanciamento = MENSAGENS_FINANCIAMENTO;
+
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],
     dataAquisicao: ['', Validators.required],
@@ -80,8 +94,11 @@ export class AtivoFormImovel {
       complemento: [''],
       bairro: ['', Validators.required],
       cidade: ['', Validators.required],
-      uf: ['', [Validators.required, Validators.maxLength(2), Validators.minLength(2)]],
-      cep: ['', Validators.required],
+      uf: [
+        '',
+        [Validators.required, Validators.maxLength(2), Validators.minLength(2), ufValidator],
+      ],
+      cep: ['', [Validators.required, cepValidator]],
     }),
   });
 

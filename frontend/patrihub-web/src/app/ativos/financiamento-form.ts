@@ -15,6 +15,30 @@ export const TEXTOS_AJUDA_FINANCIAMENTO = {
 } as const;
 
 /**
+ * Mensagens por tipo de violação (ver docs/adr/0008) dos campos de Financiamento — usadas via
+ * `mensagemErro()` (`ativos-validadores.ts`) nos dois formulários que compartilham este
+ * fieldset.
+ */
+export const MENSAGENS_FINANCIAMENTO = {
+  valorParcela: {
+    required: 'Informe o valor da parcela.',
+    min: 'O valor da parcela não pode ser negativo.',
+  },
+  saldoDevedor: {
+    required: 'Informe o saldo devedor.',
+    min: 'O saldo devedor não pode ser negativo.',
+  },
+  taxaJurosAnual: {
+    required: 'Informe a taxa de juros anual.',
+    min: 'A taxa de juros não pode ser negativa.',
+  },
+  parcelasRestantes: {
+    required: 'Informe quantas parcelas ainda restam.',
+    min: 'Parcelas restantes não pode ser negativo.',
+  },
+} as const;
+
+/**
  * Subgrupo de campos de financiamento, compartilhado entre `AtivoFormImovel` e
  * `AtivoFormCarro` — os dois têm o mesmo `DadosFinanciamentoDto` opcional (ver
  * `AtivoDtos.cs`). O grupo em si nunca é `disabled`: a tela decide se manda os valores pro

@@ -89,6 +89,46 @@ describe('AtivoFormImovel', () => {
       expect(erro.textContent).toContain('matrícula');
     });
 
+    /** Ver docs/adr/0008 — antes a máscara só formatava, não impedia submeter um CEP incompleto. */
+    it('rejeita CEP com menos de 8 dígitos e mostra mensagem de formato', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.endereco.controls.cep.setValue('0100');
+      componente['form'].controls.endereco.controls.cep.markAsTouched();
+      await fixture.whenStable();
+
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#endereco-cep-erro');
+      expect(erro.textContent).toContain('8 dígitos');
+    });
+
+    it('mostra "Informe o CEP." (não a mensagem de formato) quando o campo está vazio', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.endereco.controls.cep.markAsTouched();
+      await fixture.whenStable();
+
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#endereco-cep-erro');
+      expect(erro.textContent).toContain('Informe o CEP.');
+    });
+
+    /** Ver docs/adr/0008 — antes qualquer par de letras passava, sem checar a lista real de UFs. */
+    it('rejeita UF que não está na lista das 27, mesmo com 2 letras', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.endereco.controls.uf.setValue('ZZ');
+      componente['form'].controls.endereco.controls.uf.markAsTouched();
+      await fixture.whenStable();
+
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#endereco-uf-erro');
+      expect(erro.textContent).toContain('UF inválida');
+    });
+
     it('aplica a máscara de moeda em tempo real no valor de aquisição', async () => {
       const fixture = TestBed.createComponent(AtivoFormImovel);
       const componente = fixture.componentInstance;

@@ -67,7 +67,9 @@
         />
       </label>
       @if (form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched) {
-        <p class="campo-erro" id="valorAquisicao-erro">Informe um valor de aquisição válido.</p>
+        <p class="campo-erro" id="valorAquisicao-erro">
+          {{ mensagemErro(form.controls.valorAquisicao, mensagensComuns.valorAquisicao) }}
+        </p>
       }
 
       <label>
@@ -92,7 +94,9 @@
         />
       </label>
       @if (form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched) {
-        <p class="campo-erro" id="valorMercadoAtual-erro">Informe um valor de mercado válido.</p>
+        <p class="campo-erro" id="valorMercadoAtual-erro">
+          {{ mensagemErro(form.controls.valorMercadoAtual, mensagensComuns.valorMercadoAtual) }}
+        </p>
       }
 
       <label>
@@ -136,7 +140,9 @@
         />
       </label>
       @if (form.controls.areaM2.invalid && form.controls.areaM2.touched) {
-        <p class="campo-erro" id="areaM2-erro">Informe uma área válida, maior que zero.</p>
+        <p class="campo-erro" id="areaM2-erro">
+          {{ mensagemErro(form.controls.areaM2, mensagensImovel.areaM2) }}
+        </p>
       }
 
       <label>
@@ -188,7 +194,9 @@
         />
       </label>
       @if (form.controls.valorIptuMensal.invalid && form.controls.valorIptuMensal.touched) {
-        <p class="campo-erro" id="valorIptuMensal-erro">Informe um valor de IPTU válido.</p>
+        <p class="campo-erro" id="valorIptuMensal-erro">
+          {{ mensagemErro(form.controls.valorIptuMensal, mensagensImovel.valorIptuMensal) }}
+        </p>
       }
 
       <label>
@@ -224,7 +232,7 @@
         form.controls.valorCondominioMensal.invalid && form.controls.valorCondominioMensal.touched
       ) {
         <p class="campo-erro" id="valorCondominioMensal-erro">
-          Informe um valor de condomínio válido.
+          {{ mensagemErro(form.controls.valorCondominioMensal, mensagensImovel.valorCondominioMensal) }}
         </p>
       }
 
@@ -374,7 +382,9 @@
         @if (
           form.controls.endereco.controls.uf.invalid && form.controls.endereco.controls.uf.touched
         ) {
-          <p class="campo-erro" id="endereco-uf-erro">Informe a UF com as 2 letras (ex: SP).</p>
+          <p class="campo-erro" id="endereco-uf-erro">
+            {{ mensagemErro(form.controls.endereco.controls.uf, mensagensImovel.uf) }}
+          </p>
         }
 
         <label>
@@ -404,7 +414,9 @@
         @if (
           form.controls.endereco.controls.cep.invalid && form.controls.endereco.controls.cep.touched
         ) {
-          <p class="campo-erro" id="endereco-cep-erro">Informe o CEP.</p>
+          <p class="campo-erro" id="endereco-cep-erro">
+            {{ mensagemErro(form.controls.endereco.controls.cep, mensagensImovel.cep) }}
+          </p>
         }
       </fieldset>
 
@@ -449,7 +461,11 @@
             financiamentoForm.controls.valorParcela.invalid &&
             financiamentoForm.controls.valorParcela.touched
           ) {
-            <p class="campo-erro" id="valorParcela-erro">Informe o valor da parcela.</p>
+            <p class="campo-erro" id="valorParcela-erro">
+              {{
+                mensagemErro(financiamentoForm.controls.valorParcela, mensagensFinanciamento.valorParcela)
+              }}
+            </p>
           }
 
           <label>
@@ -483,7 +499,11 @@
             financiamentoForm.controls.saldoDevedor.invalid &&
             financiamentoForm.controls.saldoDevedor.touched
           ) {
-            <p class="campo-erro" id="saldoDevedor-erro">Informe o saldo devedor.</p>
+            <p class="campo-erro" id="saldoDevedor-erro">
+              {{
+                mensagemErro(financiamentoForm.controls.saldoDevedor, mensagensFinanciamento.saldoDevedor)
+              }}
+            </p>
           }
 
           <label>
@@ -517,7 +537,14 @@
             financiamentoForm.controls.taxaJurosAnual.invalid &&
             financiamentoForm.controls.taxaJurosAnual.touched
           ) {
-            <p class="campo-erro" id="taxaJurosAnual-erro">Informe a taxa de juros anual.</p>
+            <p class="campo-erro" id="taxaJurosAnual-erro">
+              {{
+                mensagemErro(
+                  financiamentoForm.controls.taxaJurosAnual,
+                  mensagensFinanciamento.taxaJurosAnual
+                )
+              }}
+            </p>
           }
 
           <label>
@@ -551,7 +578,12 @@
             financiamentoForm.controls.parcelasRestantes.touched
           ) {
             <p class="campo-erro" id="parcelasRestantes-erro">
-              Informe quantas parcelas ainda restam.
+              {{
+                mensagemErro(
+                  financiamentoForm.controls.parcelasRestantes,
+                  mensagensFinanciamento.parcelasRestantes
+                )
+              }}
             </p>
           }
         </fieldset>
