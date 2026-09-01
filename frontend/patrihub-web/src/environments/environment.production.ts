@@ -1,6 +1,11 @@
-// Ambiente de produção. Hospedagem definitiva (Azure) ainda não está decidida além do que já
-// está em `docs/spec/02-PLANO-TECNICO.md` — este valor é um placeholder até esse deploy existir.
+// Ambiente de produção. Backend hospedado no Render (Docker), frontend no Cloudflare Pages —
+// ver README.md §Deploy. `apiBaseUrl` é resolvido em build-time via file replacement
+// (angular.json), não há indireção de config em runtime.
+//
+// URL abaixo assume que o serviço no Render foi criado com o nome "patrihub-api" (mesmo nome
+// usado em render.yaml) — se o nome real escolhido no dashboard do Render for diferente,
+// atualize este valor antes do primeiro deploy do frontend.
 export const environment = {
   production: true,
-  apiBaseUrl: 'http://localhost:8080',
+  apiBaseUrl: 'https://patrihub-api.onrender.com',
 };

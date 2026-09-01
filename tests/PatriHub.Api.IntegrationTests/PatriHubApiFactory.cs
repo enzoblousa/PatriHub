@@ -27,6 +27,12 @@ public sealed class PatriHubApiFactory : WebApplicationFactory<Program>, IAsyncL
                 // Testes não precisam (nem devem pagar o custo de) a massa de dados demo —
                 // cada teste cria só os dados que precisa via CenarioTestHelper/AutenticacaoTestHelper.
                 ["SeedDadosDemo"] = "false",
+                // O rate limiter de /api/auth/* (ver Program.cs) particiona por IP, e todo request
+                // in-memory do WebApplicationFactory cai no mesmo loopback — sem isso, o volume de
+                // chamadas a registrar/login feito por AutenticacaoTestHelper em toda a suíte
+                // estouraria o limite de produção (5/60s) bem antes de terminar.
+                ["RateLimiting:Auth:PermitLimit"] = "1000000",
+                ["RateLimiting:Auth:WindowSeconds"] = "1",
             });
         });
     }

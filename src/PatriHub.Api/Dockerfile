@@ -16,4 +16,13 @@ WORKDIR /app
 COPY --from=build /app .
 
 EXPOSE 8080
-ENTRYPOINT ["dotnet", "PatriHub.Api.dll"]
+
+# Containers com limite baixo de instâncias inotify (ex.: Render free tier) derrubam o app na
+# inicialização: o ASP.NET Core tenta observar appsettings.json pra hot-reload por padrão, e
+# WebApplication.CreateBuilder() estoura esse limite antes mesmo do nosso código rodar
+# (System.IO.IOException: "configured user limit (128) on the number of inotify instances").
+# Não precisamos de hot-reload em produção — config muda por variável de ambiente + redeploy,
+# nunca editando o arquivo em runtime. Duas formas de desligar, pra garantir que uma pegue
+# independente de qual prefixo de env var o bootstrap do host lê primeiro.
+ENV DOTNET_hostBuilder__reloadConfigOnChange=false
+ENTRYPOINT ["dotnet", "PatriHub.Api.dll", "--hostBuilder:reloadConfigOnChange=false"]

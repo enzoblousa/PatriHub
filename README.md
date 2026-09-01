@@ -12,6 +12,7 @@ arquiteturais em [`docs/adr/`](docs/adr).
 - **Backend**: .NET 10 / ASP.NET Core Web API, EF Core, PostgreSQL, autenticação JWT
 - **Frontend**: Angular 21, servido em produção via Nginx
 - **Infra local**: Docker Compose (Postgres + API + frontend)
+- **Produção**: Render (API) + Neon (Postgres) + Cloudflare Pages (frontend) — ver [Deploy](#deploy)
 
 ## Estrutura do repositório
 
@@ -82,6 +83,64 @@ Frontend:
 cd frontend/patrihub-web
 npm test
 ```
+
+## Deploy
+
+Versão beta em produção, rodando 100% em tiers grátis (sem cartão de crédito em nenhuma
+perna):
+
+- **[Render](https://render.com)** — API (`src/PatriHub.Api/Dockerfile`), free web service.
+  Definido como Blueprint em [`render.yaml`](render.yaml).
+- **[Neon](https://neon.tech)** — Postgres gerenciado, free tier. Nunca deleta dado — só
+  suspende o compute quando ocioso (retoma automaticamente na próxima conexão). Janela de
+  restauração point-in-time: 6 horas.
+- **[Cloudflare Pages](https://pages.cloudflare.com)** — build estático do Angular
+  (`frontend/patrihub-web`), free tier, bandwidth ilimitada.
+
+### Variáveis de ambiente obrigatórias no Render
+
+`render.yaml` declara todas com `sync: false` — o dashboard do Render pede cada uma na
+primeira sincronização do blueprint (ou na criação manual do serviço):
+
+| Variável | Valor |
+|---|---|
+| `ConnectionStrings__PatriHubDb` | Connection string do Neon, em formato ADO.NET: `Host=...;Port=5432;Database=...;Username=...;Password=...;SSL Mode=Require;Trust Server Certificate=true` (Neon fornece no formato `postgresql://user:pass@host/db?sslmode=require` — precisa converter) |
+| `Jwt__Secret` | Segredo novo gerado só para produção (ex.: `openssl rand -base64 48`) — nunca o valor de dev do `appsettings.json` |
+| `AdminBootstrap__Email` | Email real da primeira conta Admin |
+| `AdminBootstrap__Senha` | Senha forte real — nunca o valor de dev do `appsettings.json` |
+| `Cors__AllowedOrigins__0` | URL do Cloudflare Pages (ex.: `https://patrihub.pages.dev`) |
+
+Os demais valores (`ASPNETCORE_ENVIRONMENT`, `SeedDadosDemo=false`, `Jwt__Issuer`/`Audience`/
+`ExpiraEmDias`) já vêm fixados no `render.yaml`, não-secretos.
+
+Os valores de dev commitados em `src/PatriHub.Api/appsettings.json` continuam ali de
+propósito — são usados por `dotnet run`/`dotnet test` local e são sempre sobrescritos em
+produção pelas variáveis de ambiente acima (que têm precedência sobre `appsettings.json`
+independente do `ASPNETCORE_ENVIRONMENT`). Não reescrevemos o histórico do Git para remover
+os segredos de dev antigos — uma vez rotacionados, os valores antigos não dão acesso a nada.
+
+### CI/CD
+
+Dois workflows em [`.github/workflows/`](.github/workflows/), cada um só disparado por
+mudanças na sua área (`src/**`+`tests/**` para o backend, `frontend/**` para o frontend):
+
+1. Todo push/PR roda os testes (`dotnet test`, `ng test`).
+2. Só em push na `main`, depois dos testes passarem: o job de deploy do backend chama o
+   **Deploy Hook** do Render (`RENDER_DEPLOY_HOOK_URL` nos GitHub Secrets) — o Auto-Deploy do
+   Render está **desligado** de propósito, então nenhum deploy acontece sem os testes
+   passarem primeiro. O job de deploy do frontend builda e publica no Cloudflare Pages via
+   `cloudflare/pages-action` (`CLOUDFLARE_API_TOKEN`/`CLOUDFLARE_ACCOUNT_ID` nos GitHub
+   Secrets).
+
+### Limitações conhecidas desta beta
+
+- Sem confirmação de email nem reset de senha por email — se alguém travar, o Admin reseta a
+  senha manualmente pelo painel.
+- Sem backup além da janela de 6h de point-in-time restore do Neon.
+- Sem domínio próprio — usa os subdomínios grátis dos hosts (`*.onrender.com`,
+  `*.pages.dev`).
+- O free tier do Render "dorme" após 15 minutos sem tráfego; o primeiro acesso depois disso
+  pode levar de 30 a 60 segundos para responder.
 
 ## Contribuindo
 

@@ -40,7 +40,7 @@ public sealed class AuthTests(PatriHubApiFactory factory) : IClassFixture<PatriH
         // AuthController.Registrar, que não distingue "email duplicado" de erro de validação.
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         var corpo = await response.Content.ReadAsStringAsync();
-        Assert.Contains("Política de Privacidade", corpo);
+        Assert.Contains("aceitar o uso dos dados", corpo);
     }
 
     [Fact]
