@@ -5,84 +5,286 @@
     <p>Carregando…</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="salvar()" novalidate>
+      <p class="legenda-obrigatorios">* campos obrigatórios</p>
+
       <label>
-        Apelido
-        <input type="text" formControlName="apelido" />
+        Apelido <span class="obrigatorio">*</span>
+        <input
+          type="text"
+          formControlName="apelido"
+          [class.campo-invalido]="form.controls.apelido.invalid && form.controls.apelido.touched"
+          [attr.aria-invalid]="form.controls.apelido.invalid && form.controls.apelido.touched"
+          [attr.aria-describedby]="
+            form.controls.apelido.invalid && form.controls.apelido.touched ? 'apelido-erro' : null
+          "
+        />
       </label>
       @if (form.controls.apelido.invalid && form.controls.apelido.touched) {
-        <p class="campo-erro">Informe um apelido.</p>
+        <p class="campo-erro" id="apelido-erro">Informe um apelido.</p>
       }
 
       <label>
-        Data de aquisição
-        <input type="date" formControlName="dataAquisicao" />
+        Data de aquisição <span class="obrigatorio">*</span>
+        <input
+          type="date"
+          formControlName="dataAquisicao"
+          [class.campo-invalido]="
+            form.controls.dataAquisicao.invalid && form.controls.dataAquisicao.touched
+          "
+          [attr.aria-invalid]="
+            form.controls.dataAquisicao.invalid && form.controls.dataAquisicao.touched
+          "
+          [attr.aria-describedby]="
+            form.controls.dataAquisicao.invalid && form.controls.dataAquisicao.touched
+              ? 'dataAquisicao-erro'
+              : null
+          "
+        />
       </label>
+      @if (form.controls.dataAquisicao.invalid && form.controls.dataAquisicao.touched) {
+        <p class="campo-erro" id="dataAquisicao-erro">Informe a data de aquisição.</p>
+      }
 
       <label>
-        Valor de aquisição
-        <input type="number" formControlName="valorAquisicao" min="0" step="0.01" />
+        Valor de aquisição <span class="obrigatorio">*</span>
+        <input
+          type="text"
+          inputmode="decimal"
+          appMoeda
+          formControlName="valorAquisicao"
+          placeholder="R$ 0,00"
+          [class.campo-invalido]="
+            form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched
+          "
+          [attr.aria-invalid]="
+            form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched
+          "
+          [attr.aria-describedby]="
+            form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched
+              ? 'valorAquisicao-erro'
+              : null
+          "
+        />
       </label>
+      @if (form.controls.valorAquisicao.invalid && form.controls.valorAquisicao.touched) {
+        <p class="campo-erro" id="valorAquisicao-erro">Informe um valor de aquisição válido.</p>
+      }
 
       <label>
-        Valor de mercado atual
-        <input type="number" formControlName="valorMercadoAtual" min="0" step="0.01" />
+        Valor de mercado atual <span class="obrigatorio">*</span>
+        <input
+          type="text"
+          inputmode="decimal"
+          appMoeda
+          formControlName="valorMercadoAtual"
+          placeholder="R$ 0,00"
+          [class.campo-invalido]="
+            form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched
+          "
+          [attr.aria-invalid]="
+            form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched
+          "
+          [attr.aria-describedby]="
+            form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched
+              ? 'valorMercadoAtual-erro'
+              : null
+          "
+        />
       </label>
+      @if (form.controls.valorMercadoAtual.invalid && form.controls.valorMercadoAtual.touched) {
+        <p class="campo-erro" id="valorMercadoAtual-erro">Informe um valor de mercado válido.</p>
+      }
 
       <label>
-        Tipo
-        <select formControlName="tipoImovel">
+        Tipo <span class="obrigatorio">*</span>
+        <select
+          formControlName="tipoImovel"
+          [class.campo-invalido]="
+            form.controls.tipoImovel.invalid && form.controls.tipoImovel.touched
+          "
+          [attr.aria-invalid]="form.controls.tipoImovel.invalid && form.controls.tipoImovel.touched"
+          [attr.aria-describedby]="
+            form.controls.tipoImovel.invalid && form.controls.tipoImovel.touched
+              ? 'tipoImovel-erro'
+              : null
+          "
+        >
           @for (tipo of tiposImovel; track tipo.valor) {
             <option [value]="tipo.valor">{{ tipo.rotulo }}</option>
           }
         </select>
       </label>
+      @if (form.controls.tipoImovel.invalid && form.controls.tipoImovel.touched) {
+        <p class="campo-erro" id="tipoImovel-erro">Escolha o tipo do imóvel.</p>
+      }
 
       <label>
         <span class="rotulo-com-ajuda">
-          Área (m²)
+          Área (m²) <span class="obrigatorio">*</span>
           <app-ajuda [texto]="textosAjuda.areaM2" />
         </span>
-        <input type="number" formControlName="areaM2" min="0.01" step="0.01" />
+        <input
+          type="number"
+          formControlName="areaM2"
+          min="0.01"
+          step="0.01"
+          [class.campo-invalido]="form.controls.areaM2.invalid && form.controls.areaM2.touched"
+          [attr.aria-invalid]="form.controls.areaM2.invalid && form.controls.areaM2.touched"
+          [attr.aria-describedby]="
+            form.controls.areaM2.invalid && form.controls.areaM2.touched ? 'areaM2-erro' : null
+          "
+        />
       </label>
+      @if (form.controls.areaM2.invalid && form.controls.areaM2.touched) {
+        <p class="campo-erro" id="areaM2-erro">Informe uma área válida, maior que zero.</p>
+      }
 
       <label>
         <span class="rotulo-com-ajuda">
-          Matrícula
+          Matrícula <span class="obrigatorio">*</span>
           <app-ajuda [texto]="textosAjuda.matricula" />
         </span>
-        <input type="text" formControlName="matricula" />
+        <input
+          type="text"
+          formControlName="matricula"
+          placeholder="Ex: 12.345"
+          [class.campo-invalido]="
+            form.controls.matricula.invalid && form.controls.matricula.touched
+          "
+          [attr.aria-invalid]="form.controls.matricula.invalid && form.controls.matricula.touched"
+          [attr.aria-describedby]="
+            form.controls.matricula.invalid && form.controls.matricula.touched
+              ? 'matricula-erro'
+              : null
+          "
+        />
       </label>
+      @if (form.controls.matricula.invalid && form.controls.matricula.touched) {
+        <p class="campo-erro" id="matricula-erro">Informe a matrícula do imóvel.</p>
+      }
 
       <label>
         <span class="rotulo-com-ajuda">
-          IPTU mensal
+          IPTU mensal <span class="obrigatorio">*</span>
           <app-ajuda [texto]="textosAjuda.iptuMensal" />
         </span>
-        <input type="number" formControlName="valorIptuMensal" min="0" step="0.01" />
+        <input
+          type="text"
+          inputmode="decimal"
+          appMoeda
+          formControlName="valorIptuMensal"
+          placeholder="R$ 0,00"
+          [class.campo-invalido]="
+            form.controls.valorIptuMensal.invalid && form.controls.valorIptuMensal.touched
+          "
+          [attr.aria-invalid]="
+            form.controls.valorIptuMensal.invalid && form.controls.valorIptuMensal.touched
+          "
+          [attr.aria-describedby]="
+            form.controls.valorIptuMensal.invalid && form.controls.valorIptuMensal.touched
+              ? 'valorIptuMensal-erro'
+              : null
+          "
+        />
       </label>
+      @if (form.controls.valorIptuMensal.invalid && form.controls.valorIptuMensal.touched) {
+        <p class="campo-erro" id="valorIptuMensal-erro">Informe um valor de IPTU válido.</p>
+      }
 
       <label>
         <span class="rotulo-com-ajuda">
-          Condomínio mensal
+          Condomínio mensal <span class="obrigatorio">*</span>
           <app-ajuda
             texto="Taxa mensal paga ao condomínio, quando o imóvel faz parte de um (prédio, condomínio fechado etc.). Deixe 0 se não tiver."
           />
         </span>
-        <input type="number" formControlName="valorCondominioMensal" min="0" step="0.01" />
+        <input
+          type="text"
+          inputmode="decimal"
+          appMoeda
+          formControlName="valorCondominioMensal"
+          placeholder="R$ 0,00"
+          [class.campo-invalido]="
+            form.controls.valorCondominioMensal.invalid &&
+            form.controls.valorCondominioMensal.touched
+          "
+          [attr.aria-invalid]="
+            form.controls.valorCondominioMensal.invalid &&
+            form.controls.valorCondominioMensal.touched
+          "
+          [attr.aria-describedby]="
+            form.controls.valorCondominioMensal.invalid &&
+            form.controls.valorCondominioMensal.touched
+              ? 'valorCondominioMensal-erro'
+              : null
+          "
+        />
       </label>
+      @if (
+        form.controls.valorCondominioMensal.invalid && form.controls.valorCondominioMensal.touched
+      ) {
+        <p class="campo-erro" id="valorCondominioMensal-erro">
+          Informe um valor de condomínio válido.
+        </p>
+      }
 
       <fieldset formGroupName="endereco">
         <legend>Endereço</legend>
 
         <label>
-          Rua
-          <input type="text" formControlName="rua" />
+          Rua <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            formControlName="rua"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.rua.invalid &&
+              form.controls.endereco.controls.rua.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.rua.invalid &&
+              form.controls.endereco.controls.rua.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.rua.invalid &&
+              form.controls.endereco.controls.rua.touched
+                ? 'endereco-rua-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.rua.invalid && form.controls.endereco.controls.rua.touched
+        ) {
+          <p class="campo-erro" id="endereco-rua-erro">Informe a rua.</p>
+        }
 
         <label>
-          Número
-          <input type="text" formControlName="numero" />
+          Número <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            formControlName="numero"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.numero.invalid &&
+              form.controls.endereco.controls.numero.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.numero.invalid &&
+              form.controls.endereco.controls.numero.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.numero.invalid &&
+              form.controls.endereco.controls.numero.touched
+                ? 'endereco-numero-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.numero.invalid &&
+          form.controls.endereco.controls.numero.touched
+        ) {
+          <p class="campo-erro" id="endereco-numero-erro">Informe o número.</p>
+        }
 
         <label>
           Complemento
@@ -90,24 +292,120 @@
         </label>
 
         <label>
-          Bairro
-          <input type="text" formControlName="bairro" />
+          Bairro <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            formControlName="bairro"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.bairro.invalid &&
+              form.controls.endereco.controls.bairro.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.bairro.invalid &&
+              form.controls.endereco.controls.bairro.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.bairro.invalid &&
+              form.controls.endereco.controls.bairro.touched
+                ? 'endereco-bairro-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.bairro.invalid &&
+          form.controls.endereco.controls.bairro.touched
+        ) {
+          <p class="campo-erro" id="endereco-bairro-erro">Informe o bairro.</p>
+        }
 
         <label>
-          Cidade
-          <input type="text" formControlName="cidade" />
+          Cidade <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            formControlName="cidade"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.cidade.invalid &&
+              form.controls.endereco.controls.cidade.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.cidade.invalid &&
+              form.controls.endereco.controls.cidade.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.cidade.invalid &&
+              form.controls.endereco.controls.cidade.touched
+                ? 'endereco-cidade-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.cidade.invalid &&
+          form.controls.endereco.controls.cidade.touched
+        ) {
+          <p class="campo-erro" id="endereco-cidade-erro">Informe a cidade.</p>
+        }
 
         <label>
-          UF
-          <input type="text" formControlName="uf" maxlength="2" />
+          UF <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            appMaiusculas
+            formControlName="uf"
+            maxlength="2"
+            placeholder="SP"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.uf.invalid &&
+              form.controls.endereco.controls.uf.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.uf.invalid &&
+              form.controls.endereco.controls.uf.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.uf.invalid &&
+              form.controls.endereco.controls.uf.touched
+                ? 'endereco-uf-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.uf.invalid && form.controls.endereco.controls.uf.touched
+        ) {
+          <p class="campo-erro" id="endereco-uf-erro">Informe a UF com as 2 letras (ex: SP).</p>
+        }
 
         <label>
-          CEP
-          <input type="text" formControlName="cep" />
+          CEP <span class="obrigatorio">*</span>
+          <input
+            type="text"
+            inputmode="numeric"
+            appCep
+            formControlName="cep"
+            placeholder="00000-000"
+            [class.campo-invalido]="
+              form.controls.endereco.controls.cep.invalid &&
+              form.controls.endereco.controls.cep.touched
+            "
+            [attr.aria-invalid]="
+              form.controls.endereco.controls.cep.invalid &&
+              form.controls.endereco.controls.cep.touched
+            "
+            [attr.aria-describedby]="
+              form.controls.endereco.controls.cep.invalid &&
+              form.controls.endereco.controls.cep.touched
+                ? 'endereco-cep-erro'
+                : null
+            "
+          />
         </label>
+        @if (
+          form.controls.endereco.controls.cep.invalid && form.controls.endereco.controls.cep.touched
+        ) {
+          <p class="campo-erro" id="endereco-cep-erro">Informe o CEP.</p>
+        }
       </fieldset>
 
       <label class="checkbox">
@@ -124,33 +422,138 @@
           <legend>Financiamento</legend>
 
           <label>
-            Valor da parcela
-            <input type="number" formControlName="valorParcela" min="0" step="0.01" />
+            Valor da parcela <span class="obrigatorio">*</span>
+            <input
+              type="text"
+              inputmode="decimal"
+              appMoeda
+              formControlName="valorParcela"
+              placeholder="R$ 0,00"
+              [class.campo-invalido]="
+                financiamentoForm.controls.valorParcela.invalid &&
+                financiamentoForm.controls.valorParcela.touched
+              "
+              [attr.aria-invalid]="
+                financiamentoForm.controls.valorParcela.invalid &&
+                financiamentoForm.controls.valorParcela.touched
+              "
+              [attr.aria-describedby]="
+                financiamentoForm.controls.valorParcela.invalid &&
+                financiamentoForm.controls.valorParcela.touched
+                  ? 'valorParcela-erro'
+                  : null
+              "
+            />
           </label>
+          @if (
+            financiamentoForm.controls.valorParcela.invalid &&
+            financiamentoForm.controls.valorParcela.touched
+          ) {
+            <p class="campo-erro" id="valorParcela-erro">Informe o valor da parcela.</p>
+          }
 
           <label>
             <span class="rotulo-com-ajuda">
-              Saldo devedor
+              Saldo devedor <span class="obrigatorio">*</span>
               <app-ajuda [texto]="textosAjudaFinanciamento.saldoDevedor" />
             </span>
-            <input type="number" formControlName="saldoDevedor" min="0" step="0.01" />
+            <input
+              type="text"
+              inputmode="decimal"
+              appMoeda
+              formControlName="saldoDevedor"
+              placeholder="R$ 0,00"
+              [class.campo-invalido]="
+                financiamentoForm.controls.saldoDevedor.invalid &&
+                financiamentoForm.controls.saldoDevedor.touched
+              "
+              [attr.aria-invalid]="
+                financiamentoForm.controls.saldoDevedor.invalid &&
+                financiamentoForm.controls.saldoDevedor.touched
+              "
+              [attr.aria-describedby]="
+                financiamentoForm.controls.saldoDevedor.invalid &&
+                financiamentoForm.controls.saldoDevedor.touched
+                  ? 'saldoDevedor-erro'
+                  : null
+              "
+            />
           </label>
+          @if (
+            financiamentoForm.controls.saldoDevedor.invalid &&
+            financiamentoForm.controls.saldoDevedor.touched
+          ) {
+            <p class="campo-erro" id="saldoDevedor-erro">Informe o saldo devedor.</p>
+          }
 
           <label>
             <span class="rotulo-com-ajuda">
-              Taxa de juros anual
+              Taxa de juros anual <span class="obrigatorio">*</span>
               <app-ajuda [texto]="textosAjudaFinanciamento.taxaJurosAnual" />
             </span>
-            <input type="number" formControlName="taxaJurosAnual" min="0" step="0.01" />
+            <input
+              type="text"
+              inputmode="decimal"
+              appPercentual
+              formControlName="taxaJurosAnual"
+              placeholder="0,00%"
+              [class.campo-invalido]="
+                financiamentoForm.controls.taxaJurosAnual.invalid &&
+                financiamentoForm.controls.taxaJurosAnual.touched
+              "
+              [attr.aria-invalid]="
+                financiamentoForm.controls.taxaJurosAnual.invalid &&
+                financiamentoForm.controls.taxaJurosAnual.touched
+              "
+              [attr.aria-describedby]="
+                financiamentoForm.controls.taxaJurosAnual.invalid &&
+                financiamentoForm.controls.taxaJurosAnual.touched
+                  ? 'taxaJurosAnual-erro'
+                  : null
+              "
+            />
           </label>
+          @if (
+            financiamentoForm.controls.taxaJurosAnual.invalid &&
+            financiamentoForm.controls.taxaJurosAnual.touched
+          ) {
+            <p class="campo-erro" id="taxaJurosAnual-erro">Informe a taxa de juros anual.</p>
+          }
 
           <label>
             <span class="rotulo-com-ajuda">
-              Parcelas restantes
+              Parcelas restantes <span class="obrigatorio">*</span>
               <app-ajuda [texto]="textosAjudaFinanciamento.parcelasRestantes" />
             </span>
-            <input type="number" formControlName="parcelasRestantes" min="0" step="1" />
+            <input
+              type="number"
+              formControlName="parcelasRestantes"
+              min="0"
+              step="1"
+              [class.campo-invalido]="
+                financiamentoForm.controls.parcelasRestantes.invalid &&
+                financiamentoForm.controls.parcelasRestantes.touched
+              "
+              [attr.aria-invalid]="
+                financiamentoForm.controls.parcelasRestantes.invalid &&
+                financiamentoForm.controls.parcelasRestantes.touched
+              "
+              [attr.aria-describedby]="
+                financiamentoForm.controls.parcelasRestantes.invalid &&
+                financiamentoForm.controls.parcelasRestantes.touched
+                  ? 'parcelasRestantes-erro'
+                  : null
+              "
+            />
           </label>
+          @if (
+            financiamentoForm.controls.parcelasRestantes.invalid &&
+            financiamentoForm.controls.parcelasRestantes.touched
+          ) {
+            <p class="campo-erro" id="parcelasRestantes-erro">
+              Informe quantas parcelas ainda restam.
+            </p>
+          }
         </fieldset>
       }
 

@@ -65,6 +65,73 @@ describe('AtivoFormCarro', () => {
       httpMock.expectNone(`${baseUrl}/carros`);
     });
 
+    it('mostra a legenda de campos obrigatórios e o asterisco nos labels obrigatórios', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      await fixture.whenStable();
+
+      const legenda: HTMLElement = fixture.nativeElement.querySelector('.legenda-obrigatorios');
+      expect(legenda.textContent).toContain('campos obrigatórios');
+
+      const asteriscos = fixture.nativeElement.querySelectorAll('.obrigatorio');
+      expect(asteriscos.length).toBeGreaterThan(0);
+    });
+
+    it('aplica a máscara de placa: assume formato antigo e reconhece Mercosul ao digitar', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="placa"]',
+      );
+
+      input.value = 'abc1234';
+      input.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+      expect(input.value).toBe('ABC-1234');
+      expect(componente['form'].controls.placa.value).toBe('ABC-1234');
+
+      input.value = 'abc1d23';
+      input.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+      expect(input.value).toBe('ABC1D23');
+      expect(componente['form'].controls.placa.value).toBe('ABC1D23');
+    });
+
+    it('rejeita anoModelo menor que anoFabricacao e mostra o erro inline', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].setValue({ ...carroValido, anoFabricacao: 2022, anoModelo: 2021 });
+      componente['form'].controls.anoModelo.markAsTouched();
+      fixture.nativeElement.querySelector('button[type="submit"]').click();
+      await fixture.whenStable();
+
+      httpMock.expectNone(`${baseUrl}/carros`);
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="anoModelo"]',
+      );
+      expect(input.classList.contains('campo-invalido')).toBe(true);
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#anoModelo-erro');
+      expect(erro.textContent).toContain('ano de fabricação');
+    });
+
+    it('rejeita anoFabricacao fora do intervalo [1900, ano atual + 1]', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.anoFabricacao.setValue(1899);
+      componente['form'].controls.anoFabricacao.markAsTouched();
+      await fixture.whenStable();
+
+      expect(componente['form'].controls.anoFabricacao.invalid).toBe(true);
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#anoFabricacao-erro');
+      expect(erro.textContent).toContain('1900');
+    });
+
     it('cadastra e navega pro detalhe quando aceito', async () => {
       const fixture = TestBed.createComponent(AtivoFormCarro);
       const componente = fixture.componentInstance;

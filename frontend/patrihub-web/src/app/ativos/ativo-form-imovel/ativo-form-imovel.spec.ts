@@ -47,6 +47,88 @@ describe('AtivoFormImovel', () => {
       httpMock.expectNone(`${baseUrl}/imoveis`);
     });
 
+    it('mostra a legenda de campos obrigatórios e o asterisco nos labels obrigatórios', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      await fixture.whenStable();
+
+      const legenda: HTMLElement = fixture.nativeElement.querySelector('.legenda-obrigatorios');
+      expect(legenda.textContent).toContain('campos obrigatórios');
+
+      const asteriscos = fixture.nativeElement.querySelectorAll('.obrigatorio');
+      expect(asteriscos.length).toBeGreaterThan(0);
+    });
+
+    it('não mostra erro/borda vermelha antes de o campo ser tocado', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.querySelector('#matricula-erro')).toBeNull();
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="matricula"]',
+      );
+      expect(input.classList.contains('campo-invalido')).toBe(false);
+    });
+
+    it('mostra erro inline com aria-invalid/aria-describedby quando o campo é tocado e está inválido', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.matricula.markAsTouched();
+      componente['form'].controls.matricula.updateValueAndValidity();
+      await fixture.whenStable();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="matricula"]',
+      );
+      expect(input.classList.contains('campo-invalido')).toBe(true);
+      expect(input.getAttribute('aria-invalid')).toBe('true');
+      expect(input.getAttribute('aria-describedby')).toBe('matricula-erro');
+
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#matricula-erro');
+      expect(erro.textContent).toContain('matrícula');
+    });
+
+    it('aplica a máscara de moeda em tempo real no valor de aquisição', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      const input: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="valorAquisicao"]',
+      );
+      input.value = '30000000';
+      input.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+
+      expect(input.value).toBe('R$ 300.000,00');
+      expect(componente['form'].controls.valorAquisicao.value).toBe(300_000);
+    });
+
+    it('aplica a máscara de CEP e deixa a UF em maiúsculas em tempo real', async () => {
+      const fixture = TestBed.createComponent(AtivoFormImovel);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      const cep: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="cep"]',
+      );
+      cep.value = '01000000';
+      cep.dispatchEvent(new Event('input'));
+
+      const uf: HTMLInputElement = fixture.nativeElement.querySelector(
+        'input[formcontrolname="uf"]',
+      );
+      uf.value = 'sp';
+      uf.dispatchEvent(new Event('input'));
+      await fixture.whenStable();
+
+      expect(cep.value).toBe('01000-000');
+      expect(componente['form'].controls.endereco.controls.cep.value).toBe('01000-000');
+      expect(uf.value).toBe('SP');
+      expect(componente['form'].controls.endereco.controls.uf.value).toBe('SP');
+    });
+
     it('cadastra e navega pro detalhe quando aceito', async () => {
       const fixture = TestBed.createComponent(AtivoFormImovel);
       const componente = fixture.componentInstance;
@@ -113,7 +195,10 @@ describe('AtivoFormImovel', () => {
       await fixture.whenStable();
 
       const req = httpMock.expectOne(`${baseUrl}/imoveis`);
-      req.flush({ erro: 'Apelido do ativo não pode ser vazio.' }, { status: 400, statusText: 'Bad Request' });
+      req.flush(
+        { erro: 'Apelido do ativo não pode ser vazio.' },
+        { status: 400, statusText: 'Bad Request' },
+      );
       await fixture.whenStable();
 
       const mensagemErro = fixture.nativeElement.querySelector('.erro') as HTMLElement;

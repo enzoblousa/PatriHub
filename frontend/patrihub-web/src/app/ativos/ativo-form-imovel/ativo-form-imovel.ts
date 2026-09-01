@@ -4,6 +4,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { mensagemErroHttp } from '../../core/http/mensagem-erro-http';
 import { Ajuda } from '../../shared/ajuda/ajuda';
+import { CepDirective } from '../../shared/mascaras/cep.directive';
+import { MaiusculasDirective } from '../../shared/mascaras/maiusculas.directive';
+import { MoedaDirective } from '../../shared/mascaras/moeda.directive';
+import { PercentualDirective } from '../../shared/mascaras/percentual.directive';
 import { Ativos } from '../ativos';
 import { TEXTOS_AJUDA_IMOVEL } from '../ativos-rotulos';
 import type { ImovelRequest } from '../ativos.models';
@@ -23,7 +27,15 @@ import {
  */
 @Component({
   selector: 'app-ativo-form-imovel',
-  imports: [ReactiveFormsModule, RouterLink, Ajuda],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    Ajuda,
+    CepDirective,
+    MaiusculasDirective,
+    MoedaDirective,
+    PercentualDirective,
+  ],
   templateUrl: './ativo-form-imovel.html',
   styleUrl: './ativo-form-imovel.css',
 })
@@ -88,7 +100,10 @@ export class AtivoFormImovel {
             valorIptuMensal: detalhe.imovel?.valorIptuMensal,
             valorCondominioMensal: detalhe.imovel?.valorCondominioMensal,
             endereco: detalhe.imovel
-              ? { ...detalhe.imovel.endereco, complemento: detalhe.imovel.endereco.complemento ?? '' }
+              ? {
+                  ...detalhe.imovel.endereco,
+                  complemento: detalhe.imovel.endereco.complemento ?? '',
+                }
               : undefined,
           });
           if (detalhe.financiamento) {
