@@ -1,3 +1,5 @@
+using System.Text.RegularExpressions;
+
 namespace PatriHub.Domain.Entidades;
 
 /// <summary>
@@ -15,6 +17,13 @@ public enum Motorizacao
 public sealed class Carro : Ativo
 {
     public override TipoAtivo Tipo => TipoAtivo.Carro;
+
+    /// <summary>
+    /// Formato antigo (`AAA-0000`) e Mercosul (`AAA0A00`) — os dois em uso no Brasil, ver
+    /// docs/adr/0007 e docs/adr/0008. Aplicado sobre a placa já normalizada (trim + maiúsculas).
+    /// </summary>
+    private static readonly Regex PlacaFormatoAntigo = new(@"^[A-Z]{3}-\d{4}$", RegexOptions.Compiled);
+    private static readonly Regex PlacaFormatoMercosul = new(@"^[A-Z]{3}\d[A-Z]\d{2}$", RegexOptions.Compiled);
 
     public string Placa { get; private set; } = string.Empty;
     public string Marca { get; private set; } = string.Empty;
@@ -110,6 +119,12 @@ public sealed class Carro : Ativo
             throw new ArgumentException("Placa não pode ser vazia.", nameof(placa));
         }
 
+        var placaNormalizada = placa.Trim().ToUpperInvariant();
+        if (!PlacaFormatoAntigo.IsMatch(placaNormalizada) && !PlacaFormatoMercosul.IsMatch(placaNormalizada))
+        {
+            throw new ArgumentException("Placa em formato inválido (ex: AAA-0000 ou AAA0A00).", nameof(placa));
+        }
+
         if (string.IsNullOrWhiteSpace(marca))
         {
             throw new ArgumentException("Marca não pode ser vazia.", nameof(marca));
@@ -148,7 +163,7 @@ public sealed class Carro : Ativo
             throw new ArgumentException("Consumo médio não pode ser negativo.", nameof(consumoMedio));
         }
 
-        Placa = placa.Trim().ToUpperInvariant();
+        Placa = placaNormalizada;
         Marca = marca.Trim();
         Modelo = modelo.Trim();
         AnoFabricacao = anoFabricacao;

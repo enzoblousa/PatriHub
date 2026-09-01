@@ -11,10 +11,18 @@ import { Ativos } from '../ativos';
 import { ROTULOS_MOTORIZACAO, TEXTOS_AJUDA_CARRO, UNIDADE_CONSUMO_MEDIO } from '../ativos-rotulos';
 import type { CarroRequest } from '../ativos.models';
 import { Motorizacao } from '../ativos.models';
-import { anoFabricacaoValidator, anoMaximoCarro, anoModeloValidator } from '../ativos-validadores';
+import {
+  anoFabricacaoValidator,
+  anoModeloValidator,
+  MENSAGENS_ATIVO_COMUM,
+  MENSAGENS_CARRO,
+  mensagemErro,
+  placaValidator,
+} from '../ativos-validadores';
 import {
   criarFinanciamentoForm,
   financiamentoFormParaDto,
+  MENSAGENS_FINANCIAMENTO,
   preencherFinanciamentoForm,
   TEXTOS_AJUDA_FINANCIAMENTO,
 } from '../financiamento-form';
@@ -58,15 +66,19 @@ export class AtivoFormCarro {
   protected readonly rotulosMotorizacao = ROTULOS_MOTORIZACAO;
   protected readonly textosAjuda = TEXTOS_AJUDA_CARRO;
   protected readonly textosAjudaFinanciamento = TEXTOS_AJUDA_FINANCIAMENTO;
-  /** Exibido nas mensagens de erro de `anoFabricacao`/`anoModelo` — ver `ativos-validadores.ts`. */
-  protected readonly anoMaximoCarro = anoMaximoCarro();
+
+  /** Resolve a mensagem de erro por tipo de violação — ver docs/adr/0008. */
+  protected readonly mensagemErro = mensagemErro;
+  protected readonly mensagensComuns = MENSAGENS_ATIVO_COMUM;
+  protected readonly mensagensCarro = MENSAGENS_CARRO;
+  protected readonly mensagensFinanciamento = MENSAGENS_FINANCIAMENTO;
 
   protected readonly form = this.formBuilder.nonNullable.group({
     apelido: ['', Validators.required],
     dataAquisicao: ['', Validators.required],
     valorAquisicao: [0, [Validators.required, Validators.min(0)]],
     valorMercadoAtual: [0, [Validators.required, Validators.min(0)]],
-    placa: ['', Validators.required],
+    placa: ['', [Validators.required, placaValidator]],
     marca: ['', Validators.required],
     modelo: ['', Validators.required],
     anoFabricacao: [new Date().getFullYear(), [Validators.required, anoFabricacaoValidator]],

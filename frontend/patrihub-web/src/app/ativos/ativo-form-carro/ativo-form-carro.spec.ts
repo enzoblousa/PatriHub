@@ -132,6 +132,33 @@ describe('AtivoFormCarro', () => {
       expect(erro.textContent).toContain('1900');
     });
 
+    /** Ver docs/adr/0008 — antes a máscara só formatava, não impedia submeter algo incompleto. */
+    it('rejeita placa incompleta e mostra mensagem de formato, distinta da de campo vazio', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.placa.setValue('AB');
+      componente['form'].controls.placa.markAsTouched();
+      await fixture.whenStable();
+
+      expect(componente['form'].controls.placa.invalid).toBe(true);
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#placa-erro');
+      expect(erro.textContent).toContain('formato inválido');
+    });
+
+    it('mostra "Informe a placa." (não a mensagem de formato) quando o campo está vazio', async () => {
+      const fixture = TestBed.createComponent(AtivoFormCarro);
+      const componente = fixture.componentInstance;
+      await fixture.whenStable();
+
+      componente['form'].controls.placa.markAsTouched();
+      await fixture.whenStable();
+
+      const erro: HTMLElement = fixture.nativeElement.querySelector('#placa-erro');
+      expect(erro.textContent).toContain('Informe a placa.');
+    });
+
     it('cadastra e navega pro detalhe quando aceito', async () => {
       const fixture = TestBed.createComponent(AtivoFormCarro);
       const componente = fixture.componentInstance;
