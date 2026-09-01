@@ -76,6 +76,53 @@ public class ImovelTests
             EnderecoValido(), TipoImovel.Apartamento, 65m, "12345", 150m, 400m));
     }
 
+    /// <summary>Ver docs/adr/0008 — antes só se checava `Length == 2`, aceitando qualquer par de letras.</summary>
+    [Theory]
+    [InlineData("ZZ")]
+    [InlineData("XX")]
+    public void Endereco_Criar_com_uf_fora_da_lista_das_27_lanca_ArgumentException(string ufInvalida)
+    {
+        Assert.Throws<ArgumentException>(() =>
+            Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", ufInvalida, "01000-000"));
+    }
+
+    [Theory]
+    [InlineData("S")]
+    [InlineData("SPP")]
+    public void Endereco_Criar_com_uf_de_tamanho_errado_lanca_ArgumentException(string ufInvalida)
+    {
+        Assert.Throws<ArgumentException>(() =>
+            Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", ufInvalida, "01000-000"));
+    }
+
+    [Fact]
+    public void Endereco_Criar_normaliza_uf_minuscula_para_maiuscula()
+    {
+        var endereco = Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", "sp", "01000-000");
+
+        Assert.Equal("SP", endereco.Uf);
+    }
+
+    /// <summary>Ver docs/adr/0008 — antes só se checava não-vazio, sem validar a quantidade de dígitos.</summary>
+    [Theory]
+    [InlineData("0100")] // poucos dígitos
+    [InlineData("010000000")] // dígitos demais
+    public void Endereco_Criar_com_cep_fora_de_8_digitos_lanca_ArgumentException(string cepInvalido)
+    {
+        Assert.Throws<ArgumentException>(() =>
+            Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", cepInvalido));
+    }
+
+    [Fact]
+    public void Endereco_Criar_aceita_cep_com_ou_sem_traco()
+    {
+        var comTraco = Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", "01000-000");
+        var semTraco = Endereco.Criar("Rua das Flores", "123", null, "Centro", "São Paulo", "SP", "01000000");
+
+        Assert.Equal("01000-000", comTraco.Cep);
+        Assert.Equal("01000000", semTraco.Cep);
+    }
+
     [Fact]
     public void Atualizar_troca_ValorMercadoAtual_e_demais_campos()
     {

@@ -53,6 +53,32 @@ public class CarroTests
             placaInvalida, "Toyota", "Corolla", 2022, 2022, 105_000m, 30_000m, Motorizacao.Combustao, 14.5m));
     }
 
+    /// <summary>Ver docs/adr/0008 — antes só se checava não-vazio, sem validar o formato real.</summary>
+    [Theory]
+    [InlineData("AB1234")] // só 2 letras
+    [InlineData("ABCD123")] // 4 letras
+    [InlineData("ABC123")] // formato antigo sem o traço
+    [InlineData("ABC-12345")] // formato antigo com 5 dígitos
+    [InlineData("ABC1234")] // nem antigo (sem traço) nem Mercosul (5º caractere é dígito, não letra)
+    public void Cadastrar_com_placa_em_formato_invalido_lanca_ArgumentException(string placaInvalida)
+    {
+        Assert.Throws<ArgumentException>(() => Carro.Cadastrar(
+            Guid.NewGuid(), "Corolla", new DateOnly(2022, 3, 15), 120_000m, 100_000m,
+            placaInvalida, "Toyota", "Corolla", 2022, 2022, 105_000m, 30_000m, Motorizacao.Combustao, 14.5m));
+    }
+
+    [Theory]
+    [InlineData("abc-1234", "ABC-1234")] // formato antigo, letras minúsculas normalizadas
+    [InlineData("abc1d23", "ABC1D23")] // Mercosul, letras minúsculas normalizadas
+    public void Cadastrar_aceita_formato_antigo_e_Mercosul(string placaBruta, string placaEsperada)
+    {
+        var carro = Carro.Cadastrar(
+            Guid.NewGuid(), "Corolla", new DateOnly(2022, 3, 15), 120_000m, 100_000m,
+            placaBruta, "Toyota", "Corolla", 2022, 2022, 105_000m, 30_000m, Motorizacao.Combustao, 14.5m);
+
+        Assert.Equal(placaEsperada, carro.Placa);
+    }
+
     [Fact]
     public void Cadastrar_com_ano_modelo_anterior_ao_ano_fabricacao_lanca_ArgumentException()
     {
