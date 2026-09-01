@@ -8,8 +8,13 @@ import type { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/fo
  */
 export const ANO_MINIMO_CARRO = 1900;
 
+/**
+ * Usa `getUTCFullYear()`, não `getFullYear()` (hora local) — o backend calcula o teto com
+ * `DateTime.UtcNow.Year` (`Carro.cs`), e perto da virada do ano os dois divergem em fusos à
+ * frente de UTC se um usar hora local e o outro UTC.
+ */
 export function anoMaximoCarro(): number {
-  return new Date().getFullYear() + 1;
+  return new Date().getUTCFullYear() + 1;
 }
 
 function vazio(valor: unknown): boolean {

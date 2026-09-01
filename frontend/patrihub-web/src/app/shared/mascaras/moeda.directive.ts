@@ -9,7 +9,7 @@ import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from '@angular/forms';
 export function formatarMoeda(valor: number): string {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
     .format(valor)
-    .replace(' ', ' ');
+    .replace(String.fromCharCode(0xa0), ' ');
 }
 
 /**
