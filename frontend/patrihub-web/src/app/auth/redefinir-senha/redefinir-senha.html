@@ -1,0 +1,27 @@
+<section class="redefinir-senha">
+  <img class="redefinir-senha-logo" src="patrihub-logo.png" alt="PatriHub" />
+  <h1>Definir nova senha</h1>
+
+  @if (linkInvalido) {
+    <p class="erro" role="alert">Link de recuperação inválido ou incompleto.</p>
+    <p><a routerLink="/esqueci-senha">Solicitar um novo link</a></p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="redefinir()" novalidate>
+      <label>
+        Nova senha
+        <input type="password" formControlName="novaSenha" autocomplete="new-password" />
+      </label>
+      @if (form.controls.novaSenha.invalid && form.controls.novaSenha.touched) {
+        <p class="campo-erro">{{ mensagemErro(form.controls.novaSenha, MENSAGENS_SENHA) }}</p>
+      }
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Salvando…' : 'Salvar nova senha' }}
+      </button>
+    </form>
+  }
+</section>

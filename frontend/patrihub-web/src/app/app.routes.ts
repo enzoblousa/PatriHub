@@ -19,6 +19,15 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/registro/registro').then((m) => m.Registro),
   },
   {
+    path: 'esqueci-senha',
+    loadComponent: () => import('./auth/esqueci-senha/esqueci-senha').then((m) => m.EsqueciSenha),
+  },
+  {
+    path: 'redefinir-senha',
+    loadComponent: () =>
+      import('./auth/redefinir-senha/redefinir-senha').then((m) => m.RedefinirSenha),
+  },
+  {
     path: 'perfil',
     canActivate: [authGuard],
     loadComponent: () => import('./perfil/perfil').then((m) => m.Perfil),

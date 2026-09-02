@@ -101,3 +101,28 @@ describe('Login vindo da exclusão de conta', () => {
     );
   });
 });
+
+describe('Login vindo da redefinição de senha', () => {
+  it('mostra a mensagem de confirmação quando ?senhaRedefinida=true', async () => {
+    localStorage.clear();
+    await TestBed.configureTestingModule({
+      imports: [Login],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        provideRouter([]),
+        {
+          provide: ActivatedRoute,
+          useValue: { snapshot: { queryParamMap: convertToParamMap({ senhaRedefinida: 'true' }) } },
+        },
+      ],
+    }).compileComponents();
+
+    const fixture = TestBed.createComponent(Login);
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelector('.confirmacao')?.textContent).toContain(
+      'Senha redefinida com sucesso.',
+    );
+  });
+});

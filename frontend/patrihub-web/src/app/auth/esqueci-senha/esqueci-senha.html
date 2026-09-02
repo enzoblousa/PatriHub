@@ -1,0 +1,35 @@
+<section class="esqueci-senha">
+  <img class="esqueci-senha-logo" src="patrihub-logo.png" alt="PatriHub" />
+  <h1>Recuperar senha</h1>
+
+  @if (enviado()) {
+    <p class="confirmacao" role="status">
+      Enviamos um link de recuperação para o seu email. Confira sua caixa de entrada — o link
+      expira em 30 minutos.
+    </p>
+  } @else {
+    <p class="instrucoes">
+      Informe o email da sua conta para receber um link de redefinição de senha.
+    </p>
+
+    <form [formGroup]="form" (ngSubmit)="enviar()" novalidate>
+      <label>
+        Email
+        <input type="email" formControlName="email" autocomplete="email" />
+      </label>
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <p class="campo-erro">Informe um email válido.</p>
+      }
+
+      @if (erro()) {
+        <p class="erro" role="alert">{{ erro() }}</p>
+      }
+
+      <button type="submit" [disabled]="enviando()">
+        {{ enviando() ? 'Enviando…' : 'Enviar link de recuperação' }}
+      </button>
+    </form>
+  }
+
+  <p><a routerLink="/login">Voltar para o login</a></p>
+</section>

@@ -27,6 +27,10 @@ services:
         value: PatriHub
       - key: Jwt__ExpiraEmDias
         value: "7"
+      - key: Resend__RemetenteEmail
+        value: nao-responda@patrihub.com.br
+      - key: Resend__RemetenteNome
+        value: PatriHub
       # Segredos e valores específicos do ambiente — preenchidos manualmente no dashboard do
       # Render, nunca commitados. Ver README.md §Deploy para o significado de cada um.
       - key: ConnectionStrings__PatriHubDb
@@ -37,5 +41,22 @@ services:
         sync: false
       - key: AdminBootstrap__Senha
         sync: false
+      # URL pública do frontend hoje (Cloudflare Pages) — usada só pra montar o link do email de
+      # recuperação de senha (ver ADR-0009). Trocar para "https://app.patrihub.com.br" quando o
+      # domínio próprio estiver de fato apontado (ver wizard de DNS) — até lá o link teria que
+      # apontar pra um domínio que ainda não resolve.
+      - key: Frontend__BaseUrl
+        sync: false
+      # Chave de API do Resend — sem ela o backend cai no fallback que só loga o link em vez de
+      # mandar o email de verdade (ver EnviadorDeEmailConsole). Precisa do domínio
+      # "patrihub.com.br" verificado no Resend antes de configurar isto em produção.
+      - key: Resend__ApiKey
+        sync: false
       - key: Cors__AllowedOrigins__0
+        sync: false
+      # Origem adicional pro app quando o domínio próprio estiver apontado (ver wizard de DNS) —
+      # declarada agora, mesmo antes do domínio resolver, pra já documentar o passo em
+      # render.yaml (ver README.md §Deploy). Cors:AllowedOrigins é um array (Program.cs), então
+      # as duas origens convivem durante a transição.
+      - key: Cors__AllowedOrigins__1
         sync: false

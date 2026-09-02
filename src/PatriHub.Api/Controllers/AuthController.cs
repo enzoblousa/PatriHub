@@ -41,6 +41,40 @@ public sealed class AuthController(IAutenticacaoService autenticacaoService) : C
         return Ok(resultado);
     }
 
+    /// <summary>"Esqueci minha senha" — ver ADR-0009. Sempre 200 quando o email existe, 404 quando não (Q3: decisão consciente de revelar isso, ver ADR-0009).</summary>
+    [HttpPost("esqueci-senha")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthEndpoints")]
+    public async Task<IActionResult> EsqueciSenha([FromBody] SolicitarRecuperacaoSenhaRequest request)
+    {
+        var resultado = await autenticacaoService.SolicitarRecuperacaoSenhaAsync(request);
+        if (resultado.Sucesso)
+        {
+            return Ok();
+        }
+
+        return resultado.TipoErro == TipoErroOperacao.NaoEncontrado
+            ? NotFound(new { erro = resultado.Erro })
+            : BadRequest(new { erro = resultado.Erro });
+    }
+
+    /// <summary>Conclui a recuperação de senha a partir do link do email — ver ADR-0009.</summary>
+    [HttpPost("redefinir-senha")]
+    [AllowAnonymous]
+    [EnableRateLimiting("AuthEndpoints")]
+    public async Task<IActionResult> RedefinirSenha([FromBody] RedefinirSenhaRequest request)
+    {
+        var resultado = await autenticacaoService.RedefinirSenhaAsync(request);
+        if (resultado.Sucesso)
+        {
+            return Ok();
+        }
+
+        return resultado.TipoErro == TipoErroOperacao.NaoEncontrado
+            ? NotFound(new { erro = resultado.Erro })
+            : BadRequest(new { erro = resultado.Erro });
+    }
+
     [HttpGet("me")]
     [Authorize]
     public IActionResult Me()

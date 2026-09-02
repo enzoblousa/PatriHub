@@ -6,8 +6,10 @@ import { tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import type {
   LoginRequest,
+  RedefinirSenhaRequest,
   RegistrarUsuarioRequest,
   ResultadoAutenticacao,
+  SolicitarRecuperacaoSenhaRequest,
   UsuarioDto,
 } from './auth.models';
 
@@ -46,6 +48,24 @@ export class Auth {
     return this.http
       .post<ResultadoAutenticacao>(`${environment.apiBaseUrl}/api/auth/login`, request)
       .pipe(tap((resultado) => this.persistirSessao(resultado)));
+  }
+
+  /**
+   * "Esqueci minha senha" (ver ADR-0009). Sem `tap`/persistência de sessão — esse passo não
+   * autentica ninguém, só dispara o email. 404 (email não encontrado) e 400 chegam como erro
+   * pro `subscribe` de quem chama, mesmo padrão de `login`/`registrar`.
+   */
+  solicitarRecuperacaoSenha(request: SolicitarRecuperacaoSenhaRequest) {
+    return this.http.post<void>(`${environment.apiBaseUrl}/api/auth/esqueci-senha`, request);
+  }
+
+  /**
+   * Conclui a recuperação de senha a partir do token do link do email (ver ADR-0009). Também
+   * sem `tap`: login automático pós-reset foi decidido fora de escopo (Q11) — quem chama
+   * redireciona pro `/login` manualmente depois do sucesso.
+   */
+  redefinirSenha(request: RedefinirSenhaRequest) {
+    return this.http.post<void>(`${environment.apiBaseUrl}/api/auth/redefinir-senha`, request);
   }
 
   /** Dados da própria conta a partir das claims do token (`GET /api/auth/me`) — usado pelo Perfil pra nunca depender só do que ficou em `localStorage` desde o login/registro. */

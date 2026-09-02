@@ -18,4 +18,19 @@ public interface IAutenticacaoService
     /// `/me`), nunca de um parâmetro vindo do cliente.
     /// </summary>
     Task<ResultadoOperacao> ExcluirContaAsync(Guid usuarioId);
+
+    /// <summary>
+    /// "Esqueci minha senha" — ver ADR-0009. Devolve <see cref="TipoErroOperacao.NaoEncontrado"/>
+    /// quando o email não existe (decisão consciente de não mascarar isso, ver ADR-0009);
+    /// nunca lança se o envio de email falhar silenciosamente por trás — quem chama trata isso
+    /// como sucesso mesmo assim, pra não vazar detalhe de infra pro cliente.
+    /// </summary>
+    Task<ResultadoOperacao> SolicitarRecuperacaoSenhaAsync(SolicitarRecuperacaoSenhaRequest request);
+
+    /// <summary>
+    /// Conclui a recuperação: valida o token (opaco, do Identity) e troca a senha. Sucesso aqui
+    /// também invalida qualquer sessão JWT emitida antes da troca (checado na Infrastructure —
+    /// ver ADR-0009).
+    /// </summary>
+    Task<ResultadoOperacao> RedefinirSenhaAsync(RedefinirSenhaRequest request);
 }

@@ -1,5 +1,12 @@
 import type { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
+import { mensagemErro } from '../shared/formularios/mensagem-erro';
+
+// Reexportado daqui: era definido neste arquivo antes de virar utilitário compartilhado (ver
+// shared/formularios/mensagem-erro.ts) — evita quebrar quem já importa `mensagemErro` a partir
+// deste módulo.
+export { mensagemErro };
+
 /**
  * Validadores de `AtivoFormCarro` que hoje só existem no backend (`Carro.AtualizarDadosDoCarro`)
  * — issue #72 pede que o frontend reflita a mesma regra em vez de deixar o usuário descobrir só
@@ -19,38 +26,6 @@ export function anoMaximoCarro(): number {
 
 function vazio(valor: unknown): boolean {
   return valor === null || valor === undefined || valor === ('' as unknown);
-}
-
-/**
- * Resolve qual mensagem mostrar pra um `AbstractControl` inválido, a partir de um mapa
- * `{ chaveDoErro: mensagem }` — ver docs/adr/0008. Um campo com mais de um validador (ex:
- * `required` + formato) mostra uma mensagem por *tipo* de violação, não uma genérica só; a
- * ordem das chaves no mapa é a ordem de prioridade quando, em teoria, mais de um erro
- * estivesse presente ao mesmo tempo (na prática isso quase não acontece, porque os
- * validadores de formato — nativos ou os `*Validator` deste arquivo — não rodam em campo
- * vazio, só `required` roda). Aceita uma mensagem fixa ou uma função que recebe o valor do
- * erro (ex: `{ minimo, maximo }` de `anoFabricacaoValidator`), pra mensagem poder citar esse
- * valor sem precisar duplicá-lo.
- */
-export function mensagemErro(
-  control: Pick<AbstractControl, 'errors'> | null | undefined,
-  // `any`: o payload de erro varia por validador (`ErroDeIntervaloDeAno`, `boolean`, etc.) — cada
-  // mapa de mensagens (`MENSAGENS_CARRO` etc.) já tipa sua própria função com o payload certo.
-  mensagens: Record<string, string | ((erro: any) => string)>,
-): string | null {
-  const erros = control?.errors;
-  if (!erros) {
-    return null;
-  }
-
-  for (const chave of Object.keys(mensagens)) {
-    if (chave in erros) {
-      const mensagem = mensagens[chave];
-      return typeof mensagem === 'function' ? mensagem(erros[chave]) : mensagem;
-    }
-  }
-
-  return null;
 }
 
 /** Formato antigo (`AAA-0000`) e Mercosul (`AAA0A00`) — espelha `Carro.cs` (ver docs/adr/0008). */

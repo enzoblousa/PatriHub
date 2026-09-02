@@ -1,35 +1,30 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 import { Auth } from '../../core/auth/auth';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-esqueci-senha',
   imports: [ReactiveFormsModule, RouterLink],
-  templateUrl: './login.html',
-  styleUrl: './login.css',
+  templateUrl: './esqueci-senha.html',
+  styleUrl: './esqueci-senha.css',
 })
-export class Login {
+export class EsqueciSenha {
   private readonly auth = inject(Auth);
-  private readonly router = inject(Router);
   private readonly formBuilder = inject(FormBuilder);
-  private readonly route = inject(ActivatedRoute);
 
   protected readonly enviando = signal(false);
   protected readonly erro = signal<string | null>(null);
-  /** Vindo do redirecionamento pós-exclusão de conta (ver Perfil.confirmarExclusao). */
-  protected readonly contaExcluida = this.route.snapshot.queryParamMap.get('contaExcluida') === 'true';
-  /** Vindo do redirecionamento pós-redefinição de senha (ver RedefinirSenha — Q11: sem login automático, ADR-0009). */
-  protected readonly senhaRedefinida = this.route.snapshot.queryParamMap.get('senhaRedefinida') === 'true';
+  /** Esconde o formulário depois do sucesso — não faz sentido deixar reenviar sem motivo (ver ADR-0009, Q10 já cobre limite no backend, isso aqui é só UX). */
+  protected readonly enviado = signal(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    senha: ['', Validators.required],
   });
 
-  protected entrar(): void {
+  protected enviar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -38,14 +33,17 @@ export class Login {
     this.enviando.set(true);
     this.erro.set(null);
 
-    this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigateByUrl('/'),
+    this.auth.solicitarRecuperacaoSenha(this.form.getRawValue()).subscribe({
+      next: () => {
+        this.enviando.set(false);
+        this.enviado.set(true);
+      },
       error: (erro: unknown) => {
         this.enviando.set(false);
         this.erro.set(
           erro instanceof HttpErrorResponse && typeof erro.error?.erro === 'string'
             ? erro.error.erro
-            : 'Não foi possível entrar. Tente novamente.',
+            : 'Não foi possível enviar o link de recuperação. Tente novamente.',
         );
       },
     });

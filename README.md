@@ -112,6 +112,9 @@ primeira sincronização do blueprint (ou na criação manual do serviço):
 | `AdminBootstrap__Email` | Email real da primeira conta Admin |
 | `AdminBootstrap__Senha` | Senha forte real — nunca o valor de dev do `appsettings.json` |
 | `Cors__AllowedOrigins__0` | URL do Cloudflare Pages: `https://patrihub.pages.dev` (sem barra no final — CORS compara a origem de forma exata) |
+| `Cors__AllowedOrigins__1` | URL do domínio próprio (`https://app.patrihub.com.br`), quando apontado — array, convive com `__0` durante a transição (ver ADR-0009) |
+| `Frontend__BaseUrl` | Origem pública do frontend, usada só pra montar o link do email de recuperação de senha (ver ADR-0009) — hoje `https://patrihub.pages.dev`, trocar para o domínio próprio quando o DNS estiver apontado |
+| `Resend__ApiKey` | Chave de API do [Resend](https://resend.com), com o domínio `patrihub.com.br` verificado (SPF/DKIM) — sem essa variável, o backend cai no fallback que só loga o link em vez de enviar o email de verdade (ver `EnviadorDeEmailConsole`, ADR-0009) |
 
 Os demais valores (`ASPNETCORE_ENVIRONMENT`, `SeedDadosDemo=false`, `Jwt__Issuer`/`Audience`/
 `ExpiraEmDias`) já vêm fixados no `render.yaml`, não-secretos.
