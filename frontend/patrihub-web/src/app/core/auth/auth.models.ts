@@ -14,6 +14,16 @@ export interface LoginRequest {
   senha: string;
 }
 
+export interface SolicitarRecuperacaoSenhaRequest {
+  email: string;
+}
+
+export interface RedefinirSenhaRequest {
+  email: string;
+  token: string;
+  novaSenha: string;
+}
+
 export interface UsuarioDto {
   id: string;
   nome: string;

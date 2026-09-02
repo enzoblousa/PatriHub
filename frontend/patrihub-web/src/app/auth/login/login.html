@@ -5,6 +5,9 @@
   @if (contaExcluida) {
     <p class="confirmacao" role="status">Sua conta foi excluída com sucesso.</p>
   }
+  @if (senhaRedefinida) {
+    <p class="confirmacao" role="status">Senha redefinida com sucesso. Entre com sua nova senha.</p>
+  }
 
   <form [formGroup]="form" (ngSubmit)="entrar()" novalidate>
     <label>
@@ -22,6 +25,7 @@
     @if (form.controls.senha.invalid && form.controls.senha.touched) {
       <p class="campo-erro">Informe sua senha.</p>
     }
+    <p class="esqueci-senha-link"><a routerLink="/esqueci-senha">Esqueci minha senha</a></p>
 
     @if (erro()) {
       <p class="erro" role="alert">{{ erro() }}</p>

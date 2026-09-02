@@ -22,6 +22,9 @@ public sealed class PatriHubDbContext(DbContextOptions<PatriHubDbContext> option
         builder.Entity<ApplicationUser>(entity =>
         {
             entity.Property(u => u.Nome).IsRequired().HasMaxLength(200);
+            // Nullable por padrão (tipo já é `DateTimeOffset?`) — sem HasDefaultValue de propósito,
+            // `null` é o estado real de "nunca passou pelo /redefinir-senha" (ver ApplicationUser).
+            entity.Property(u => u.SenhaAlteradaEm);
         });
 
         // Table-per-type: "Ativos" guarda os campos comuns, "Imoveis"/"Carros" guardam os

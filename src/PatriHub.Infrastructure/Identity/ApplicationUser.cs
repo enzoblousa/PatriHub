@@ -15,4 +15,13 @@ public sealed class ApplicationUser : IdentityUser<Guid>
 
     /// <summary>Timestamp do aceite da Política de Privacidade no registro — ver Usuario.Registrar.</summary>
     public DateTimeOffset ConsentimentoLgpdEm { get; set; }
+
+    /// <summary>
+    /// Quando a senha foi trocada pela última vez via /api/auth/redefinir-senha — `null` pra
+    /// quem nunca passou por esse fluxo (inclui todo mundo registrado antes dele existir).
+    /// Usado só para invalidar sessões antigas (ver <see cref="VerificadorSenhaAlterada"/>
+    /// e ADR-0009); não é atualizado no registro nem em nenhum outro fluxo de troca de senha,
+    /// porque não existe outro hoje.
+    /// </summary>
+    public DateTimeOffset? SenhaAlteradaEm { get; set; }
 }

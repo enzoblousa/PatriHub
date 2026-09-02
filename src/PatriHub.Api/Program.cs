@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using PatriHub.Api.Autenticacao;
 using PatriHub.Infrastructure;
 using PatriHub.Infrastructure.Identity;
 using PatriHub.Infrastructure.Jwt;
@@ -79,6 +80,9 @@ var app = builder.Build();
 app.UseCors(FrontendCorsPolicy);
 app.UseRateLimiter();
 app.UseAuthentication();
+// Depois de UseAuthentication (precisa de app.User já populado) e antes de UseAuthorization
+// (precisa barrar antes do endpoint rodar) — ver ADR-0009 e SessaoInvalidadaMiddleware.
+app.UseMiddleware<SessaoInvalidadaMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();

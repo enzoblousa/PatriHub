@@ -13,7 +13,8 @@ public sealed class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenG
 
     public (string Token, DateTimeOffset ExpiraEm) GerarToken(ApplicationUser usuario, IEnumerable<string> papeis)
     {
-        var expiraEm = DateTimeOffset.UtcNow.AddDays(_options.ExpiraEmDias);
+        var agora = DateTimeOffset.UtcNow;
+        var expiraEm = agora.AddDays(_options.ExpiraEmDias);
 
         var claims = new List<Claim>
         {
@@ -21,6 +22,10 @@ public sealed class JwtTokenGenerator(IOptions<JwtOptions> options) : IJwtTokenG
             new(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, usuario.Email ?? string.Empty),
             new(PatriHubClaimTypes.Nome, usuario.Nome),
+            // Explícito (não confia no default do JwtSecurityToken) porque
+            // SessaoInvalidadaMiddleware depende desse claim pra saber se o token foi emitido
+            // antes de uma troca de senha (ver VerificadorSenhaAlterada e ADR-0009).
+            new(JwtRegisteredClaimNames.Iat, agora.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64),
         };
 
         claims.AddRange(papeis.Select(papel => new Claim(ClaimTypes.Role, papel)));

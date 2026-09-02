@@ -5,6 +5,17 @@
     <ProjectReference Include="..\PatriHub.Application\PatriHub.Application.csproj" />
   </ItemGroup>
 
+  <!--
+    Só pra ganhar acesso ao Microsoft.AspNetCore.Identity "cheio" do shared framework
+    (DataProtectorTokenProvider, AddDefaultTokenProviders etc.) — os pacotes NuGet
+    Microsoft.Extensions.Identity.Core/.Stores usados abaixo são um subconjunto sem integração
+    com DataProtection, insuficiente pro token de recuperação de senha (ver ADR-0009). Não torna
+    este projeto um app Web: continua uma class library comum, só com mais assemblies visíveis.
+  -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.11" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.11" />
@@ -12,7 +23,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.0" />
+    <!--
+      Microsoft.Extensions.Hosting.Abstractions e Microsoft.Extensions.Http: removidos daqui —
+      já vêm pelo FrameworkReference acima (ver aviso NU1510 do build), que passou a existir
+      nesta mudança (ADR-0009). Mantidos como comentário só pra não perder o rastro de onde
+      IHostedService/IHttpClientFactory continuam vindo pra quem for procurar.
+    -->
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.22.0" />
   </ItemGroup>
